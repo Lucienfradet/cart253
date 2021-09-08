@@ -1,2 +1,2 @@
-# cart253
-Course work for CART253
+# CART253 - Creative computation I
+Lucien's course work for CART253
