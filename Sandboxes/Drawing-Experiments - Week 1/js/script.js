@@ -1,9 +1,8 @@
 /**
-Title of Project
-Author Name
+Drawing Experiments
+Lucien Cusson-Fradet
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+Experimenting with shapes and color!
 */
 
 "use strict";
