@@ -1,9 +1,9 @@
-/**
+/************************************************
 Drawing Experiments
 Lucien Cusson-Fradet
 
 Experimenting with shapes and color!
-*/
+************************************************/
 
 "use strict";
 
