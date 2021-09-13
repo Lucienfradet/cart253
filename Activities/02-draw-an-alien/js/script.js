@@ -1,9 +1,8 @@
 /**
-Title of Project
-Author Name
+Activity 02 -Draw an Alien
+Lucien Cusson-Fradet
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+First Activity, Drawing an alien with simple shapes and P5 functions.
 */
 
 "use strict";
