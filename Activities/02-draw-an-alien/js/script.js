@@ -19,7 +19,7 @@ let r=0;
 
 
 /**
-Description of setup
+Canvas, Background, and frameRate
 */
 function setup() {
 createCanvas(640,480);
@@ -30,7 +30,7 @@ frameRate(45);
 
 
 /**
-Description of draw()
+Drawing an animated loop of circle and the Alien on top.
 */
 function draw() {
   background(252, 232, 249);
