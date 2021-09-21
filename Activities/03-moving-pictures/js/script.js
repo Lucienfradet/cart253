@@ -5,23 +5,26 @@ Lucien Cusson-Fradet
 
 "use strict";
 
+let canvasW = 500;
+let canvasH = 500;
+let couleurFond = 0;
+
 let circleRight = {
-  x:width,
-  y:height/2,
+  x:canvasW,
+  y:canvasH/2,
   size:15,
-  speed:2,
-  alpha:200
+  speed:-2,
+  oppacity:200
 }
 
 let circleLeft = {
   x:0,
-  y:height/2,
+  y:canvasH/2,
   size:40,
   speed:2,
-  alpha:80
+  oppacity:80
 }
 
-let backgroundColor = 0;
 
 /**
 Description of preload
@@ -35,11 +38,15 @@ function preload() {
 Description of setup
 */
 function setup() {
-  createCanvas(500, 500);
+  createCanvas(canvasW, canvasH);
+  background(couleurFond);
+
+
+
 
   //Place the two circles properly
-  circleRight.x =+ circleRight.size/2;
-  circleLeft.x =- circleLeft.size/2;
+  circleRight.x += circleRight.size/2;
+  circleLeft.x -= circleLeft.size/2;
 }
 
 
@@ -47,14 +54,23 @@ function setup() {
 Description of draw()
 */
 function draw() {
-  background(backgroundColor,0,0);
-  backgroundColor += 0.1;
-
+  couleurFond += 0.5;
+  background(couleurFond, 0, 0);
   noStroke();
 
-  fill(0,0,0,circleRight.alpha);
-  ellipse(circelRight.x, cricleRight.y, circelRight.size);
-  fill(0,0,0,circleLeft.alpha);
+
+  fill(0,0,0,circleRight.oppacity);
+  ellipse(circleRight.x, circleRight.y, circleRight.size);
+  fill(0,0,0,circleLeft.oppacity);
   ellipse(circleLeft.x, circleLeft.y, circleLeft.size);
 
+  circleLeft.size += 0.5;
+  circleLeft.x += circleLeft.speed;
+  constrain(circleLeft.x, 0 - circleLeft.size/2, width/2);
+
+  circleRight.size += 0.5;
+  circleRight.x += circleRight.speed;
+  constrain(circleRight.x, width/2, width + circleRight.size/2);
+
+  //console.log("VARIABLE SHITHEAD: "backgroundColor);
 }
