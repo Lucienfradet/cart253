@@ -11,14 +11,6 @@ const BOULETTES_NUM = 5;
 let boulettesProp = [];
 let boulettes = [];
 let bouletteChoice;
-/*
-  quantity:2,
-  sideChoice:0,
-  size:0,
-  mvmt:0,
-  speed:0.5
-}
-*/
 
 let ligne = {
   x:0,
@@ -36,7 +28,7 @@ let ligne = {
 }
 
 /**
-Description of setup
+Creating arrays for the randomly generated boulettes
 */
 function setup() {
   createCanvas(canvasW, canvasH);
@@ -76,7 +68,7 @@ function setup() {
 
 
 /**
-Description of draw()
+Make the boulettes fly across the screen, change the background shade with the mouseX and generate a couple of lines that move with sin/cos functions
 */
 function draw() {
   background(map(constrain(mouseY, 0, height), 0, height, 0, 255));
@@ -105,13 +97,15 @@ function draw() {
     ellipse(boulette.x, boulette.y, boulette.size);
   }
 
-  strokeWeight(ligne.offSet);
-  //Allows to affect the amplitude of the functions with the mouse
-  ligne.amplitudeMod = map(constrain(mouseX, 0, width), 0, width, 0.5, 5);
 
+
+  ligne.amplitudeMod = map(constrain(mouseX, 0, width), 0, width, 0.5, 5); //Allows to affect the amplitude of the functions with the mouse
+
+  //Now that I know how to make arrays work, would be nice to program the lines as objects so they can evolve independently from each other! (kinda running out of time.)
   push();
   translate(width/2.7, height/2.7);
   stroke(255);
+  strokeWeight(ligne.offSet);
   //Drawing multiple lines...
   for (let i = 0; i < ligne.numberOfLines; i++) {
     line(ligne.x+i*ligne.spacing, ligne.y+i*ligne.spacing, ligne.x1+i*ligne.spacing, ligne.y1+i*ligne.spacing);
@@ -128,23 +122,6 @@ function draw() {
   ligne.mvmt += ligne.speed;
   pop();
 
-
-
-
-
-/**
-  for (let i = 0; i < boulette.quantity; i++) {
-    boulette.size = random(25, 150);
-    boulette.sideChoice = int(random(0,2));
-    if (boulette.sideChoice < 1) {
-      ellipse(0+boulette.mvmt, random(0+boulette.size/2, width-boulette.size/2), boulette.size);
-    }
-    else {
-      ellipse(width-boulette.mvmt, random(0+boulette.size/2, width-boulette.size/2), boulette.size);
-    }
-  }
-  boulette.mvmt += boulette.speed;
-*/
   //console.log("ligne x:" + ligne.x);
   //console.log("ligne y:" + ligne.y);
   //console.log("ligne x1:" + ligne.x1);
