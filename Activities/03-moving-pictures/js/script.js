@@ -13,7 +13,7 @@ let circleRight = {
   x:canvasW,
   y:canvasH/2,
   size:15,
-  speed:-2,
+  speed:-1,
   oppacity:200
 }
 
@@ -21,7 +21,7 @@ let circleLeft = {
   x:0,
   y:canvasH/2,
   size:40,
-  speed:2,
+  speed:1,
   oppacity:80
 }
 
@@ -66,11 +66,11 @@ function draw() {
 
   circleLeft.size += 0.5;
   circleLeft.x += circleLeft.speed;
-  constrain(circleLeft.x, 0 - circleLeft.size/2, width/2);
+  circleLeft.x = constrain(circleLeft.x, 0 - circleLeft.size/2, width/2);
 
   circleRight.size += 0.5;
   circleRight.x += circleRight.speed;
-  constrain(circleRight.x, width/2, width + circleRight.size/2);
+  circleRight.x = constrain(circleRight.x, width/2, width + circleRight.size/2);
 
   //console.log("VARIABLE SHITHEAD: "backgroundColor);
 }
