@@ -38,6 +38,12 @@ function draw() {
 //Caterpillar THING!
   push();
     let x = caterpillar.x;
+    for (let segmentsDrawn = 0; segmentsDrawn < caterpillar.totalSegments; segmentsDrawn++) {
+      ellipse(x, caterpillar.y, caterpillar.segmentSize);
+      x += caterpillar.segmentSpacing;
+    }
+
+/*
     let segmentsDrawn = 0;
 
     while (segmentsDrawn < caterpillar.totalSegments) {
@@ -45,6 +51,7 @@ function draw() {
         x += caterpillar.segmentSpacing;
         segmentsDrawn++;
     }
+*/
   pop();
 
 
