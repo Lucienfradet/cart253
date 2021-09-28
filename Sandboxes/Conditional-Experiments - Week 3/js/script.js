@@ -13,6 +13,13 @@ let circle = {
   speed: 5,
   fill: 255
 }
+let caterpillar = {
+  x: 75,
+  y: 75,
+  totalSegments: 10,
+  segmentSize: 50,
+  segmentSpacing: 40
+}
 
 /**
 Description of setup
@@ -28,6 +35,19 @@ Description of draw()
 function draw() {
   background(backgroundShade);
   noStroke();
+//Caterpillar THING!
+  push();
+    let x = caterpillar.x;
+    let segmentsDrawn = 0;
+
+    while (segmentsDrawn < caterpillar.totalSegments) {
+        ellipse(x, caterpillar.y, caterpillar.segmentSize);
+        x += caterpillar.segmentSpacing;
+        segmentsDrawn++;
+    }
+  pop();
+
+
   backgroundShade += 0.5;
 
   if (backgroundShade === 255) {
@@ -62,7 +82,7 @@ function draw() {
     fill(150,150,25);
   }
 
-  if (keyIsPressed === true) {
+  if (keyIsPressed) { //Don't actually need the "=== true" for this to work!
     background(150,150,25);
   }
 
