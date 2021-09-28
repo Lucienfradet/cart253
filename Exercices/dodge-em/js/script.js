@@ -89,25 +89,25 @@ function draw() {
 
   //Check where the gem is compared to the mouse
   if (mouseX > redGem.x) {
-    redGem.ax += redGem.acceleration;
+    redGem.ax = redGem.acceleration;
   }
   else if (mouseX < redGem.x) {
-    redGem.ax += -redGem.acceleration;
+    redGem.ax = -redGem.acceleration;
   }
 
   if (mouseY > redGem.y) {
-    redGem.ay += redGem.acceleration;
+    redGem.ay = redGem.acceleration;
   }
   else if (mouseY < redGem.y) {
-    redGem.ay += -redGem.acceleration;
+    redGem.ay = -redGem.acceleration;
   }
 
   //update the speed of the gem
   redGem.vx += redGem.ax;
-  redGem.vx = constrain(redGem.ax, -redGem.maxSpeed, redGem.maxSpeed);
+  redGem.vx = constrain(redGem.vx, -redGem.maxSpeed, redGem.maxSpeed);
 
   redGem.vy += redGem.ay;
-  redGem.vy = constrain(redGem.ay, -redGem.maxSpeed, redGem.maxSpeed);
+  redGem.vy = constrain(redGem.vy, -redGem.maxSpeed, redGem.maxSpeed);
 
   //Change the position of the gem
   redGem.x += redGem.vx;
@@ -159,7 +159,7 @@ function draw() {
 
 
   console.log(`mouseX: ${mouseX}`);
-  console.log(`ship.x: ${ship.x}`);
-  console.log(`redGem.distance: ${redGem.distance}`);
+  console.log(`redGem.ay: ${redGem.ay}`);
+  console.log(`redGem.vy: ${redGem.vy}`);
   console.log(`redGem.acceleration: ${redGem.acceleration}`);
 }
