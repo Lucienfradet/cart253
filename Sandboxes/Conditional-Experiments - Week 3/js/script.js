@@ -27,6 +27,7 @@ Description of draw()
 */
 function draw() {
   background(backgroundShade);
+  noStroke();
   backgroundShade += 0.5;
 
   if (backgroundShade === 255) {
@@ -56,6 +57,14 @@ function draw() {
     circle.y = 350;
   }
   else {circle.y = 250;}
+
+  if (mouseIsPressed === true) { //When the mouse is pressed, it makes the circle look like litteral shit! I mean COME ON!
+    fill(150,150,25);
+  }
+
+  if (keyIsPressed === true) {
+    background(150,150,25);
+  }
 
   circle.x = circle.x + circle.speed;
   ellipse(circle.x, circle.y, circle.size);
