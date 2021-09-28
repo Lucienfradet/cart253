@@ -42,10 +42,26 @@ function draw() {
 
   fill(circle.fill);
 
-  if (mouseX < width/2) {
+  if (!(mouseX > width/3)) {
     fill(255, 0, 0);
   }
-  
+  else if (mouseX < 2 * width/3) {
+    fill(0, 255, 0);
+  }
+  else {
+    fill(0, 0, 255);
+  }
+
+  if (mouseX < width/3 && circle.x < width/3) {
+    circle.y = 350;
+  }
+  else {circle.y = 250;}
+
   circle.x = circle.x + circle.speed;
   ellipse(circle.x, circle.y, circle.size);
+
+  if (backgroundShade === 0 || backgroundShade === 255) {
+    circle.size *= 2;
+  }
+  if (circle.size > 500) {circle.size = 100;}
 }
