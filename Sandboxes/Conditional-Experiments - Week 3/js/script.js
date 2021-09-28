@@ -23,20 +23,70 @@ let caterpillar = {
 
 const STARS_NUM = 200;
 
+// Our white circle
+let circle2 = {
+  x: undefined, // We don't know x yet because we set it randomly
+  y: undefined, // We don't know y yet because we set it randomly
+  size: 100
+};
+
+// The danger zone we'd like to avoid
+let dangerZone = {
+  x: 250,
+  y: 250,
+  size: 150
+}
+
+let lightIsOn = false;
+
 /**
 Description of setup
 */
 function setup() {
   createCanvas(500,500);
-}
 
+}
 
 /**
 Description of draw()
 */
 function draw() {
   background(backgroundShade);
+  if (keyIsPressed) { //Don't actually need the "=== true" for this to work!
+    background(150,150,25);
+  }
   noStroke();
+
+if (mouseIsPressed) {
+    randomSeed();
+  // Give our white circle a random position (once at the start of the program)
+    circle2.x = random(0, width);
+    circle2.y = random(0, height);
+    // Calculate the distance from our circle to the danger zone...
+    let d = dist(circle2.x, circle2.y, dangerZone.x, dangerZone.y);
+  // Check if our white circle overlaps the danger zone...
+    while (d < circle2.size / 2 + dangerZone.size / 2) {
+    // If it does, try a different random position!
+      circle2.x = random(0, width);
+      circle2.y = random(0, height);
+    // Recalculate the distance for the next time through the loop
+      d = dist(circle2.x, circle2.y, dangerZone.x, dangerZone.y);
+    }
+  }
+
+
+push();
+// Draw the danger zone!
+  noFill();
+  stroke(255, 0, 0);
+  ellipse(dangerZone.x, dangerZone.y, dangerZone.size);
+
+  // Draw the white ellipse
+  fill(255);
+  noStroke();
+  ellipse(circle2.x, circle2.y, circle2.size);
+
+pop();
 
 
 push();
@@ -101,10 +151,6 @@ pop();
     fill(150,150,25);
   }
 
-  if (keyIsPressed) { //Don't actually need the "=== true" for this to work!
-    background(150,150,25);
-  }
-
   circle.x = circle.x + circle.speed;
   ellipse(circle.x, circle.y, circle.size);
 
@@ -112,4 +158,13 @@ pop();
     circle.size *= 2;
   }
   if (circle.size > 500) {circle.size = 100;}
+
+  if (lightIsOn) {
+    fill("#fffe00");
+    ellipse (width/2, height/2, 300, 300);
+  }
+}
+
+function mousePressed() {
+  lightIsOn = !lightIsOn;
 }
