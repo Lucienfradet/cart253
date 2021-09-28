@@ -21,6 +21,8 @@ let caterpillar = {
   segmentSpacing: 40
 }
 
+const STARS_NUM = 200;
+
 /**
 Description of setup
 */
@@ -35,12 +37,22 @@ Description of draw()
 function draw() {
   background(backgroundShade);
   noStroke();
+
+
+push();
+  stroke(255);
+  randomSeed(0);
+  for (let i = 0; i < STARS_NUM; i++) {
+    let x = random(0, width);
+    let y = random(0, height);
+    point(x, y);
+  }
+pop();
+
 //Caterpillar THING!
   push();
-    let x = caterpillar.x;
-    for (let segmentsDrawn = 0; segmentsDrawn < caterpillar.totalSegments; segmentsDrawn++) {
-      ellipse(x, caterpillar.y, caterpillar.segmentSize);
-      x += caterpillar.segmentSpacing;
+    for (let i = 0; i < caterpillar.totalSegments; i++) {
+      ellipse(caterpillar.x + i * caterpillar.segmentSpacing, caterpillar.y, caterpillar.segmentSize);
     }
 
 /*
