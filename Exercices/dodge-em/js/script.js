@@ -26,6 +26,13 @@ let redGem = {
   accChange:0
 }
 
+//triangle shape, the ship
+let ship = {
+  x: 0,
+  base: 15,
+  hauteur: 30
+}
+
 /**
 Description of preload
 */
@@ -107,7 +114,7 @@ function draw() {
   redGem.y += redGem.vy;
   redGem.y = constrain(redGem.y, 0 - redGem.size/2, height/5 * 4);
 
-
+  //Drawing the RedGem
   push();
   noStroke();
   scale(0.92,1);
@@ -121,8 +128,38 @@ function draw() {
   sphere(redGem.size, redGem.detailX, redGem.detailY);
   pop();
 
+  //Move the ship
+  if (keyIsDown(LEFT_ARROW)) {
+    ship.x += 5;
+  }
+  else if (keyIsDown(RIGHT_ARROW)) {
+    ship.x -= 5;
+  }
+
+  //Make the ship loop
+  if (ship.x > width/2 + ship.base/2) {
+    ship.x = -width/2 + ship.base/2;
+  }
+  else if (ship.x < -width/2 - ship.base/2) {
+    ship.x = width/2 + ship.base/2;
+  }
+
+  //Drawing the Space ship
+  push();
+  fill(255);
+  noStroke();
+  rotate(PI);
+
+  translate(ship.x, -height/2 + height/13);
+  rotateY(millis() / 1000);
+
+  cone(ship.base, ship.hauteur, 8, 1);
+  pop();
+
+
+
   console.log(`mouseX: ${mouseX}`);
-  console.log(`redGem.x: ${redGem.x}`);
+  console.log(`ship.x: ${ship.x}`);
   console.log(`redGem.distance: ${redGem.distance}`);
   console.log(`redGem.acceleration: ${redGem.acceleration}`);
 }
