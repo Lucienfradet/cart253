@@ -39,6 +39,19 @@ let dangerZone = {
 
 let lightIsOn = false;
 
+let dragger = {
+  x: 250,
+  y: 250,
+  size: 50,
+  // Because it changes size, let's set a minimum and maximum size
+  minSize: 50,
+  maxSize: 400,
+  fill: 0,
+  // We need to keep track of whether the circle is being dragged or not
+  // so we know whether to move it with the mouse position
+  dragging: false
+}
+
 /**
 Description of setup
 */
@@ -163,8 +176,41 @@ pop();
     fill("#fffe00");
     ellipse (width/2, height/2, 300, 300);
   }
+  ellipse(dragger.x, dragger.y, dragger.size);
 }
 
 function mousePressed() {
   lightIsOn = !lightIsOn;
+
+  let d = dist(mouseX, mouseY, dragger.x, dragger.y);
+  // If the distance is less that the circle's radius, we know the mouse was
+  // inside the circle when pressed
+  if (d < dragger.size / 2) {
+    // So we can now drag the circle
+    dragger.dragging = true;
+  }
+}
+
+function mouseReleased() {
+  // If the mouse is released, we should stop dragging the circle
+  dragger.dragging = false;
+}
+
+function mouseDragged() {
+  // When the mouse is dragged (with the mouse button down), we check if the circle
+  // is being dragged
+  if (dragger.dragging) {
+    // If it is, we move it to the mouse position
+    dragger.x = mouseX;
+    dragger.y = mouseY;
+  }
+}
+
+function mouseWheel(event) {
+  // When the mouse wheel (or touchpad) is scrolled
+  // event.delta contains the distance (in pixels) it scrolled
+  // So we can add this to the size of the circle
+  dragger.size += event.delta;
+  // And constrain the size to stay within the minimum and maximum
+  dragger.size = constrain(dragger.size, dragger.minSize, dragger.maxSize);
 }
