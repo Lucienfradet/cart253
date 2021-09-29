@@ -1,12 +1,16 @@
 /**
 Exercice 2: Dodge 'em!
 Lucien Cusson-Fradet
+
+Game where you move a spaceship with the left and right arrow keys. The red ball that you have to shoot can be controlled by a second player with the mouse.
+(Or the same player's other hand if the connection between the left and right hemisphere of his brain has been cut out!)
 */
 
 "use strict";
 let canvasWidth = 500;
 let canvasHeight = 800;
 
+//Event Switches
 let hitSwitch = false;
 let spaceBarSwitch = false;
 
@@ -35,36 +39,37 @@ let redGem = {
   accChange:0
 }
 
-//triangle shape, the ship
+//Cone shape, the ship
 let ship = {
   x: 0,
   base: 15,
   hauteur: 30
 }
 
+//Bullet object
 let bullet = {
   x: undefined,
   y: undefined,
   hauteur: 20,
   base: 5,
   depth: 5,
-
+  hitDettection: undefined,
 }
 //Amount of Stars
 const NUM_STARS = 200;
 
 /**
-Description of preload
+Testing things out with image Rasterization but I could not finish
 */
 function preload() {
-  faceImage = loadImage('assets/images/Head.png');
-  faceImage.resize(imageSize,0);
+  //faceImage = loadImage('assets/images/Head.png');
+  //faceImage.resize(imageSize,0);
 
 }
 
 
 /**
-Description of setup
+Setting up the canvas and base value for the redGem
 */
 function setup() {
   smooth();
@@ -75,9 +80,6 @@ function setup() {
 }
 
 
-/**
-Description of draw()
-*/
 function draw() {
   background(0);
 
@@ -93,8 +95,8 @@ function draw() {
     }
   pop();
 
-//Trying to display the image as different sized spheres influence by the brighness of the pixels...
-/**
+//Trying to display an image as different sized spheres influence by the brighness of the pixels... did not manage...
+/*
   push();
   noStroke();
   fill(255);
@@ -112,10 +114,10 @@ function draw() {
 */
 
 
-  imageMode(CENTER);
+  //imageMode(CENTER);
   //image(faceImage,0,0);
 
-  //Move the mouseX and mouseY position to fit in the 3D envirement
+  //Move the mouseX and mouseY position to fit in the 3D environment
   let souris = {
     x: mouseX - width/2,
     y: mouseY - height/2
@@ -135,8 +137,8 @@ function draw() {
     redGem.y = height + redGem.size/2;
   }
 
-/**
-  //Change the acceleration... Pas vraiment au point
+/*
+  //Change the acceleration... Pas vraiment au point...
   redGem.distance = dist(redGem.x, redGem.y, mouseX, mouseY);
   redGem.accChange = map(redGem.distance, 0, 800, 0.01, -0.01);
   redGem.acceleration += redGem.accChange;
@@ -165,10 +167,23 @@ function draw() {
   redGem.vy += redGem.ay;
   redGem.vy = constrain(redGem.vy, -redGem.maxSpeed, redGem.maxSpeed);
 
-  //Change the position of the gem
-  redGem.x += redGem.vx;
-  redGem.y += redGem.vy;
-  redGem.y = constrain(redGem.y, 0 - redGem.size/2, height/5 * 4);
+  //Change the position of the gem and check if it's been hit
+  if (hitSwitch === false) {
+    redGem.x += redGem.vx;
+    redGem.y += redGem.vy;
+    redGem.y = constrain(redGem.y, 0 - redGem.size/2, height/5 * 4);
+  }
+  else {
+    redGem.size += 10;
+  }
+
+  if (redGem.size > 2000) {
+    hitSwitch = false;
+    redGem.size = 25;
+    redGem.x = width/2;
+    redGem.y = 100;
+  }
+
 
   //Drawing the RedGem
   push();
@@ -212,13 +227,14 @@ function draw() {
   cone(ship.base, ship.hauteur, 8, 1);
   pop();
 
-  //Bullet thing
+  //Bullet Shooting!
   if (spaceBarSwitch === false) {
     bullet.x = -ship.x;
     bullet.y = height/2 - height/13;
   }
   else {
     push();
+    noStroke();
     translate(bullet.x, bullet.y);
     rotateY(millis() / 300);
     box(bullet.base, bullet.hauteur, bullet.depth);
@@ -230,15 +246,26 @@ function draw() {
     }
   }
 
+  //Hit detection!
+  bullet.hitDettection = dist(bullet.x, bullet.y, redGem.x - width/2, redGem.y - height/2);
+  if (bullet.hitDettection < bullet.hauteur/2 + redGem.size/2) {
+    spaceBarSwitch = false;
+    bullet.y = -height/2;
+    hitSwitch = true;
+  }
 
   console.log(`mouseX: ${mouseX}`);
-  console.log(`redGem.ay: ${redGem.ay}`);
-  console.log(`redGem.vy: ${redGem.vy}`);
-  console.log(`ship.x: ${bullet.x}`);
-  console.log(`ship.x: ${bullet.y}`);
+  console.log(`redGem.x: ${redGem.x - width/2}`);
+  console.log(`redGem.y: ${redGem.y - height/2}`);
+  console.log(`bullet.x: ${bullet.x}`);
+  console.log(`bullet.x: ${bullet.y}`);
   console.log(`keypress? ${spaceBarSwitch}`);
+  console.log(`keypress? ${hitSwitch}`);
+  console.log(`distancething ${bullet.hitDettection}`);
+  console.log(`redGem.size ${redGem.size}`);
 }
 
+//Function to shoot the bullet
 function keyPressed() {
   if (keyCode === DOWN_ARROW) {
     spaceBarSwitch = true;
