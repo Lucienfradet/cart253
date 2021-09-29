@@ -30,7 +30,7 @@ let redGem = {
   acceleration: 0.1,
   accMin: 0.01,
   accMax: 1,
-  size: 50,
+  size: 25,
   distance: 0,
   accChange:0
 }
@@ -50,6 +50,8 @@ let bullet = {
   depth: 5,
 
 }
+//Amount of Stars
+const NUM_STARS = 200;
 
 /**
 Description of preload
@@ -70,7 +72,6 @@ function setup() {
   background(0);
   redGem.x = width/2;
   redGem.y = 100;
-
 }
 
 
@@ -79,6 +80,18 @@ Description of draw()
 */
 function draw() {
   background(0);
+
+//Drawing a couple of stars!
+  push();
+    stroke(255);
+    randomSeed(0);
+    translate(-width/2, -height/2);
+    for (let i = 0; i < NUM_STARS; i++) {
+      let x = random(0, width);
+      let y = random(0, height);
+      point(x, y);
+    }
+  pop();
 
 //Trying to display the image as different sized spheres influence by the brighness of the pixels...
 /**
