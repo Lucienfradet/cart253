@@ -7,6 +7,15 @@ Lucien Cusson-Fradet
 let canvasWidth = 500;
 let canvasHeight = 800;
 
+let hitSwitch = false;
+let spaceBarSwitch = false;
+
+//Image data...
+let faceImage;
+let imageSize = 200;
+let tiles = 80;
+let tileSize = imageSize/tiles;
+
 //redGem object
 let redGem = {
   detailX: 7,
@@ -33,10 +42,21 @@ let ship = {
   hauteur: 30
 }
 
+let bullet = {
+  x: undefined,
+  y: undefined,
+  hauteur: 20,
+  base: 5,
+  depth: 5,
+
+}
+
 /**
 Description of preload
 */
 function preload() {
+  faceImage = loadImage('assets/images/Head.png');
+  faceImage.resize(imageSize,0);
 
 }
 
@@ -59,6 +79,29 @@ Description of draw()
 */
 function draw() {
   background(0);
+
+//Trying to display the image as different sized spheres influence by the brighness of the pixels...
+/**
+  push();
+  noStroke();
+  fill(255);
+    for(let i = 0; i < tiles; i++) {
+      for(let j = 0; j < tiles; j++) {
+        //let couleur = faceImage.get(i, j, tileSize, tileSize);
+        //let bright = map(brightness(couleur), 0, 255, 1, 0);
+
+        translate(i * tileSize, j * tileSize);
+        sphere(tileSize);
+        r += 0.1;
+      }
+    }
+    pop();
+*/
+
+
+  imageMode(CENTER);
+  //image(faceImage,0,0);
+
   //Move the mouseX and mouseY position to fit in the 3D envirement
   let souris = {
     x: mouseX - width/2,
@@ -156,10 +199,35 @@ function draw() {
   cone(ship.base, ship.hauteur, 8, 1);
   pop();
 
+  //Bullet thing
+  if (spaceBarSwitch === false) {
+    bullet.x = -ship.x;
+    bullet.y = height/2 - height/13;
+  }
+  else {
+    push();
+    translate(bullet.x, bullet.y);
+    rotateY(millis() / 300);
+    box(bullet.base, bullet.hauteur, bullet.depth);
+    bullet.y -= 10;
+    pop();
+
+    if (bullet.y < -height/2) {
+      spaceBarSwitch = false;
+    }
+  }
 
 
   console.log(`mouseX: ${mouseX}`);
   console.log(`redGem.ay: ${redGem.ay}`);
   console.log(`redGem.vy: ${redGem.vy}`);
-  console.log(`redGem.acceleration: ${redGem.acceleration}`);
+  console.log(`ship.x: ${bullet.x}`);
+  console.log(`ship.x: ${bullet.y}`);
+  console.log(`keypress? ${spaceBarSwitch}`);
+}
+
+function keyPressed() {
+  if (keyCode === DOWN_ARROW) {
+    spaceBarSwitch = true;
+  }
 }
