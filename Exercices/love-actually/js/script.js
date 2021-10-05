@@ -7,11 +7,11 @@ let canvasWidth = 650;
 let canvasHeight = 500;
 let collision = 0;
 
-let state = `bouncing`;
+let state = `onGround`;
 
 let lover = {
-  x:200,
-  y:50,
+  x:300,
+  y:undefined,
   vx:0,
   vy:0,
   ax:0,
@@ -19,7 +19,8 @@ let lover = {
   maxSpeed:0,
   minSpeed:0,
   drag:0.001,
-  size:15
+  size:15,
+  birdReach: 100
 }
 
 let trampo = {
@@ -40,6 +41,13 @@ let wall = {
   w:undefined,
 }
 
+let house = {
+  x: 555,
+  y: 60,
+  w: 75,
+  h: 40
+}
+
 let ground = {
   x:0,
   y:480,
@@ -48,10 +56,37 @@ let ground = {
 }
 
 let bird = {
-  x: 200,
-  y: 200,
-  vRotation: 0,
-  size: 25
+  beginX: -50,
+  beginY: 60,
+  endX: 500,
+  endY: -20,
+  distX: undefined,
+  distY: undefined,
+  exponent: 4,
+  x: 0,
+  y: 0,
+  step: 0.02,
+  pct: 0,
+  size: 25,
+  go: false
+}
+
+let birdSign = {
+  xRect: 75,
+  yRect: 70,
+  w: 90,
+  h: 19,
+  radius: 2,
+  text: `SpaceBar !`
+}
+
+let birdTriangle = {
+  x1: birdSign.xRect - birdSign.w/2 - 5,
+  y1: birdSign.yRect - birdSign.h/2 + 3,
+  x2: birdSign.xRect - birdSign.w/2 - 5,
+  y2: birdSign.yRect + birdSign.h/2 - 3,
+  x3: birdSign.xRect - birdSign.w/2 - 15,
+  y3: birdSign.yRect
 }
 
 /**
@@ -60,7 +95,6 @@ Description of preload
 function preload() {
 
 }
-
 
 /**
 Description of setup
@@ -74,8 +108,10 @@ function setup() {
   ground.h = height - ground.y;
   ground.w = width;
   trampo.y = ground.y - 15;
+  //Set the bird properties
+  bird.distX = bird.endX - bird.beginX;
+  bird.distY = bird.endY - bird.beginY;
 }
-
 
 /**
 Description of draw()
@@ -83,17 +119,26 @@ Description of draw()
 function draw() {
   background(`#080c44`);
 
+  //Drawing the wall and house
   push();
-  ellipseMode(CENTER);
-  translate(190, -220);
-  rotate(bird.vRotation);
-  bird.vRotation += -0.05;
-  strokeWeight(10);
-  stroke(255, 0, 0);
-  fill (252, 186, 3);
-  ellipseMode(CORNER);
-  ellipse(bird.x, bird.y, bird.size);
+  fill(0);
+  rect(wall.x, wall.y, wall.w, wall.h);
+  rect(ground.x, ground.y, ground.w, ground.h);
   pop();
+  push()
+  rectMode(CENTER);
+  fill(255);
+  rect(house.x, house.y, house.w, house.h);
+  pop();
+
+  //Get the player attention if the Lover is high enough
+  if (lover.y < lover.birdReach && bird.go === false && state === `bouncing`) {
+    birdTrigger();
+  }
+
+  if (bird.go) {
+    birdFly();
+  }
 
   switch (state) {
     case `bouncing`:
@@ -103,23 +148,22 @@ function draw() {
     case `onGround`:
       loverOnGround();
       break;
+
+    case `pogneLe`:
+      loverGrabbed();
+      break;
+
+    case `ending`:
+      ending();
+      break;
   }
 
   carControl();
 
-  //Drawing the wall
-  push();
-  fill(0);
-  rect(wall.x, wall.y, wall.w, wall.h);
-  rect(ground.x, ground.y, ground.w, ground.h);
-  pop();
-
-
-console.log(`bird.x: ${bird.x}`);
-console.log(`bird.y: ${bird.y}`);
-console.log(`lover.y: ${lover.y}`);
-console.log(`state: ${state}`);
-
+  console.log(`lover.x: ${lover.x}`);
+  console.log(`lover.y: ${lover.y}`);
+  console.log(`bird.go: ${bird.go}`);
+  console.log(`state: ${state}`);
 }
 
 function loverBounce() {
@@ -167,6 +211,7 @@ function loverBounce() {
   }
   //Bounce On the floor
   else if (lover.y + lover.size/2 >= ground.y) {
+    lover.y = ground.y - lover.size/2; 
     lover.vy = -(lover.vy) + 2;
   }
   if (lover.y + lover.size/2 - 10 > ground.y) {
@@ -197,6 +242,30 @@ function loverBounce() {
 
 function loverOnGround() {
   lover.y = ground.y - lover.size/2;
+  push();
+  noStroke();
+  ellipseMode(CENTER);
+  ellipse(lover.x, lover.y, lover.size);
+  pop();
+}
+
+function loverGrabbed() {
+  if (lover.x < wall.x - 50 ) {
+    lover.x = bird.x;
+    lover.y = bird.y;
+  }
+  else {
+    lover.vx = 2;
+    lover.vy = 0.5;
+    lover.x += lover.vx;
+    lover.y += lover.vy;
+  }
+
+  let atTheDoor = dist(lover.x, lover.y, house.x, house.y);
+  if (atTheDoor < 15) {
+    state = `ending`;
+  }
+
   push();
   noStroke();
   ellipseMode(CENTER);
@@ -238,6 +307,48 @@ function carControl() {
   pop();
 }
 
+function birdFly() {
+  bird.pct += bird.step;
+  if (bird.pct < 1) {
+    bird.x = bird.beginX + bird.pct * bird.distX;
+    bird.y = bird.beginY + pow(bird.pct, bird.exponent) * bird.distY;
+  }
+  push();
+  ellipseMode(CENTER);
+  noStroke();
+  fill(255);
+  ellipse(bird.x, bird.y, bird.size);
+  pop();
+  //reset the bird
+  if (bird.x >= bird.endX - 15 && bird.y <= bird.endY + 10) {
+    bird.x = bird.beginX;
+    bird.y = bird.beginY;
+    bird.pct = 0;
+    bird.go = false;
+  }
+  //check the bird and lover distance and grab the lover if close enough
+  let proximity = dist(lover.x, lover.y, bird.x, bird.y);
+  if (proximity < lover.size + 5) {
+    state = `pogneLe`;
+  }
+}
+
+function birdTrigger() {
+  if (frameCount % 20 < 10) {
+    push();
+    rectMode(CENTER);
+    noStroke();
+    fill(255, 0, 0);
+    rect(birdSign.xRect, birdSign.yRect, birdSign.w, birdSign.h, birdSign.radius);
+    fill(255);
+    triangle(birdTriangle.x1, birdTriangle.y1, birdTriangle.x2, birdTriangle.y2, birdTriangle.x3, birdTriangle.y3);
+    textSize(15);
+    textAlign(CENTER);
+    text(birdSign.text, birdSign.xRect, birdSign.yRect + birdSign.h/2 - 4);
+    pop();
+  }
+}
+
 function keyPressed() {
   if (keyCode === 65) { //LEFT_ARROW
     trampo.vx -= 0.3;
@@ -250,4 +361,11 @@ function keyPressed() {
     lover.vy = -3;
     lover.y = ground.y - 15;
   }
+  else if (keyCode === 32 && state === `bouncing` && lover.y < lover.birdReach) {
+    bird.go = true;
+  }
+}
+
+function ending() {
+
 }

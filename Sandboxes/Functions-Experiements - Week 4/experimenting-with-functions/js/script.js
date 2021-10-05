@@ -3,8 +3,6 @@ Experimenting and learning Functions!
 Lucien Cusson-Fradet
 */
 
-//QUESTION!!! Why does the randomColor function is being called every fucking frame? how do we make it happen only on the reset!?
-
 "use strict";
 
 let circle = {
@@ -13,6 +11,11 @@ let circle = {
   size: 100,
   vx: 0,
   vy: 0
+}
+let color = {
+  r:undefined,
+  g:undefined,
+  b:undefined
 }
 
 /**
@@ -29,6 +32,10 @@ Description of setup
 function setup() {
   createCanvas(500, 500);
   reset();
+  randomColor();
+  color.r = randomColor().r;
+  color.g = randomColor().g;
+  color.b = randomColor().b;
 }
 
 
@@ -45,10 +52,14 @@ function draw() {
 
   if (circleIsOffScreen()) {
     reset();
+    randomColor();
+    color.r = randomColor().r;
+    color.g = randomColor().g;
+    color.b = randomColor().b;
   }
 
   drawCircle();
-  let color = randomColor().r;
+
   console.log (`color thing: ${color}`);
 
   textFont(`Yaldevi`);
@@ -97,7 +108,6 @@ function reset() {
   circle.y = 250;
   circle.vx = random(-10, 10);
   circle.vy = random(-10, 10);
-  randomColor();
 }
 
 function randomColor() {
