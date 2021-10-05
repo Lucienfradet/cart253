@@ -21,6 +21,7 @@ let lover = {
   drag:0.001,
   size:15
 }
+
 let trampo = {
   x:250,
   y:undefined,
@@ -38,11 +39,19 @@ let wall = {
   h:undefined,
   w:undefined,
 }
+
 let ground = {
   x:0,
   y:480,
   h:undefined,
   w:undefined
+}
+
+let bird = {
+  x: 200,
+  y: 200,
+  vRotation: 0,
+  size: 25
 }
 
 /**
@@ -74,6 +83,18 @@ Description of draw()
 function draw() {
   background(`#080c44`);
 
+  push();
+  ellipseMode(CENTER);
+  translate(190, -220);
+  rotate(bird.vRotation);
+  bird.vRotation += -0.05;
+  strokeWeight(10);
+  stroke(255, 0, 0);
+  fill (252, 186, 3);
+  ellipseMode(CORNER);
+  ellipse(bird.x, bird.y, bird.size);
+  pop();
+
   switch (state) {
     case `bouncing`:
       loverBounce();
@@ -94,8 +115,8 @@ function draw() {
   pop();
 
 
-console.log(`lover.ay: ${lover.ay}`);
-console.log(`lover.vx: ${lover.vx}`);
+console.log(`bird.x: ${bird.x}`);
+console.log(`bird.y: ${bird.y}`);
 console.log(`lover.y: ${lover.y}`);
 console.log(`state: ${state}`);
 
