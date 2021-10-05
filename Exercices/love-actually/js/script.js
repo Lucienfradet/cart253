@@ -7,6 +7,8 @@ let canvasWidth = 650;
 let canvasHeight = 500;
 let collision = 0;
 
+let state = `bouncing`;
+
 let lover = {
   x:200,
   y:50,
@@ -20,7 +22,7 @@ let lover = {
   size:15
 }
 let trampo = {
-  x:200,
+  x:250,
   y:undefined,
   vx:0,
   ax:0,
@@ -72,7 +74,16 @@ Description of draw()
 function draw() {
   background(`#080c44`);
 
-  loverBounce();
+  switch (state) {
+    case `bouncing`:
+      loverBounce();
+      break;
+
+    case `onGround`:
+      loverOnGround();
+      break;
+  }
+
   carControl();
 
   //Drawing the wall
@@ -82,9 +93,12 @@ function draw() {
   rect(ground.x, ground.y, ground.w, ground.h);
   pop();
 
-console.log(`collision: ${collision}`);
+
+console.log(`lover.ay: ${lover.ay}`);
 console.log(`lover.vx: ${lover.vx}`);
 console.log(`lover.y: ${lover.y}`);
+console.log(`state: ${state}`);
+
 }
 
 function loverBounce() {
@@ -131,14 +145,13 @@ function loverBounce() {
     lover.vy = -(lover.vy) - 0.5;
   }
   //Bounce On the floor
-  else if (lover.y + lover.size/2 === ground.y) {
-    lover.y = ground.y - lover.size/2 + 2 ;
-    lover.vy = -(lover.vy);
+  else if (lover.y + lover.size/2 >= ground.y) {
+    lover.vy = -(lover.vy) + 2;
   }
-  if (lover.y + lover.size/2 + 2 > ground.y) {
+  if (lover.y + lover.size/2 - 10 > ground.y) {
     lover.vx = 0;
     lover.vy = 0;
-    lover.y = ground.y - lover.size/2;
+    state = `onGround`;
   }
   //Bounce on the walls
   if (lover.x - lover.size <= 0) {
@@ -161,6 +174,15 @@ function loverBounce() {
   pop();
 }
 
+function loverOnGround() {
+  lover.y = ground.y - lover.size/2;
+  push();
+  noStroke();
+  ellipseMode(CENTER);
+  ellipse(lover.x, lover.y, lover.size);
+  pop();
+}
+
 function carControl() {
   //stoping at edges
   if (trampo.x - trampo.w/2 <= 0 && trampo.vx !== 0) {
@@ -170,6 +192,19 @@ function carControl() {
   else if (trampo.x + trampo.w/2 >= wall.x && trampo.vx !== 0) {
     trampo.vx = 0;
     trampo.x -= 1;
+  }
+  //Stop at the Lover ball
+  if (state === `onGround`){
+    let gageLeft = dist(trampo.x + trampo.w/2, trampo.h, lover.x - lover.size/2, trampo.h);
+      if (gageLeft < 1) {
+        trampo.vx = 0;
+        trampo.x -= 1;
+      }
+    let gageRight = dist(trampo.x - trampo.w/2, trampo.h, lover.x + lover.size/2, trampo.h);
+      if (gageRight < 1) {
+        trampo.vx = 0;
+        trampo.x += 1;
+      }
   }
   //moving the car
   trampo.x += trampo.vx
@@ -183,10 +218,15 @@ function carControl() {
 }
 
 function keyPressed() {
-  if (keyCode === 65) {
+  if (keyCode === 65) { //LEFT_ARROW
     trampo.vx -= 0.3;
   }
-  else if (keyCode === 68) {
+  else if (keyCode === 68) { //RIGHT_ARROW
     trampo.vx += 0.3;
+  }
+  else if (keyCode === 32 && state === `onGround`) { //SPACEBAR
+    state = `bouncing`;
+    lover.vy = -3;
+    lover.y = ground.y - 15;
   }
 }
