@@ -20,7 +20,8 @@ let lover = {
   minSpeed:0,
   drag:0.001,
   size:15,
-  birdReach: 100
+  birdReach: 100,
+  counter:0
 }
 
 let trampo = {
@@ -160,9 +161,9 @@ function draw() {
 
   carControl();
 
-  console.log(`lover.x: ${lover.x}`);
   console.log(`lover.y: ${lover.y}`);
-  console.log(`bird.go: ${bird.go}`);
+  console.log(`lover.vy: ${lover.vy}`);
+  console.log(`counter: ${lover.counter}`);
   console.log(`state: ${state}`);
 }
 
@@ -211,13 +212,19 @@ function loverBounce() {
   }
   //Bounce On the floor
   else if (lover.y + lover.size/2 >= ground.y) {
-    lover.y = ground.y - lover.size/2; 
+    lover.y = ground.y - lover.size/2;
     lover.vy = -(lover.vy) + 2;
   }
-  if (lover.y + lover.size/2 - 10 > ground.y) {
-    lover.vx = 0;
-    lover.vy = 0;
-    state = `onGround`;
+  //Check if the lover has stopped bouncing
+  if (lover.y >= 472 && lover.y <= 475) {
+    lover.counter += 1;
+    if (lover.counter > 40) {
+      lover.counter = 0;
+      lover.vx = 0;
+      lover.vy = 0;
+      state = `onGround`;
+    }
+
   }
   //Bounce on the walls
   if (lover.x - lover.size <= 0) {
