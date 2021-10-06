@@ -441,7 +441,7 @@ function keyPressed() {
   else if (keyCode === 68) { //RIGHT D
     trampo.vx += 0.3;
   }
-  else if (keyCode === 8 && state !== `title` && state !== `ending` && state !== `titleNoSound`) { //BACKSPACE
+  else if (keyCode === 8 && state !== `title` && state !== `ending` && state !== `titleNoSound`) { //BACKSPACE 
     state = `ending`;
   }
   else if (keyCode === 32 && state === `onGround`) { //SPACEBAR
