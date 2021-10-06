@@ -435,10 +435,10 @@ function keyPressed() {
     gameMusic.loop();
     state = `onGround`;
   }
-  else if (keyCode === 65) { //LEFT_ARROW
+  else if (keyCode === 65) { //LEFT A
     trampo.vx -= 0.3;
   }
-  else if (keyCode === 68) { //RIGHT_ARROW
+  else if (keyCode === 68) { //RIGHT D
     trampo.vx += 0.3;
   }
   else if (keyCode === 8 && state === `boucing` || state === `onGround`) { //BACKSPACE
