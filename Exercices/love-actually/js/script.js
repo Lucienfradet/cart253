@@ -1,13 +1,48 @@
 /**
 Le grand Amour!
 Lucien Cusson-Fradet
+
+I've run out of time a little bit. The program is missing some key information and needs a little explaining and imagination to understand it.
+
+- On the title screen, pressing any key will start the title music. Doing that again will start the game.
+- On the game screen, a white ball represent a desperate lover that is trying to get to the top of a cliff and reach his loved one's house (the white rectangle).
+- Using the SPACEBAR, the lover jumps in the air and starts bouncing. If he bounces on the floor, he looses momentum until he comes to a stop.
+- Using A and D keys allows his partner in the "car" to move. The car is deleberatly hard to control in order to make the lover's mission hard.
+  (Every press of the A and D keys accelerates or decelerates the car.)
+- The little white line at the bottom represents a trampoline attached to the invisible car. If the lover bounces in it's center, he goes higher. Whatch the sides!
+- If the Lover reaches a certain height, using the SPACEBAR again will trigger a flying bird (white ball again) and if the two connect, the lover is dropped at his loved one's house.
+- The Ending scene ensues.
+
+As you can experience for yourself, finding love is pretty f**ing hard.
+If you are ready to give up, you can press BACKSPACE during gameplay to go directly to the ending.
+
+Thank you!
+I hope to upgrade this little program further in a near future!
 */
+
 "use strict";
 let canvasWidth = 650;
 let canvasHeight = 500;
 let collision = 0;
 
-let state = `onGround`;
+//Images This could very much be a single object
+let titleImg;
+let whoImg;
+let noLoveImg;
+let deceptionImg;
+let imageDelay = 0;
+let imageZoom = 0;
+
+//Sound
+let titleMusic;
+let gameMusic;
+let endMusic;
+
+//State of the program
+let state = `titleNoSound`;
+
+//Delay to fix the title skipping a state
+let titleDelay = 0;
 
 let lover = {
   x:300,
@@ -91,14 +126,20 @@ let birdTriangle = {
 }
 
 /**
-Description of preload
+PreLoad images and music
 */
 function preload() {
-
+  titleImg = loadImage("assets/images/TitleBackground.png");
+  noLoveImg = loadImage("assets/images/noLove.png");
+  whoImg = loadImage("assets/images/whoAreYou.png");
+  deceptionImg = loadImage("assets/images/deception.png");
+  titleMusic = loadSound("assets/sounds/titleMusic.mp3");
+  gameMusic = loadSound("assets/sounds/gameMusic.mp3");
+  endMusic = loadSound("assets/sounds/endMusic.mp3");
 }
 
 /**
-Description of setup
+Setup canvas and starting properties fo wall, ground, trampo and bird
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
@@ -115,33 +156,21 @@ function setup() {
 }
 
 /**
-Description of draw()
+Deals with functions and parts of the game that I haven't put in functions like the bird trigger
 */
 function draw() {
   background(`#080c44`);
 
-  //Drawing the wall and house
-  push();
-  fill(0);
-  rect(wall.x, wall.y, wall.w, wall.h);
-  rect(ground.x, ground.y, ground.w, ground.h);
-  pop();
-  push()
-  rectMode(CENTER);
-  fill(255);
-  rect(house.x, house.y, house.w, house.h);
-  pop();
-
-  //Get the player attention if the Lover is high enough
-  if (lover.y < lover.birdReach && bird.go === false && state === `bouncing`) {
-    birdTrigger();
-  }
-
-  if (bird.go) {
-    birdFly();
-  }
-
   switch (state) {
+    case `titleNoSound`:
+      titleScreen();
+      break;
+
+    case `title`:
+      titleScreen();
+      titleDelay++;
+      break;
+
     case `bouncing`:
       loverBounce();
       break;
@@ -159,14 +188,48 @@ function draw() {
       break;
   }
 
-  carControl();
+  //Drawing the wall and house
+  if (state !== `title` && state !== `ending` && state !== `titleNoSound`) {
+    push();
+    fill(0);
+    rect(wall.x, wall.y, wall.w, wall.h);
+    rect(ground.x, ground.y, ground.w, ground.h);
+    pop();
+    push()
+    rectMode(CENTER);
+    fill(255);
+    rect(house.x, house.y, house.w, house.h);
+    pop();
+    //controlling the car
+    carControl();
+    //game Music
+  }
+
+
+  //Get the player attention if the Lover is high enough
+  if (lover.y < lover.birdReach && bird.go === false && state === `bouncing`) {
+    birdTrigger();
+  }
+
+  if (bird.go) {
+    birdFly();
+  }
+
+
 
   console.log(`lover.y: ${lover.y}`);
   console.log(`lover.vy: ${lover.vy}`);
-  console.log(`counter: ${lover.counter}`);
+  console.log(`imageDelay: ${imageDelay}`);
   console.log(`state: ${state}`);
 }
 
+//Displays the title screen image
+function titleScreen() {
+  imageMode(CENTER);
+  image(titleImg, width/2, height/2);
+}
+
+//Function that allows the lover to bounce around
 function loverBounce() {
   //push the lover with gust of wind randomly
   let windPush = random();
@@ -247,6 +310,7 @@ function loverBounce() {
   pop();
 }
 
+//function that deals with the lover once it's stationnary on the ground
 function loverOnGround() {
   lover.y = ground.y - lover.size/2;
   push();
@@ -256,6 +320,7 @@ function loverOnGround() {
   pop();
 }
 
+//Deals with the lover once it's made contact with the bird
 function loverGrabbed() {
   if (lover.x < wall.x - 50 ) {
     lover.x = bird.x;
@@ -280,6 +345,7 @@ function loverGrabbed() {
   pop();
 }
 
+//controls the car movments
 function carControl() {
   //stoping at edges
   if (trampo.x - trampo.w/2 <= 0 && trampo.vx !== 0) {
@@ -314,6 +380,7 @@ function carControl() {
   pop();
 }
 
+//Controls the movments of the bird object
 function birdFly() {
   bird.pct += bird.step;
   if (bird.pct < 1) {
@@ -340,6 +407,7 @@ function birdFly() {
   }
 }
 
+//Draws a sign to signal the player that the lover is within reach of the bird
 function birdTrigger() {
   if (frameCount % 20 < 10) {
     push();
@@ -356,16 +424,29 @@ function birdTrigger() {
   }
 }
 
+//Controls the keyboard inputs
 function keyPressed() {
-  if (keyCode === 65) { //LEFT_ARROW
+  if (state === `titleNoSound`) {
+    titleMusic.play();
+    state = `title`;
+  }
+  if (state === `title` && titleDelay > 15) {
+    titleMusic.stop();
+    gameMusic.loop();
+    state = `onGround`;
+  }
+  else if (keyCode === 65) { //LEFT_ARROW
     trampo.vx -= 0.3;
   }
   else if (keyCode === 68) { //RIGHT_ARROW
     trampo.vx += 0.3;
   }
+  else if (keyCode === 8 && state === `boucing` || state === `onGround`) { //BACKSPACE
+    state = `ending`;
+  }
   else if (keyCode === 32 && state === `onGround`) { //SPACEBAR
     state = `bouncing`;
-    lover.vy = -3;
+    lover.vy = -5;
     lover.y = ground.y - 15;
   }
   else if (keyCode === 32 && state === `bouncing` && lover.y < lover.birdReach) {
@@ -373,6 +454,23 @@ function keyPressed() {
   }
 }
 
+//End screens once the lover has reached the house
 function ending() {
+  imageDelay++;
 
+  imageMode(CENTER);
+  image(whoImg, width/2, height/2);
+
+  if (imageDelay > 150 && imageDelay < 300) {
+    image(noLoveImg, width/2, height/2);
+  }
+  else if (imageDelay > 300) {
+    image(deceptionImg, width/2, height/2);
+    if (imageDelay === 349) {endMusic.play();}
+    if (imageDelay > 350) {
+      gameMusic.stop();
+      imageZoom += 2;
+      deceptionImg.resize(width+imageZoom, height+imageZoom);
+    }
+  }
 }
