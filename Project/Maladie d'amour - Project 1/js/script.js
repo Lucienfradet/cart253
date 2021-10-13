@@ -164,7 +164,8 @@ Setup canvas and starting properties fo wall, ground, trampo and bird
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
   background(`#080c44`);
-  image(img.titleScreen, width/2, height/2);
+  createArrays();
+
   //Setting the size of the wall, ground and car
   wall.h = height - wall.y;
   wall.w = width - wall.x;
@@ -239,8 +240,8 @@ function draw() {
 
 
   console.log(`lover.y: ${lover.y}`);
-  console.log(`lover.vy: ${lover.vy}`);
-  console.log(`img.delay: ${img.delay}`);
+  console.log(`mouseX: ${mouseX}`);
+  console.log(`mouseY: ${mouseY}`);
   console.log(`state: ${state}`);
 }
 
@@ -249,18 +250,70 @@ function titleScreen() {
   imageMode(CENTER);
   if (state === `title`) {
     image(img.titleScreen, width/2, height/2);
+    waterEffect();
+  }
+  else {
+    //Prompts the player to press a key and start the program
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(17);
+    text(`Press any key`, width/2, height/2);
+    pop();
   }
 }
 
-function waterEffect() {
+function createArrays() {
   for (let i = 0; i < DROP_NUM; i++) {
     let waterDrop = {
       x: random(25, width - 25),
       y: random (25, height - 25),
-      size: 15,
-    }
+      sizeX: 3,
+      sizeY: 1,
+      speedX: 2.4,
+      speedY: 0.8,
+      locationColor: undefined,
+      opacity: 200,
+      timer: random(0, 100)
+    };
+    waterDrops.push(waterDrop);
   }
-  waterDrops.push(waterDrop);
+
+}
+
+
+function waterEffect() {
+  for (let i = 0; i < DROP_NUM; i++) {
+    let waterDrop = waterDrops[i];
+    waterDrop.locationColor = get(waterDrop.x, waterDrop.y);
+
+    //Timer so the drops are not in sync at the start
+    if (waterDrop.timer > 0) {
+      waterDrop.timer--;
+    }
+    //Checking where they are displayed
+    else if (waterDrop.locationColor[2] !== 10 || waterDrop.sizeX > 60) { //10 is the blue value of the water section in the background image
+      waterDrop.x = random(25, width - 25);
+      waterDrop.y = random (25, height - 25);
+      waterDrop.sizeX = 3;
+      waterDrop.sizeY = 1;
+      waterDrop.opacity = 200;
+    }
+    else {
+      waterDrop.sizeX += waterDrop.speedX;
+      waterDrop.sizeY += waterDrop.speedY;
+      waterDrop.opacity -= 10;
+
+      //Drawing the rainDrops
+      push();
+      noFill();
+      stroke(255, waterDrop.opacity);
+      strokeWeight(1);
+      ellipse(waterDrop.x, waterDrop.y, waterDrop.sizeX, waterDrop.sizeY);
+      pop();
+    }
+
+  }
 }
 
 //Function that allows the lover to bounce around
