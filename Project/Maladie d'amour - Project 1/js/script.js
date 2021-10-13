@@ -39,17 +39,21 @@ let canvasHeight = 500;
 let collision = 0;
 
 //Images This could very much be a single object
-let titleImg;
-let whoImg;
-let noLoveImg;
-let deceptionImg;
-let imageDelay = 0;
-let imageZoom = 0;
+let img = {
+  titleScreen: undefined,
+  whoAreYou: undefined,
+  noLove: undefined,
+  deception: undefined,
+  delay: 0,
+  zoom: 0
+}
 
 //Sound
-let titleMusic;
-let gameMusic;
-let endMusic;
+let snd = {
+  titleMusic: undefined,
+  gameMusic: undefined,
+  endMusic: undefined
+}
 
 //State of the program
 let state = `titleNoSound`;
@@ -115,7 +119,7 @@ let bird = {
   x: 0,
   y: 0,
   step: 0.02,
-  pct: 0,
+  pct: 0, //percentage
   size: 25,
   go: false
 }
@@ -145,13 +149,13 @@ let waterDrops = [];
 PreLoad images and music
 */
 function preload() {
-  titleImg = loadImage("assets/images/TitleBackground.png");
-  noLoveImg = loadImage("assets/images/noLove.png");
-  whoImg = loadImage("assets/images/whoAreYou.png");
-  deceptionImg = loadImage("assets/images/deception.png");
-  titleMusic = loadSound("assets/sounds/titleMusic.mp3");
-  gameMusic = loadSound("assets/sounds/gameMusic.mp3");
-  endMusic = loadSound("assets/sounds/endMusic.mp3");
+  img.titleScreen = loadImage("assets/images/TitleBackground.png");
+  img.noLove = loadImage("assets/images/noLove.png");
+  img.whoAreYou = loadImage("assets/images/whoAreYou.png");
+  img.deception = loadImage("assets/images/deception.png");
+  snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
+  snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
+  snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
 }
 
 /**
@@ -160,6 +164,7 @@ Setup canvas and starting properties fo wall, ground, trampo and bird
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
   background(`#080c44`);
+  image(img.titleScreen, width/2, height/2);
   //Setting the size of the wall, ground and car
   wall.h = height - wall.y;
   wall.w = width - wall.x;
@@ -235,7 +240,7 @@ function draw() {
 
   console.log(`lover.y: ${lover.y}`);
   console.log(`lover.vy: ${lover.vy}`);
-  console.log(`imageDelay: ${imageDelay}`);
+  console.log(`img.delay: ${img.delay}`);
   console.log(`state: ${state}`);
 }
 
@@ -243,7 +248,7 @@ function draw() {
 function titleScreen() {
   imageMode(CENTER);
   if (state === `title`) {
-    image(titleImg, width/2, height/2);
+    image(img.titleScreen, width/2, height/2);
   }
 }
 
@@ -456,12 +461,12 @@ function birdTrigger() {
 //Controls the keyboard inputs
 function keyPressed() {
   if (state === `titleNoSound`) {
-    titleMusic.play();
+    snd.titleMusic.play();
     state = `title`;
   }
   if (state === `title` && titleDelay > 15) {
-    titleMusic.stop();
-    gameMusic.loop();
+    snd.titleMusic.stop();
+    snd.gameMusic.loop();
     state = `onGround`;
   }
   else if (keyCode === 65) { //LEFT A
@@ -485,21 +490,21 @@ function keyPressed() {
 
 //End screens once the lover has reached the house
 function ending() {
-  imageDelay++;
+  img.delay++;
 
   imageMode(CENTER);
-  image(whoImg, width/2, height/2);
+  image(img.whoAreYou, width/2, height/2);
 
-  if (imageDelay > 150 && imageDelay < 300) {
-    image(noLoveImg, width/2, height/2);
+  if (img.delay > 150 && img.delay < 300) {
+    image(img.noLove, width/2, height/2);
   }
-  else if (imageDelay > 300) {
-    image(deceptionImg, width/2, height/2);
-    if (imageDelay === 349) {endMusic.play();}
-    if (imageDelay > 350) {
-      gameMusic.stop();
-      imageZoom += 2;
-      deceptionImg.resize(width+imageZoom, height+imageZoom);
+  else if (img.delay > 300) {
+    image(img.deception, width/2, height/2);
+    if (img.delay === 349) {snd.endMusic.play();}
+    if (img.delay > 350) {
+      snd.gameMusic.stop();
+      img.zoom += 2;
+      img.deception.resize(width+img.zoom, height+img.zoom);
     }
   }
 }
