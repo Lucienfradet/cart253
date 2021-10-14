@@ -44,6 +44,8 @@ let img = {
   whoAreYou: undefined,
   noLove: undefined,
   deception: undefined,
+  gameBackground: undefined,
+  gameForeground: undefined,
   delay: 0,
   zoom: 0
 }
@@ -153,6 +155,8 @@ function preload() {
   img.noLove = loadImage("assets/images/noLove.png");
   img.whoAreYou = loadImage("assets/images/whoAreYou.png");
   img.deception = loadImage("assets/images/deception.png");
+  img.gameBackground = loadImage("assets/images/gameBackground.png");
+  img.gameForeground = loadImage("assets/images/gameForeground.png");
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
@@ -163,7 +167,7 @@ Setup canvas and starting properties fo wall, ground, trampo and bird
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
-  background(`#080c44`);
+  background(0, 1, 10);
   createArrays();
 
   //Setting the size of the wall, ground and car
@@ -181,7 +185,8 @@ function setup() {
 Deals with functions and parts of the game that I haven't put in functions like the bird trigger
 */
 function draw() {
-  background(`#080c44`);
+  background(0, 1, 10);
+  //background(255);
 
   switch (state) {
     case `titleNoSound`:
@@ -194,39 +199,27 @@ function draw() {
       break;
 
     case `bouncing`:
+      backgroundElements();
       loverBounce();
+      foregroundElements();
       break;
 
     case `onGround`:
+      backgroundElements();
       loverOnGround();
+      foregroundElements();
       break;
 
     case `pogneLe`:
+      backgroundElements();
       loverGrabbed();
+      foregroundElements();
       break;
 
     case `ending`:
       ending();
       break;
   }
-
-  //Drawing the wall and house
-  if (state !== `title` && state !== `ending` && state !== `titleNoSound`) {
-    push();
-    fill(0);
-    rect(wall.x, wall.y, wall.w, wall.h);
-    rect(ground.x, ground.y, ground.w, ground.h);
-    pop();
-    push()
-    rectMode(CENTER);
-    fill(255);
-    rect(house.x, house.y, house.w, house.h);
-    pop();
-    //controlling the car
-    carControl();
-    //game Music
-  }
-
 
   //Get the player attention if the Lover is high enough
   if (lover.y < lover.birdReach && bird.go === false && state === `bouncing`) {
@@ -263,6 +256,31 @@ function titleScreen() {
   }
 }
 
+function foregroundElements() {
+  push();
+  imageMode(CORNER);
+  image(img.gameForeground, ground.x, ground.y - 40);
+  pop();
+}
+
+function backgroundElements() {
+  push();
+  fill(0);
+  //rect(wall.x, wall.y, wall.w, wall.h);
+  //rect(ground.x, ground.y, ground.w, ground.h);
+  pop();
+  push()
+  rectMode(CENTER);
+  fill(255);
+  //rect(house.x, house.y, house.w, house.h);
+  imageMode(CENTER);
+  image(img.gameBackground, width/2, height/2);
+  pop();
+  //controlling the car
+  carControl();
+  //game Music
+}
+
 function createArrays() {
   for (let i = 0; i < DROP_NUM; i++) {
     let waterDrop = {
@@ -280,7 +298,6 @@ function createArrays() {
   }
 
 }
-
 
 function waterEffect() {
   for (let i = 0; i < DROP_NUM; i++) {
