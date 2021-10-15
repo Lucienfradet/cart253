@@ -81,7 +81,11 @@ let lover = {
   vx:0,
   vy:0,
   ax:0,
-  ay:0.1,
+  ayBouncing:0.1,
+  ayParachute: 0.01,
+  parachuteTriggerX: true,
+  parachuteTriggerY: true,
+  parachuteLimit: canvasHeight / 10 * 8,
   maxSpeed:0,
   minSpeed:0,
   drag:0.001,
@@ -266,75 +270,14 @@ function draw() {
 
 
   console.log(`wind.xSpeed: ${wind.xSpeed}`);
-  console.log(`mouseX: ${mouseX}`);
+  console.log(`lover.y: ${lover.y}`);
   console.log(`lover.vy: ${lover.vy}`);
+  console.log(`lover.vx: ${lover.vx}`);
+  console.log(`lover.parachuteTriggerX: ${lover.parachuteTriggerX}`);
   console.log(`state: ${state}`);
 }
 
-//Displays the title screen image
-function titleScreen() {
-  imageMode(CENTER);
-  if (state === `title`) {
-    image(img.titleScreen, width/2, height/2);
-    waterDropEffect();
-  }
-  else {
-    //Prompts the player to press a key and start the program
-    push();
-    fill(255);
-    textAlign(CENTER);
-    textSize(17);
-    text(`Press any key`, width/2, height/2);
-    pop();
-  }
-}
-
-function foregroundElements() {
-  push();
-  imageMode(CORNER);
-  image(img.gameForeground, ground.x, ground.y - 40);
-  pop();
-}
-
-function backgroundElements() {
-  push();
-  fill(0);
-  //rect(wall.x, wall.y, wall.w, wall.h);
-  //rect(ground.x, ground.y, ground.w, ground.h);
-  pop();
-  push()
-  rectMode(CENTER);
-  fill(255);
-  //rect(house.x, house.y, house.w, house.h);
-  imageMode(CENTER);
-  image(img.gameBackground, width/2, height/2);
-  pop();
-  //controlling the car
-  carControl();
-  //game Music
-}
-
-function tunderEffect() {
-  thunder.aleatoire = random();
-  thunder.count++;
-
-  if (thunder.aleatoire < 0.001) {
-    thunder.state = true;
-    thunder.count = 0;
-  }
-
-  if (thunder.state && thunder.count < 5) {
-    background(255);
-  }
-  if (thunder.state && thunder.count > 10) {
-    background(255);
-  }
-  if (thunder.state && thunder.count > 15) {
-    thunder.state = false;
-    thunder.count = 0;
-  }
-}
-
+//Creates the Arrays in the setup of the program
 function createArrays() {
   for (let i = 0; i < DROP_NUM; i++) {
     let waterDrop = {
@@ -359,7 +302,7 @@ function createArrays() {
       hauteur: 10,
       epaisseur: 1,
       speedY: 20,
-      opacity: 40,
+      opacity: 70,
       top: -500,
       bottom: width + 500
     };
@@ -368,6 +311,74 @@ function createArrays() {
   }
 }
 
+//Displays the title screen image
+function titleScreen() {
+  imageMode(CENTER);
+  if (state === `title`) {
+    image(img.titleScreen, width/2, height/2);
+    waterDropEffect();
+  }
+  else {
+    //Prompts the player to press a key and start the program
+    push();
+    fill(255);
+    textAlign(CENTER);
+    textSize(17);
+    text(`Press any key`, width/2, height/2);
+    pop();
+  }
+}
+
+//Displays elements in the foreground
+function foregroundElements() {
+  push();
+  imageMode(CORNER);
+  image(img.gameForeground, ground.x, ground.y - 40);
+  pop();
+}
+
+//Displays elements in the background
+function backgroundElements() {
+  push();
+  fill(0);
+  //rect(wall.x, wall.y, wall.w, wall.h);
+  //rect(ground.x, ground.y, ground.w, ground.h);
+  pop();
+  push()
+  rectMode(CENTER);
+  fill(255);
+  //rect(house.x, house.y, house.w, house.h);
+  imageMode(CENTER);
+  image(img.gameBackground, width/2, height/2);
+  pop();
+  //controlling the car
+  carControl();
+  //game Music
+}
+
+//Randomly activates thunderstuck by ACDC
+function tunderEffect() {
+  thunder.aleatoire = random();
+  thunder.count++;
+
+  if (thunder.aleatoire < 0.001) {
+    thunder.state = true;
+    thunder.count = 0;
+  }
+
+  if (thunder.state && thunder.count < 5) {
+    background(255);
+  }
+  if (thunder.state && thunder.count > 10) {
+    background(255);
+  }
+  if (thunder.state && thunder.count > 15) {
+    thunder.state = false;
+    thunder.count = 0;
+  }
+}
+
+//Displays little water drops on the title screen
 function waterDropEffect() {
   for (let i = 0; i < DROP_NUM; i++) {
     let waterDrop = waterDrops[i];
@@ -401,6 +412,7 @@ function waterDropEffect() {
   }
 }
 
+//Displays rain in the game section
 function rainDropEffect() {
   for (let i = 0; i < RAIN_AMOUNT; i++) {
     let rainDrop = rainDrops[i];
@@ -424,6 +436,7 @@ function rainDropEffect() {
   }
 }
 
+//Randomly changes the wind direction and keeps track of it.
 function windControl() {
   wind.trigger = random();
 
@@ -433,6 +446,7 @@ function windControl() {
   else if (wind.trigger > 0.99) {
     wind.xSpeed -= wind.variation;
   }
+  wind.xSpeed = constrain(wind.xSpeed, -1, 1);
 }
 
 //Function that allows the lover to bounce around
@@ -506,21 +520,58 @@ function loverBounce() {
 
   lover.x += lover.vx;
   //Gravity
-  lover.vy += lover.ay;
+  lover.vy += lover.ayBouncing;
   lover.y += lover.vy;
   loverDraw();
 }
 
+//Activate the lovers glider
 function loverParachute() {
-  lover.vy = 0.001;
-  lover.y += lover.vy;
-
-  lover.vx = wind.xSpeed;
-  lover.x += lover.vx;
-
-  if (lover.y > height / 5 * 4) {
-    state = `bouncing`;
+  //Cutdown the vy
+  if (lover.parachuteTriggerY && lover.vy < 0) {
+    lover.vy += 0.1;
   }
+  else {
+    lover.parachuteTriggerY = false
+  }
+
+  //Cutdowm the vx
+  if (lover.parachuteTriggerX && lover.vx > 0.01) {
+    lover.vx -= 0.05;
+  }
+  else if (lover.parachuteTriggerX && lover.vx < 0.01) {
+    lover.vx += 0.05;
+  }
+
+  //activate the wind once the vx is stable
+  if (lover.parachuteTriggerX && lover.vx < 0.001) {
+    lover.parachuteTriggerX = false;
+  }
+
+  //stop on the walls
+  if (lover.x - lover.size/2 <= 0) {
+    lover.vx = 0.1;
+  }
+  else if (lover.x + lover.size/2 >= wall.x) {
+    lover.vx = -0.1;
+  }
+  else if (lover.parachuteTriggerX === false) { //Moves following the wind
+    lover.ax = -(wind.xSpeed/100);
+    lover.vx += lover.ax;
+    lover.x += lover.vx;
+  }
+
+  if (lover.y > lover.parachuteLimit) { //return to the bouncing mode if it gets to close to the ground
+    state = `bouncing`;
+    lover.parachuteTriggerX = true;
+    lover.parachuteTriggerY = true;
+  }
+
+  lover.x += lover.vx;
+  //Gravity
+  lover.vy += lover.ayParachute;
+  lover.y += lover.vy;
+  loverDraw();
 }
 
 //function that deals with the lover once it's stationnary on the ground
@@ -662,10 +713,14 @@ function keyPressed() {
     lover.vy = -5;
     lover.y = ground.y - 15;
   }
-  else if (keyCode === 32 && state === `bouncing` === lover.y < height / 5 * 4) {
+  else if (keyCode === 32 && state === `bouncing` === lover.y < lover.parachuteLimit && state !== `title`) {
+    lover.parachuteTriggerX = true;
+    lover.parachuteTriggerY = true;
     state = `parachute`;
   }
   else if (keyCode === 32 && state === `parachute`) {
+    lover.parachuteTriggerX = true;
+    lover.parachuteTriggerY = true;
     state = `bouncing`;
   }
   else if (keyCode === 32 && state === `bouncing` && lover.y < lover.birdReach) {
