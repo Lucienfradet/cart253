@@ -69,6 +69,12 @@ let thunder = {
   aleatoire: undefined
 }
 
+let wind = {
+  xSpeed: 0,
+  trigger: undefined,
+  variation: 0.1
+}
+
 let lover = {
   x:300,
   y:undefined,
@@ -153,9 +159,8 @@ let birdTriangle = {
 const DROP_NUM = 10;
 let waterDrops = [];
 
-const RAIN_AMOUNT = 200;
+const RAIN_AMOUNT = 300;
 let rainDrops = [];
-let rainDropEffectOrientation = 0;
 
 /**
 PreLoad images and music
@@ -209,25 +214,37 @@ function draw() {
       break;
 
     case `bouncing`:
-      tunderEffect()
-      rainDropEffect()
+      tunderEffect();
+      rainDropEffect();
       backgroundElements();
+      windControl();
       loverBounce();
       foregroundElements();
       break;
 
-    case `onGround`:
-      tunderEffect()
-      rainDropEffect()
+    case `parachute`:
+      tunderEffect();
+      rainDropEffect();
       backgroundElements();
+      windControl();
+      loverParachute();
+      foregroundElements();
+      break;
+
+    case `onGround`:
+      tunderEffect();
+      rainDropEffect();
+      backgroundElements();
+      windControl();
       loverOnGround();
       foregroundElements();
       break;
 
     case `pogneLe`:
-      tunderEffect()
-      rainDropEffect()
+      tunderEffect();
+      rainDropEffect();
       backgroundElements();
+      windControl();
       loverGrabbed();
       foregroundElements();
       break;
@@ -248,9 +265,9 @@ function draw() {
 
 
 
-  console.log(`rainDrop.x1[50]: ${rainDrops[0].y2}`);
+  console.log(`wind.xSpeed: ${wind.xSpeed}`);
   console.log(`mouseX: ${mouseX}`);
-  console.log(`mouseY: ${mouseY}`);
+  console.log(`lover.vy: ${lover.vy}`);
   console.log(`state: ${state}`);
 }
 
@@ -342,7 +359,7 @@ function createArrays() {
       hauteur: 10,
       epaisseur: 1,
       speedY: 20,
-      opacity: 35,
+      opacity: 40,
       top: -500,
       bottom: width + 500
     };
@@ -389,7 +406,7 @@ function rainDropEffect() {
     let rainDrop = rainDrops[i];
 
     if (rainDrop.y2 > rainDrop.bottom) {
-      rainDrop.x = random(-25, width + 25);
+      rainDrop.x = random(-200, width + 200);
       rainDrop.y1 = rainDrop.top;
       rainDrop.y2 = rainDrop.top + rainDrop.hauteur;
     }
@@ -399,7 +416,7 @@ function rainDropEffect() {
     }
 
     push();
-    rotate(radians(rainDropEffectOrientation));
+    rotate(radians(wind.xSpeed*30));
     strokeWeight(rainDrop.epaisseur);
     stroke(255, rainDrop.opacity);
     line(rainDrop.x, rainDrop.y1, rainDrop.x, rainDrop.y2);
@@ -407,17 +424,26 @@ function rainDropEffect() {
   }
 }
 
+function windControl() {
+  wind.trigger = random();
+
+  if (wind.trigger < 0.01) {
+    wind.xSpeed += wind.variation;
+  }
+  else if (wind.trigger > 0.99) {
+    wind.xSpeed -= wind.variation;
+  }
+}
+
 //Function that allows the lover to bounce around
 function loverBounce() {
-  //push the lover with gust of wind randomly
-  let windPush = random();
-  if (windPush < 0.01) {
+  //push the lover around randomly a bit
+  let randomPush = random();
+  if (randomPush < 0.01) {
     lover.vx += 0.1;
-    rainDropEffectOrientation += 3;
   }
-  else if (windPush > 0.99) {
+  else if (randomPush > 0.99) {
     lover.vx -= 0.1;
-    rainDropEffectOrientation -= 3;
   }
 
   //bouce on the trampoline if the ball is on the damn thing!
@@ -482,22 +508,25 @@ function loverBounce() {
   //Gravity
   lover.vy += lover.ay;
   lover.y += lover.vy;
-  //Drawing the lover
-  push();
-  noStroke();
-  ellipseMode(CENTER);
-  ellipse(lover.x, lover.y, lover.size);
-  pop();
+  loverDraw();
+}
+
+function loverParachute() {
+  lover.vy = 0.001;
+  lover.y += lover.vy;
+
+  lover.vx = wind.xSpeed;
+  lover.x += lover.vx;
+
+  if (lover.y > height / 5 * 4) {
+    state = `bouncing`;
+  }
 }
 
 //function that deals with the lover once it's stationnary on the ground
 function loverOnGround() {
   lover.y = ground.y - lover.size/2;
-  push();
-  noStroke();
-  ellipseMode(CENTER);
-  ellipse(lover.x, lover.y, lover.size);
-  pop();
+  loverDraw();
 }
 
 //Deals with the lover once it's made contact with the bird
@@ -517,7 +546,11 @@ function loverGrabbed() {
   if (atTheDoor < 15) {
     state = `ending`;
   }
+  loverDraw();
+}
 
+//Drawing the lover
+function loverDraw() {
   push();
   noStroke();
   ellipseMode(CENTER);
@@ -628,6 +661,12 @@ function keyPressed() {
     state = `bouncing`;
     lover.vy = -5;
     lover.y = ground.y - 15;
+  }
+  else if (keyCode === 32 && state === `bouncing` === lover.y < height / 5 * 4) {
+    state = `parachute`;
+  }
+  else if (keyCode === 32 && state === `parachute`) {
+    state = `bouncing`;
   }
   else if (keyCode === 32 && state === `bouncing` && lover.y < lover.birdReach) {
     bird.go = true;
