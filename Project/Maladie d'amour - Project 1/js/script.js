@@ -63,6 +63,12 @@ let state = `titleNoSound`;
 //Delay to fix the title skipping a state
 let titleDelay = 0;
 
+let thunder = {
+  state: false,
+  count: 0,
+  aleatoire: undefined
+}
+
 let lover = {
   x:300,
   y:undefined,
@@ -203,6 +209,7 @@ function draw() {
       break;
 
     case `bouncing`:
+      tunderEffect()
       rainDropEffect()
       backgroundElements();
       loverBounce();
@@ -210,6 +217,7 @@ function draw() {
       break;
 
     case `onGround`:
+      tunderEffect()
       rainDropEffect()
       backgroundElements();
       loverOnGround();
@@ -217,6 +225,7 @@ function draw() {
       break;
 
     case `pogneLe`:
+      tunderEffect()
       rainDropEffect()
       backgroundElements();
       loverGrabbed();
@@ -286,6 +295,27 @@ function backgroundElements() {
   //controlling the car
   carControl();
   //game Music
+}
+
+function tunderEffect() {
+  thunder.aleatoire = random();
+  thunder.count++;
+
+  if (thunder.aleatoire < 0.001) {
+    thunder.state = true;
+    thunder.count = 0;
+  }
+
+  if (thunder.state && thunder.count < 5) {
+    background(255);
+  }
+  if (thunder.state && thunder.count > 10) {
+    background(255);
+  }
+  if (thunder.state && thunder.count > 15) {
+    thunder.state = false;
+    thunder.count = 0;
+  }
 }
 
 function createArrays() {
