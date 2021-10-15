@@ -40,6 +40,7 @@ let collision = 0;
 
 //Images This could very much be a single object
 let img = {
+  loverSpriteAcc: undefined,
   titleScreen: undefined,
   whoAreYou: undefined,
   noLove: undefined,
@@ -170,6 +171,7 @@ let rainDrops = [];
 PreLoad images and music
 */
 function preload() {
+  img.loverSpriteAcc = loadImage("assets/images/loverSpriteAcc.png");
   img.titleScreen = loadImage("assets/images/TitleBackground.png");
   img.noLove = loadImage("assets/images/noLove.png");
   img.whoAreYou = loadImage("assets/images/whoAreYou.png");
@@ -536,15 +538,13 @@ function loverParachute() {
   }
 
   //Cutdowm the vx
-  if (lover.parachuteTriggerX && lover.vx > 0.01) {
-    lover.vx -= 0.05;
+  if (lover.parachuteTriggerX && lover.vx > 0.1) {
+    lover.vx -= 0.1;
   }
-  else if (lover.parachuteTriggerX && lover.vx < 0.01) {
-    lover.vx += 0.05;
+  else if (lover.parachuteTriggerX && lover.vx < -0.1) {
+    lover.vx += 0.1;
   }
-
-  //activate the wind once the vx is stable
-  if (lover.parachuteTriggerX && lover.vx < 0.001) {
+  else {
     lover.parachuteTriggerX = false;
   }
 
@@ -604,8 +604,10 @@ function loverGrabbed() {
 function loverDraw() {
   push();
   noStroke();
-  ellipseMode(CENTER);
-  ellipse(lover.x, lover.y, lover.size);
+  imageMode(CENTER);
+  image(img.loverSpriteAcc, lover.x, lover.y);
+  //ellipseMode(CENTER);
+  //ellipse(lover.x, lover.y, lover.size);
   pop();
 }
 
@@ -713,12 +715,12 @@ function keyPressed() {
     lover.vy = -5;
     lover.y = ground.y - 15;
   }
-  else if (keyCode === 32 && state === `bouncing` === lover.y < lover.parachuteLimit && state !== `title`) {
+  else if (keyCode === 32 && state === `bouncing` === lover.y < lover.parachuteLimit && state !== `title` && lover.y > lover.birdReach) {
     lover.parachuteTriggerX = true;
     lover.parachuteTriggerY = true;
     state = `parachute`;
   }
-  else if (keyCode === 32 && state === `parachute`) {
+  else if (keyCode === 32 && state === `parachute` && lover.y > lover.birdReach) {
     lover.parachuteTriggerX = true;
     lover.parachuteTriggerY = true;
     state = `bouncing`;
