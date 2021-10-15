@@ -147,6 +147,10 @@ let birdTriangle = {
 const DROP_NUM = 10;
 let waterDrops = [];
 
+const RAIN_AMOUNT = 200;
+let rainDrops = [];
+let rainDropEffectOrientation = 0;
+
 /**
 PreLoad images and music
 */
@@ -199,18 +203,21 @@ function draw() {
       break;
 
     case `bouncing`:
+      rainDropEffect()
       backgroundElements();
       loverBounce();
       foregroundElements();
       break;
 
     case `onGround`:
+      rainDropEffect()
       backgroundElements();
       loverOnGround();
       foregroundElements();
       break;
 
     case `pogneLe`:
+      rainDropEffect()
       backgroundElements();
       loverGrabbed();
       foregroundElements();
@@ -232,7 +239,7 @@ function draw() {
 
 
 
-  console.log(`lover.y: ${lover.y}`);
+  console.log(`rainDrop.x1[50]: ${rainDrops[0].y2}`);
   console.log(`mouseX: ${mouseX}`);
   console.log(`mouseY: ${mouseY}`);
   console.log(`state: ${state}`);
@@ -243,7 +250,7 @@ function titleScreen() {
   imageMode(CENTER);
   if (state === `title`) {
     image(img.titleScreen, width/2, height/2);
-    waterEffect();
+    waterDropEffect();
   }
   else {
     //Prompts the player to press a key and start the program
@@ -297,9 +304,24 @@ function createArrays() {
     waterDrops.push(waterDrop);
   }
 
+  for (let i = 0; i < RAIN_AMOUNT; i++) {
+    let rainDrop = {
+      x: random(-25, width + 25),
+      y1: random(-10, -3000),
+      y2: undefined,
+      hauteur: 10,
+      epaisseur: 1,
+      speedY: 20,
+      opacity: 35,
+      top: -500,
+      bottom: width + 500
+    };
+    rainDrop.y2 = rainDrop.y1 + rainDrop.hauteur;
+    rainDrops.push(rainDrop);
+  }
 }
 
-function waterEffect() {
+function waterDropEffect() {
   for (let i = 0; i < DROP_NUM; i++) {
     let waterDrop = waterDrops[i];
     waterDrop.locationColor = get(waterDrop.x, waterDrop.y);
@@ -329,7 +351,29 @@ function waterEffect() {
       ellipse(waterDrop.x, waterDrop.y, waterDrop.sizeX, waterDrop.sizeY);
       pop();
     }
+  }
+}
 
+function rainDropEffect() {
+  for (let i = 0; i < RAIN_AMOUNT; i++) {
+    let rainDrop = rainDrops[i];
+
+    if (rainDrop.y2 > rainDrop.bottom) {
+      rainDrop.x = random(-25, width + 25);
+      rainDrop.y1 = rainDrop.top;
+      rainDrop.y2 = rainDrop.top + rainDrop.hauteur;
+    }
+    else {
+      rainDrop.y1 += rainDrop.speedY;
+      rainDrop.y2 += rainDrop.speedY;
+    }
+
+    push();
+    rotate(radians(rainDropEffectOrientation));
+    strokeWeight(rainDrop.epaisseur);
+    stroke(255, rainDrop.opacity);
+    line(rainDrop.x, rainDrop.y1, rainDrop.x, rainDrop.y2);
+    pop();
   }
 }
 
@@ -339,9 +383,11 @@ function loverBounce() {
   let windPush = random();
   if (windPush < 0.01) {
     lover.vx += 0.1;
+    rainDropEffectOrientation += 3;
   }
   else if (windPush > 0.99) {
     lover.vx -= 0.1;
+    rainDropEffectOrientation -= 3;
   }
 
   //bouce on the trampoline if the ball is on the damn thing!
