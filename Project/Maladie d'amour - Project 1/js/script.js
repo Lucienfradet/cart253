@@ -115,6 +115,11 @@ let trampo = {
   y:undefined,
   vx:0,
   ax:0,
+  accelerationForward: 0.1,
+  accelerationBackward: 0.05,
+  deceleration: 0.01,
+  decelerationState: false,
+  break: 0.12,
   maxSpeed:50,
   minSpeed:0.001,
   w:45,
@@ -302,8 +307,9 @@ function draw() {
   console.log(`wind.xSpeed: ${wind.xSpeed}`);
   console.log(`lover.y: ${lover.y}`);
   console.log(`lover.vy: ${lover.vy}`);
-  console.log(`lover.vx: ${lover.vx}`);
-  console.log(`lover.parachuteTriggerX: ${lover.parachuteTriggerX}`);
+  console.log(`trampo.vx: ${trampo.vx}`);
+  console.log(`keyIsDown: ${keyIsDown(65)}`);
+  console.log(`trampoState: ${trampo.decelerationState}`);
   console.log(`state: ${state}`);
 }
 
@@ -340,7 +346,6 @@ function createArrays() {
     rainDrops.push(rainDrop);
   }
 }
-
 //Displays the title screen image
 function titleScreen() {
   imageMode(CENTER);
@@ -680,6 +685,63 @@ function loverDraw() {
 
 //controls the car movments
 function carControl() {
+  //65 = A LEFT // 68 = D RIGHT
+  if (trampo.vx === 0) {
+    if (keyIsDown(68)) {
+      trampo.vx += trampo.accelerationBackward;
+      trampo.decelerationState = false;
+    }
+    else if (keyIsDown(65)) {
+      trampo.vx -= trampo.accelerationForward;
+      trampo.decelerationState = false;
+    }
+  }
+
+  if (trampo.vx < 0 && keyIsDown(65)) {
+    trampo.vx -= trampo.accelerationForward;
+    trampo.decelerationState = false;
+  }
+
+  if (trampo.vx > 0 && keyIsDown(68)) {
+    trampo.vx += trampo.accelerationBackward;
+    trampo.decelerationState = false;
+  }
+
+  if (trampo.vx < 0 && keyIsDown(16)) {
+    trampo.vx += trampo.break;
+    trampo.decelerationState = false;
+
+    if (trampo.vx > 0) {
+      trampo.vx = 0;
+    }
+  }
+
+  if (trampo.vx > 0 && keyIsDown(16)) {
+    trampo.vx -= trampo.break;
+    trampo.decelerationState = false;
+
+    if (trampo.vx < 0) {
+      trampo.vx = 0;
+    }
+  }
+
+  //Controls the deceleration after a keyRelease
+  if (trampo.decelerationState) {
+    if (trampo.vx > 0) {
+      trampo.vx -= trampo.deceleration;
+      if (trampo.vx < 0) {trampo.decelerationState = false;}
+    }
+    else if (trampo.vx < 0) {
+      trampo.vx += trampo.deceleration;
+      if (trampo.vx > 0) {trampo.decelerationState = false;}
+    }
+    if (trampo.vx === 0) {
+      trampo.decelerationState = false;
+    }
+  }
+
+
+
   //stoping at edges
   if (trampo.x - trampo.w/2 <= 0 && trampo.vx !== 0) {
     trampo.vx = 0;
@@ -702,9 +764,14 @@ function carControl() {
         trampo.x += 1;
       }
   }
+
   //moving the car
   trampo.x += trampo.vx
-  //drawing the trampoline
+  trampoDraw();
+}
+
+//drawing the trampoline
+function trampoDraw() {
   push();
   noStroke();
   fill(255);
@@ -778,12 +845,14 @@ function keyPressed() {
     snd.rainForest.loop();
     state = `onGround`;
   }
+  /*
   else if (keyCode === 65) { //LEFT A
     trampo.vx -= 0.3;
   }
   else if (keyCode === 68) { //RIGHT D
     trampo.vx += 0.3;
   }
+  */
   else if (keyCode === 8 && state !== `title` && state !== `ending` && state !== `titleNoSound`) { //BACKSPACE
     state = `ending`;
   }
@@ -808,6 +877,12 @@ function keyPressed() {
   }
   else if (keyCode === 32 && state === `bouncing` && lover.y < lover.birdReach) {
     bird.go = true;
+  }
+}
+
+function keyReleased() {
+  if (keyCode === 65 || keyCode === 68) {
+    trampo.decelerationState = true;
   }
 }
 
