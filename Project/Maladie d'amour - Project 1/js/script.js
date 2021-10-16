@@ -40,7 +40,13 @@ let collision = 0;
 
 //Images This could very much be a single object
 let img = {
-  loverSpriteAcc: undefined,
+  loverSpriteJump: undefined,
+  loverSpriteStd: undefined,
+  loverSpriteRot: undefined,
+  loverSpriteParr: undefined,
+  loverSpriteBird: undefined,
+  birdSprite1: undefined,
+  birdSprite2: undefined,
   titleScreen: undefined,
   whoAreYou: undefined,
   noLove: undefined,
@@ -55,7 +61,14 @@ let img = {
 let snd = {
   titleMusic: undefined,
   gameMusic: undefined,
-  endMusic: undefined
+  endMusic: undefined,
+  lightRain: undefined,
+  rainForest: undefined,
+  thunder: undefined,
+  bounce1: undefined,
+  bounce2: undefined,
+  parachute: undefined,
+  parachuteClose: undefined
 }
 
 //State of the program
@@ -92,7 +105,9 @@ let lover = {
   drag:0.001,
   size:15,
   birdReach: 100,
-  counter:0
+  counter:0,
+  jumpTrigger: false,
+  angle: 0
 }
 
 let trampo = {
@@ -171,7 +186,13 @@ let rainDrops = [];
 PreLoad images and music
 */
 function preload() {
-  img.loverSpriteAcc = loadImage("assets/images/loverSpriteAcc.png");
+  img.loverSpriteStd = loadImage("assets/images/loverSpriteStd.png");
+  img.loverSpriteJump = loadImage("assets/images/loverSpriteJump.png");
+  img.loverSpriteRot = loadImage("assets/images/loverSpriteRot.png");
+  img.loverSpriteParr = loadImage("assets/images/loverSpriteParr.png");
+  img.loverSpriteBird = loadImage("assets/images/loverSpriteBird.png");
+  img.birdSprite1 = loadImage("assets/images/birdSprite1.png");
+  img.birdSprite2 = loadImage("assets/images/birdSprite2.png");
   img.titleScreen = loadImage("assets/images/TitleBackground.png");
   img.noLove = loadImage("assets/images/noLove.png");
   img.whoAreYou = loadImage("assets/images/whoAreYou.png");
@@ -181,6 +202,13 @@ function preload() {
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
+  snd.lightRain = loadSound("assets/sounds/lightRain.m4a");
+  snd.rainForest = loadSound("assets/sounds/rainForest.wav");
+  snd.thunder = loadSound("assets/sounds/thunder.wav");
+  snd.bounce1 = loadSound("assets/sounds/bounce1.wav");
+  snd.bounce2 = loadSound("assets/sounds/bounce2.wav");
+  snd.parachute = loadSound("assets/sounds/parachute.mp3");
+  snd.parachuteClose = loadSound("assets/sounds/parachuteClose.mp3");
 }
 
 /**
@@ -364,6 +392,7 @@ function tunderEffect() {
   thunder.count++;
 
   if (thunder.aleatoire < 0.001) {
+    snd.thunder.play();
     thunder.state = true;
     thunder.count = 0;
   }
@@ -468,35 +497,45 @@ function loverBounce() {
     //Bounce in deferent direction dependant on where it hit
     if (collision < 13) {
       lover.vx = 0;
+      snd.bounce1.play();
     }
     else if (collision > 13 && lover.x > trampo.x) {
       lover.vx += 2;
+      snd.bounce1.play();
     }
     else if (collision > 13 && lover.x < trampo.x) {
       lover.vx -= 2;
+      snd.bounce1.play();
     }
     else if (collision > 15 && lover.x > trampo.x) {
       lover.vx += 5;
+      snd.bounce1.play();
     }
     else if (collision > 15 && lover.x < trampo.x) {
       lover.vx -= 5;
+      snd.bounce1.play();
     }
     else if (collision > 20 && lover.x > trampo.x) {
       lover.vx += 10;
+      snd.bounce1.play();
     }
     else if (collision > 20 && lover.x < trampo.x) {
       lover.vx -= 10;
+      snd.bounce1.play();
     }
     else if (collision > 30 && lover.x > trampo.x) {
       lover.vx += 15;
+      snd.bounce1.play();
     }
     else if (collision > 30 && lover.x < trampo.x) {
       lover.vx -= 15;
+      snd.bounce1.play();
     }
     lover.vy = -(lover.vy) - 0.5;
   }
   //Bounce On the floor
   else if (lover.y + lover.size/2 >= ground.y) {
+    snd.bounce1.play();
     lover.y = ground.y - lover.size/2;
     lover.vy = -(lover.vy) + 2;
   }
@@ -513,9 +552,11 @@ function loverBounce() {
   }
   //Bounce on the walls
   if (lover.x - lover.size <= 0) {
+    snd.bounce1.play();
     lover.vx = -(lover.vx);
   }
   if (lover.x + lover.size >= wall.x) {
+    snd.bounce1.play();
     lover.vx = -(lover.vx);
   }
 
@@ -602,13 +643,39 @@ function loverGrabbed() {
 
 //Drawing the lover
 function loverDraw() {
-  push();
-  noStroke();
   imageMode(CENTER);
-  image(img.loverSpriteAcc, lover.x, lover.y);
-  //ellipseMode(CENTER);
-  //ellipse(lover.x, lover.y, lover.size);
-  pop();
+
+  switch (state) {
+    case `onGround`:
+      image(img.loverSpriteStd, lover.x, lover.y);
+      break;
+
+    case `bouncing`:
+      if (lover.jumpTrigger) {
+        image(img.loverSpriteJump, lover.x, lover.y);
+      }
+      if (lover.vy > 0) {
+        lover.jumpTrigger = false;
+      }
+
+      if (lover.jumpTrigger === false) {
+        push();
+        translate(lover.x, lover.y);
+        rotate(radians(lover.angle));
+        image(img.loverSpriteRot, 0, 0);
+        lover.angle += 5;
+        pop();
+      }
+      break;
+
+    case `parachute`:
+      image(img.loverSpriteParr, lover.x, lover.y);
+      break;
+
+    case `pogneLe`:
+      image(img.loverSpriteBird, lover.x, lover.y);
+      break;
+  }
 }
 
 //controls the car movments
@@ -653,12 +720,8 @@ function birdFly() {
     bird.x = bird.beginX + bird.pct * bird.distX;
     bird.y = bird.beginY + pow(bird.pct, bird.exponent) * bird.distY;
   }
-  push();
-  ellipseMode(CENTER);
-  noStroke();
-  fill(255);
-  ellipse(bird.x, bird.y, bird.size);
-  pop();
+
+  birdDraw();
   //reset the bird
   if (bird.x >= bird.endX - 15 && bird.y <= bird.endY + 10) {
     bird.x = bird.beginX;
@@ -670,6 +733,17 @@ function birdFly() {
   let proximity = dist(lover.x, lover.y, bird.x, bird.y);
   if (proximity < lover.size + 5) {
     state = `pogneLe`;
+  }
+}
+
+function birdDraw() {
+  imageMode(CENTER);
+
+  if (frameCount % 20 < 5) {
+    image(img.birdSprite1, bird.x, bird.y);
+  }
+  else {
+    image(img.birdSprite2, bird.x, bird.y);
   }
 }
 
@@ -694,11 +768,14 @@ function birdTrigger() {
 function keyPressed() {
   if (state === `titleNoSound`) {
     snd.titleMusic.play();
+    snd.lightRain.loop();
     state = `title`;
   }
   if (state === `title` && titleDelay > 15) {
     snd.titleMusic.stop();
+    snd.lightRain.stop();
     snd.gameMusic.loop();
+    snd.rainForest.loop();
     state = `onGround`;
   }
   else if (keyCode === 65) { //LEFT A
@@ -712,15 +789,19 @@ function keyPressed() {
   }
   else if (keyCode === 32 && state === `onGround`) { //SPACEBAR
     state = `bouncing`;
+    snd.bounce2.play();
+    lover.jumpTrigger = true;
     lover.vy = -5;
     lover.y = ground.y - 15;
   }
   else if (keyCode === 32 && state === `bouncing` === lover.y < lover.parachuteLimit && state !== `title` && lover.y > lover.birdReach) {
+    snd.parachute.play();
     lover.parachuteTriggerX = true;
     lover.parachuteTriggerY = true;
     state = `parachute`;
   }
   else if (keyCode === 32 && state === `parachute` && lover.y > lover.birdReach) {
+    snd.parachuteClose.play();
     lover.parachuteTriggerX = true;
     lover.parachuteTriggerY = true;
     state = `bouncing`;
