@@ -45,6 +45,8 @@ let img = {
   loverSpriteRot: undefined,
   loverSpriteParr: undefined,
   loverSpriteBird: undefined,
+  carTrampo: undefined,
+  carTrampoJump: undefined,
   birdSprite1: undefined,
   birdSprite2: undefined,
   titleScreen: undefined,
@@ -53,6 +55,7 @@ let img = {
   deception: undefined,
   gameBackground: undefined,
   gameForeground: undefined,
+  tree: undefined,
   delay: 0,
   zoom: 0
 }
@@ -65,14 +68,28 @@ let snd = {
   lightRain: undefined,
   rainForest: undefined,
   thunder: undefined,
+  tree: undefined,
   bounce1: undefined,
-  bounce2: undefined,
+  jump: undefined,
+  trampoSound: undefined,
   parachute: undefined,
-  parachuteClose: undefined
+  parachuteClose: undefined,
+  carTreeHit: undefined,
+  carHit1: undefined,
+  carBreak: undefined,
+  carEngine: undefined,
+  carGearSwitch: undefined,
+  carAccelerates: undefined
 }
 
 //State of the program
 let state = `titleNoSound`;
+
+let difficulty = {
+  easy: false,
+  counter: 0,
+  niceAttempt: false
+}
 
 //Delay to fix the title skipping a state
 let titleDelay = 0;
@@ -107,7 +124,8 @@ let lover = {
   birdReach: 100,
   counter:0,
   jumpTrigger: false,
-  angle: 0
+  angle: 0,
+  soundTrigger: true,
 }
 
 let trampo = {
@@ -119,11 +137,15 @@ let trampo = {
   accelerationBackward: 0.05,
   deceleration: 0.01,
   decelerationState: false,
+  gear: true, //True means Drive Forward // False means Drive Backwards
   break: 0.12,
   maxSpeed:50,
   minSpeed:0.001,
   w:45,
-  h:8
+  h:8,
+  carSoundTrigger: true,
+  carSprite: undefined,
+  carJumpTrigger: false
 }
 
 let wall = {
@@ -145,6 +167,16 @@ let ground = {
   y:480,
   h:undefined,
   w:undefined
+}
+
+let tree = {
+  x: undefined,
+  y: undefined,
+  w: 50,
+  h: canvasHeight / 4 * 3,
+  rotation: 0,
+  trigger: true,
+  go: false
 }
 
 let bird = {
@@ -196,6 +228,8 @@ function preload() {
   img.loverSpriteRot = loadImage("assets/images/loverSpriteRot.png");
   img.loverSpriteParr = loadImage("assets/images/loverSpriteParr.png");
   img.loverSpriteBird = loadImage("assets/images/loverSpriteBird.png");
+  img.carTrampo = loadImage("assets/images/carTrampo.png");
+  img.carTrampoJump = loadImage("assets/images/carTrampoJump.png");
   img.birdSprite1 = loadImage("assets/images/birdSprite1.png");
   img.birdSprite2 = loadImage("assets/images/birdSprite2.png");
   img.titleScreen = loadImage("assets/images/TitleBackground.png");
@@ -204,16 +238,25 @@ function preload() {
   img.deception = loadImage("assets/images/deception.png");
   img.gameBackground = loadImage("assets/images/gameBackground.png");
   img.gameForeground = loadImage("assets/images/gameForeground.png");
+  img.tree = loadImage("assets/images/tree.png");
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
   snd.lightRain = loadSound("assets/sounds/lightRain.m4a");
   snd.rainForest = loadSound("assets/sounds/rainForest.wav");
   snd.thunder = loadSound("assets/sounds/thunder.wav");
+  snd.tree = loadSound("assets/sounds/tree.wav");
   snd.bounce1 = loadSound("assets/sounds/bounce1.wav");
-  snd.bounce2 = loadSound("assets/sounds/bounce2.wav");
+  snd.jump = loadSound("assets/sounds/jump.wav");
+  snd.trampoSound = loadSound("assets/sounds/trampoSound.wav");
   snd.parachute = loadSound("assets/sounds/parachute.mp3");
   snd.parachuteClose = loadSound("assets/sounds/parachuteClose.mp3");
+  snd.carTreeHit = loadSound("assets/sounds/carTreeHit.wav");
+  snd.carHit1 = loadSound("assets/sounds/carHit1.wav");
+  snd.carBreak = loadSound("assets/sounds/carBreak.wav");
+  snd.carEngine = loadSound("assets/sounds/carEngine.wav");
+  snd.carGearSwitch = loadSound("assets/sounds/carGearSwitch.wav");
+  snd.carAccelerates = loadSound("assets/sounds/carAccelerates.wav");
 }
 
 /**
@@ -224,12 +267,16 @@ function setup() {
   background(0, 1, 10);
   createArrays();
 
-  //Setting the size of the wall, ground and car
+  //Setting the size of the wall, ground, car and tree
   wall.h = height - wall.y;
   wall.w = width - wall.x;
   ground.h = height - ground.y;
   ground.w = width;
-  trampo.y = ground.y - 15;
+  trampo.y = ground.y - 20;
+  tree.x = 0 - tree.w/2 + 25; //TO BE ABLE TO SEE IT FOR TESTING
+  tree.y = ground.y - tree.h/2;
+  tree.w = img.tree.width;
+  tree.h = img.tree.height;
   //Set the bird properties
   bird.distX = bird.endX - bird.beginX;
   bird.distY = bird.endY - bird.beginY;
@@ -256,8 +303,15 @@ function draw() {
       tunderEffect();
       rainDropEffect();
       backgroundElements();
+      treeFalling();
       windControl();
       loverBounce();
+      if (easeUp() === false) {
+        carControl();
+      }
+      else {
+        carControlEasy();
+      }
       foregroundElements();
       break;
 
@@ -265,8 +319,15 @@ function draw() {
       tunderEffect();
       rainDropEffect();
       backgroundElements();
+      treeFalling();
       windControl();
       loverParachute();
+      if (easeUp() === false) {
+        carControl();
+      }
+      else {
+        carControlEasy();
+      }
       foregroundElements();
       break;
 
@@ -274,8 +335,15 @@ function draw() {
       tunderEffect();
       rainDropEffect();
       backgroundElements();
+      treeFalling();
       windControl();
       loverOnGround();
+      if (easeUp() === false) {
+        carControl();
+      }
+      else {
+        carControlEasy();
+      }
       foregroundElements();
       break;
 
@@ -285,6 +353,12 @@ function draw() {
       backgroundElements();
       windControl();
       loverGrabbed();
+      if (easeUp() === false) {
+        carControl();
+      }
+      else {
+        carControlEasy();
+      }
       foregroundElements();
       break;
 
@@ -306,10 +380,10 @@ function draw() {
 
   console.log(`wind.xSpeed: ${wind.xSpeed}`);
   console.log(`lover.y: ${lover.y}`);
-  console.log(`lover.vy: ${lover.vy}`);
-  console.log(`trampo.vx: ${trampo.vx}`);
+  console.log(`tree.rotation: ${tree.rotation}`);
+  console.log(`tree.go: ${tree.go}`);
   console.log(`keyIsDown: ${keyIsDown(65)}`);
-  console.log(`trampoState: ${trampo.decelerationState}`);
+
   console.log(`state: ${state}`);
 }
 
@@ -346,6 +420,7 @@ function createArrays() {
     rainDrops.push(rainDrop);
   }
 }
+
 //Displays the title screen image
 function titleScreen() {
   imageMode(CENTER);
@@ -386,9 +461,35 @@ function backgroundElements() {
   imageMode(CENTER);
   image(img.gameBackground, width/2, height/2);
   pop();
-  //controlling the car
-  carControl();
-  //game Music
+}
+
+function treeFalling() {
+  if (tree.trigger && trampo.x - trampo.w/2 <= 0) {
+    tree.go = true;
+    snd.tree.play();
+    snd.carTreeHit.play();
+    tree.trigger = false;
+  }
+
+  if (tree.go) {
+    tree.rotation += 0.3;
+  }
+  if (tree.rotation > 90) {
+    tree.go = false;
+  }
+
+  //Displays the tree
+  push();
+  noStroke();
+  fill(255);
+  rectMode(CENTER);
+  imageMode(CENTER);
+  translate(tree.x, tree.y + tree.h / 2);
+  rotate(radians(tree.rotation));
+
+  //rect(0 , 0 - tree.h / 2, tree.w, tree.h);
+  image(img.tree, 0, 0 - tree.h / 2);
+  pop();
 }
 
 //Randomly activates thunderstuck by ACDC
@@ -502,45 +603,53 @@ function loverBounce() {
     //Bounce in deferent direction dependant on where it hit
     if (collision < 13) {
       lover.vx = 0;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 13 && lover.x > trampo.x) {
       lover.vx += 2;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 13 && lover.x < trampo.x) {
       lover.vx -= 2;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 15 && lover.x > trampo.x) {
       lover.vx += 5;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 15 && lover.x < trampo.x) {
       lover.vx -= 5;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 20 && lover.x > trampo.x) {
       lover.vx += 10;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 20 && lover.x < trampo.x) {
       lover.vx -= 10;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 30 && lover.x > trampo.x) {
       lover.vx += 15;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
     else if (collision > 30 && lover.x < trampo.x) {
       lover.vx -= 15;
-      snd.bounce1.play();
+      snd.trampoSound.play();
+      trampo.carJumpTrigger = true;
     }
-    lover.vy = -(lover.vy) - 0.5;
+    lover.vy = -(lover.vy) - 0.7;
   }
   //Bounce On the floor
   else if (lover.y + lover.size/2 >= ground.y) {
-    snd.bounce1.play();
     lover.y = ground.y - lover.size/2;
     lover.vy = -(lover.vy) + 2;
   }
@@ -571,6 +680,7 @@ function loverBounce() {
   lover.vy += lover.ayBouncing;
   lover.y += lover.vy;
   loverDraw();
+  loverSound();
 }
 
 //Activate the lovers glider
@@ -683,9 +793,68 @@ function loverDraw() {
   }
 }
 
+function loverSound() {
+  if (lover.y + lover.size/2 >= ground.y && lover.soundTrigger) {
+    lover.soundTrigger = false;
+    snd.bounce1.play();
+  }
+
+  if (lover.y + lover.size/2 < ground.y - 3) {
+    lover.soundTrigger = true;
+  }
+}
+
 //controls the car movments
 function carControl() {
-  //65 = A LEFT // 68 = D RIGHT
+  //NOTE: 65: A LEFT // 68: D RIGHT // 87: W FORWARD // 83: S BACKWARDS // 16: SHIFT Change Gear
+
+  //The brand new itteration of car CONTROLS! Gas pedal is W, break is S and SHIFT sitches gears
+  //Moves the car if the Car is set to Drive
+  if (trampo.gear) {
+    if (keyIsDown(87)) {
+      trampo.vx -= trampo.accelerationForward;
+      if (trampo.decelerationState) {
+        snd.carAccelerates.play();
+      }
+      trampo.decelerationState = false;
+    }
+    else if (keyIsDown(83) && trampo.vx !== 0) {
+      trampo.vx += trampo.break;
+      if (trampo.decelerationState) {
+        snd.carBreak.play();
+      }
+      trampo.decelerationState = false;
+
+      if (trampo.vx > 0) {
+        trampo.vx = 0;
+      }
+    }
+  }
+  //Moves the car if the car is set to backwards
+  if (trampo.gear === false) {
+    if (keyIsDown(87)) {
+      trampo.vx += trampo.accelerationBackward;
+      if (trampo.decelerationState) {
+        snd.carAccelerates.play();
+      }
+      trampo.decelerationState = false;
+    }
+    else if (keyIsDown(83) && trampo.vx !== 0) {
+      trampo.vx -= trampo.break;
+      if (trampo.decelerationState) {
+        snd.carBreak.play();
+      }
+      trampo.decelerationState = false;
+
+      if (trampo.vx < 0) {
+        trampo.vx = 0;
+      }
+    }
+  }
+
+  //Yet Another test with car controls using A and D keys and Shift as a Breaks
+  /*
+  //Starts the car if iddle
   if (trampo.vx === 0) {
     if (keyIsDown(68)) {
       trampo.vx += trampo.accelerationBackward;
@@ -696,17 +865,17 @@ function carControl() {
       trampo.decelerationState = false;
     }
   }
-
+  //Moves the car if its moving left
   if (trampo.vx < 0 && keyIsDown(65)) {
     trampo.vx -= trampo.accelerationForward;
     trampo.decelerationState = false;
   }
-
+  //Moves the car if moving Right
   if (trampo.vx > 0 && keyIsDown(68)) {
     trampo.vx += trampo.accelerationBackward;
     trampo.decelerationState = false;
   }
-
+  //Breaks the car if moving Left
   if (trampo.vx < 0 && keyIsDown(16)) {
     trampo.vx += trampo.break;
     trampo.decelerationState = false;
@@ -715,7 +884,7 @@ function carControl() {
       trampo.vx = 0;
     }
   }
-
+  //Breaks the car if moving Right
   if (trampo.vx > 0 && keyIsDown(16)) {
     trampo.vx -= trampo.break;
     trampo.decelerationState = false;
@@ -739,8 +908,7 @@ function carControl() {
       trampo.decelerationState = false;
     }
   }
-
-
+  */
 
   //stoping at edges
   if (trampo.x - trampo.w/2 <= 0 && trampo.vx !== 0) {
@@ -753,30 +921,117 @@ function carControl() {
   }
   //Stop at the Lover ball
   if (state === `onGround`){
-    let gageLeft = dist(trampo.x + trampo.w/2, trampo.h, lover.x - lover.size/2, trampo.h);
-      if (gageLeft < 1) {
+      if (trampo.x + trampo.w/2 > lover.x - lover.size/2 && trampo.x - trampo.w/2 < lover.x + lover.size/2) {
         trampo.vx = 0;
         trampo.x -= 1;
       }
-    let gageRight = dist(trampo.x - trampo.w/2, trampo.h, lover.x + lover.size/2, trampo.h);
-      if (gageRight < 1) {
+      if (trampo.x - trampo.w/2 < lover.x + lover.size/2 && trampo.x + trampo.w/2 > lover.x - lover.size/2) {
         trampo.vx = 0;
-        trampo.x += 1;
+        trampo.x += 1.5;
       }
   }
 
   //moving the car
   trampo.x += trampo.vx
   trampoDraw();
+  carColisionSound();
+}
+
+//Controls the sound the car makes
+function carColisionSound() {
+  if (trampo.x - trampo.w/2 <= 0 && trampo.carSoundTrigger && tree.trigger === false) {
+    trampo.carSoundTrigger = false;
+    snd.carHit1.play();
+  }
+  else if (trampo.x + trampo.w/2 >= wall.x && trampo.carSoundTrigger) {
+    trampo.carSoundTrigger = false;
+    snd.carHit1.play();
+  }
+
+  //Reset the trigger
+  if (trampo.x - trampo.w/2 > 20 && trampo.x < width/2) {
+    trampo.carSoundTrigger = true;
+  }
+  else if (trampo.x + trampo.w/2 < wall.x - 20 && trampo.x > width/2) {
+    trampo.carSoundTrigger = true;
+  }
+}
+
+//Controls the car with mouseX
+function carControlEasy() {
+  trampo.x = mouseX;
+  trampo.x = constrain(trampo.x, 0 + trampo.w/2, wall.x - trampo.w/2);
+
+  trampoDraw();
+}
+
+function easeUp() {
+  //Check if the lover reaches mid screen
+  if (lover.y < height/2) {
+    difficulty.niceAttempt = true;
+  }
+  //Checks if the lover crashes on the ground
+  if (difficulty.niceAttempt && lover.y + lover.size/2 >= ground.y) {
+    difficulty.counter++;
+    difficulty.niceAttempt = false;
+  }
+
+  if (difficulty.counter === 1) {
+
+    difficulty.counter = 2;
+  }
+  if (difficulty.counter === 3) {
+
+    difficulty.counter = 4;
+  }
+  if (difficulty.counter === 5) {
+    difficulty.easy = true;
+    difficulty.counter = 6;
+  }
+
+  return difficulty.easy;
 }
 
 //drawing the trampoline
 function trampoDraw() {
+  //Changes the sprite if the lover hits the trampoline
+  if (trampo.carJumpTrigger) {
+    trampo.carSprite = img.carTrampoJump;
+    if (lover.y + lover.size/2 < trampo.y - 20) {
+      trampo.carJumpTrigger = false;
+    }
+  }
+  else {
+    trampo.carSprite = img.carTrampo;
+  }
+
   push();
   noStroke();
   fill(255);
   rectMode(CENTER);
-  rect(trampo.x, trampo.y, trampo.w, trampo.h);
+  imageMode(CENTER);
+  //rect(trampo.x, trampo.y, trampo.w, trampo.h);
+  //Makes the car giggle up and down if it's moving
+  if (trampo.vx !== 0 && difficulty.easy !== true) {
+    if (frameCount % 10 < 5) {
+      image(trampo.carSprite, trampo.x, trampo.y - 1);
+    }
+    else {
+      image(trampo.carSprite, trampo.x, trampo.y);
+    }
+  }
+  else {
+    image(trampo.carSprite, trampo.x, trampo.y);
+  }
+
+  //Temporaire? Illustrates the active gear
+  textSize(32);
+  if (trampo.gear) {
+    text(`D`, width - 40, height - 20);
+  }
+  else {
+    text(`R`, width - 40, height - 20);
+  }
   pop();
 }
 
@@ -803,6 +1058,7 @@ function birdFly() {
   }
 }
 
+//Draws the bird. DAMN!
 function birdDraw() {
   imageMode(CENTER);
 
@@ -843,9 +1099,14 @@ function keyPressed() {
     snd.lightRain.stop();
     snd.gameMusic.loop();
     snd.rainForest.loop();
+    snd.carEngine.loop();
     state = `onGround`;
   }
-  /*
+  else if (keyCode === 16) {
+    snd.carGearSwitch.play();
+    trampo.gear = !trampo.gear; //Puts the car in Drive or Backwards with the SHIFT key
+  }
+  /* Used by the original shitty car controls
   else if (keyCode === 65) { //LEFT A
     trampo.vx -= 0.3;
   }
@@ -858,7 +1119,7 @@ function keyPressed() {
   }
   else if (keyCode === 32 && state === `onGround`) { //SPACEBAR
     state = `bouncing`;
-    snd.bounce2.play();
+    snd.jump.play();
     lover.jumpTrigger = true;
     lover.vy = -5;
     lover.y = ground.y - 15;
@@ -881,9 +1142,15 @@ function keyPressed() {
 }
 
 function keyReleased() {
+  //Decelerates the car if you stop pressing the gas pedal
+  if (keyCode === 87 || keyCode === 83) {
+    trampo.decelerationState = true;
+  }
+  /* old car control keys
   if (keyCode === 65 || keyCode === 68) {
     trampo.decelerationState = true;
   }
+  */
 }
 
 //End screens once the lover has reached the house
