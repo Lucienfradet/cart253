@@ -31,6 +31,13 @@ TODO LIST Project 1
 - create a better Ending
 - Adding choice in the dialogue?
 
+UPDATED TODO LIST:
+- Do the Outro
+- Add the voice Acting
+- Fix the car collisions
+- Fix the decelerate function for the car
+- Fix the difficulty level switch event
+
 */
 
 "use strict";
@@ -190,6 +197,13 @@ let diaA22 = [];
 **...
 **Ralentis, c'est icitte à gauche! r'garde la pancarte!
 
+*************
+
+**ISABELLE!
+**OUVRE LA PORTE C'EST LOUIS!
+**ISA...
+
+***
 
 */
 
