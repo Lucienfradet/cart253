@@ -56,6 +56,12 @@ let img = {
   gameBackground: undefined,
   gameForeground: undefined,
   tree: undefined,
+  introBackground1: undefined,
+  introBackground2: undefined,
+  introBackground3: undefined,
+  introCar: undefined,
+  introCarLights: undefined,
+  introCarInterior: undefined,
   delay: 0,
   zoom: 0
 }
@@ -79,7 +85,8 @@ let snd = {
   carBreak: undefined,
   carEngine: undefined,
   carGearSwitch: undefined,
-  carAccelerates: undefined
+  carAccelerates: undefined,
+  carRain: undefined
 }
 
 //State of the program
@@ -92,7 +99,18 @@ let difficulty = {
 }
 
 //Delay to fix the title skipping a state
-let titleDelay = 0;
+let stateDelay = 0;
+
+let dia = { //dia means dialogue
+  yoster: undefined,
+  delay: 0,
+  offset: 0,
+  textSpeedSlow: 5,
+  textSpeedFast: 1,
+  a: `On est presque rendu j'te dis.`
+}
+
+let diaA = [];
 
 let thunder = {
   state: false,
@@ -223,6 +241,7 @@ let rainDrops = [];
 PreLoad images and music
 */
 function preload() {
+  dia.yoster = loadFont("assets/fonts/yoster.ttf");
   img.loverSpriteStd = loadImage("assets/images/loverSpriteStd.png");
   img.loverSpriteJump = loadImage("assets/images/loverSpriteJump.png");
   img.loverSpriteRot = loadImage("assets/images/loverSpriteRot.png");
@@ -239,6 +258,12 @@ function preload() {
   img.gameBackground = loadImage("assets/images/gameBackground.png");
   img.gameForeground = loadImage("assets/images/gameForeground.png");
   img.tree = loadImage("assets/images/tree.png");
+  img.introBackground1 = loadImage("assets/images/introBackground1.png");
+  img.introBackground2 = loadImage("assets/images/introBackground2.png");
+  img.introBackground3 = loadImage("assets/images/introBackground3.png");
+  img.introCar = loadImage("assets/images/introCar.png");
+  img.introCarLights = loadImage("assets/images/introCarLights.png");
+  img.introCarInterior = loadImage("assets/images/introCarInterior.png");
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
@@ -257,6 +282,7 @@ function preload() {
   snd.carEngine = loadSound("assets/sounds/carEngine.wav");
   snd.carGearSwitch = loadSound("assets/sounds/carGearSwitch.wav");
   snd.carAccelerates = loadSound("assets/sounds/carAccelerates.wav");
+  snd.carRain = loadSound("assets/sounds/carRain.wav");
 }
 
 /**
@@ -296,7 +322,13 @@ function draw() {
 
     case `title`:
       titleScreen();
-      titleDelay++;
+      stateDelay++;
+      break;
+
+    case `intro`:
+      introScene();
+      rainDropEffect();
+      stateDelay++;
       break;
 
     case `bouncing`:
@@ -419,6 +451,12 @@ function createArrays() {
     rainDrop.y2 = rainDrop.y1 + rainDrop.hauteur;
     rainDrops.push(rainDrop);
   }
+
+  //Arrays for dialogue in the intro
+  for (let i = 0; i < dia.a.length; i++) {
+    let letter = dia.a.substring(i, i + 1);
+    diaA.push(letter);
+  }
 }
 
 //Displays the title screen image
@@ -437,6 +475,61 @@ function titleScreen() {
     text(`Press any key`, width/2, height/2);
     pop();
   }
+}
+
+function introScene() {
+  push();
+  translate(width/2, height/2);
+  imageMode(CENTER);
+  if (frameCount % 30 < 15/2) {
+    image(img.introBackground1, 0, 0);
+  }
+  else if (frameCount % 15 < 15/2) {
+    image(img.introBackground2, 0, 0);
+  }
+  else if (frameCount % 15/2 < 15/2) {
+    image(img.introBackground3, 0, 0);
+  }
+
+  if (frameCount % 10 < 5) {
+    image(img.introCarInterior, 0, 0 + 1);
+    image(img.introCar, 0, 0 + 1);
+  }
+  else {
+    image(img.introCarInterior, 0, 0);
+    image(img.introCar, 0, 0);
+  }
+
+  if (frameCount % 15 < 5) {
+    image(img.introCarLights, 0, 0 + 2);
+  }
+  else {
+    image(img.introCarLights, 0, 0 + 4);
+  }
+  pop();
+
+  push();
+  textSize(32);
+  fill(255);
+  textFont(dia.yoster);
+
+  if (frameCount % dia.textSpeedSlow === 0 && dia.delay <= dia.a.length) {
+    dia.delay++;
+  }
+  let offset = 0
+  for (let i = 0; i < dia.delay; i++) {
+    text(diaA[i], 50 + offset, 50);
+    offset += textWidth(diaA[i]);
+  }
+
+
+
+
+  // for (let i = 0; i < dia.a.length; i++) {
+  //   text(diaA[i], 50 + offset, 50);
+  //   offset += textWidth(diaA[i]);
+  // }
+  pop();
 }
 
 //Displays elements in the foreground
@@ -1094,7 +1187,15 @@ function keyPressed() {
     snd.lightRain.loop();
     state = `title`;
   }
-  if (state === `title` && titleDelay > 15) {
+  if (state === `title` && stateDelay > 15) {
+    stateDelay = 0;
+    snd.titleMusic.stop();
+    snd.lightRain.stop();
+    snd.carRain.loop();
+    state = `intro`;
+  }
+  else if (state === `intro` && stateDelay > 15) {
+    snd.carRain.stop();
     snd.titleMusic.stop();
     snd.lightRain.stop();
     snd.gameMusic.loop();
