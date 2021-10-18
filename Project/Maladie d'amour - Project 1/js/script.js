@@ -91,6 +91,7 @@ let snd = {
 
 //State of the program
 let state = `titleNoSound`;
+let introState = `a1`;
 
 let difficulty = {
   easy: false,
@@ -105,12 +106,92 @@ let dia = { //dia means dialogue
   yoster: undefined,
   delay: 0,
   offset: 0,
-  textSpeedSlow: 5,
-  textSpeedFast: 1,
-  a: `On est presque rendu j'te dis.`
-}
+  slow:5,
+  fast:1,
+  textSpeed: 5,
+  textSwitch: 1,
+  done: false,
+  a1:"Louis-Joseph: Écoûte!",
+  a2:"RADIO: La tempête qui s'abat sur l'ouest de la province fait des ravages.",
+  a3:"RADIO:  Les dommages causé par des vents de plus de 80 km heure bloque l'accès à plusieurs routes.",
+  a4:"RADIO:  Hydro Québec est en état d'alarme...",
+  a5:"*shkt*",
+  a6:"Maurice: M'a virer d'bord calice!",
+  a7:"Louis-Joseph: Hey ciboire!",
+  a8:"Maurice: Tu m'fais pogner l'ch'min dans l'bois!",
+  a9:"Maurice: Avec la trampoline de mon gars dans l'trailer   en arrière!",
+  a10:"Maurice: pis y pleut comme une chienne!",
+  a11:"Maurice: J'commence à m'dire que t'es p'tête tombée       su'à'tête!",
+  a12:"Louis-Joseph: S't'es la dernière soirée, tu l'sais bin      qu'a part demain.",
+  a13:"Louis-Joseph: La madame au dep m'a dit que la grand     route est bloquée fac on passe par icitte, c'est toute.",
+  a14:"Maurice: Hmm... J'comprends même pas qu'est-ce tu veuxfaire.",
+  a15:"Louis-Joseph: Ciboire, j't'ai déjà toute expliqué...",
+  a16:"Louis-Joseph: La route est farmé, on passe par le         chemin Tramblay.",
+  a17:"Louis-Joseph: Rendu dans le parking du sentier des      moulins, On utilise la trampoline du p'ti Michel",
+  a18:"Louis-Joseph: pis tu t'arranges pour que j'me ramasse en haut d'la falaise.",
+  a19:"Louis-Joseph: Anyway, s'pas dangereux, j'ai amené       l'grand foulard de Germaine pour ralentir ma chute.",
+  a20:"Maurice: Eh sacrament... Pis tu penses qu'à va faire      quoi quand a va voir ta vielle gueule à sa porte?",
+  a21:"...",
+  a22:"Louis-Joseph: Ralentis, c'est icitte à gauche! r'garde la pancarte!",
+  totalDialogues: 22
+  }
 
-let diaA = [];
+//Did not manage to automate that operation sor here are all the arrays!
+let diaA1 = [];
+let diaA2 = [];
+let diaA3 = [];
+let diaA4 = [];
+let diaA5 = [];
+let diaA6 = [];
+let diaA7 = [];
+let diaA8 = [];
+let diaA9 = [];
+let diaA10 = [];
+let diaA11 = [];
+let diaA12 = [];
+let diaA13 = [];
+let diaA14 = [];
+let diaA15 = [];
+let diaA16 = [];
+let diaA17 = [];
+let diaA18 = [];
+let diaA19 = [];
+let diaA20 = [];
+let diaA21 = [];
+let diaA22 = [];
+
+//dialogues script
+/*
+*Écoûte!
+***RADIO: La tempête qui s'abat sur l'ouest de la province
+***RADIO: fait des ravages. Les dommages causés par des vents
+***RADIO: de plus de 100 km/h bloque l'accès à plusieurs
+***RADIO: routes. Hydro Québec est en état d'alarme...
+*** *shkt*
+* M'a virer d'bord calice!
+** Hey ciboire!
+* Tu m'fais pogner l'ch'min dans l'bois!
+* Avec la trampoline de mon gars dans l'trailer en arrière!
+* pis y pleut comme une chienne!
+* J'commence à m'dire que t'es p'tête tombée su'à'tête!
+** S't'es la dernière soirée, tu l'sais bin à part demain.
+**La madame au dep m'a dit que la grand route était bloquée
+**fac on passe par icitte, c'est toute.
+*Hmm... J'comprends même pas qu'est-ce tu veux faire.
+**Ciboire, j't'ai déjà toute expliqué...
+**La route est famré, on passe par le chemin Tramblay.
+**Rendu dans le parking du sentier des moulins,
+**On utilise la trampoline du p'ti Michel
+**pis tu t'arranges pour que j'me ramasse en haut d'la falaise
+**Anyway, s'pas dangereux, j'ai amené le grand foulard
+**de Germaine pour pogner dans l'vent.
+*Pis tu penses qu'à va faire quoi quand a va voir ta
+*vielle gueule à sa porte?
+**...
+**Ralentis, c'est icitte à gauche! r'garde la pancarte!
+
+
+*/
 
 let thunder = {
   state: false,
@@ -452,11 +533,23 @@ function createArrays() {
     rainDrops.push(rainDrop);
   }
 
-  //Arrays for dialogue in the intro
-  for (let i = 0; i < dia.a.length; i++) {
-    let letter = dia.a.substring(i, i + 1);
-    diaA.push(letter);
+  //Creates the arrays of letters for the intro dialogues
+  for (let i = 1; i < dia.totalDialogues; i++) {
+    let currentText = eval(`dia.a` + i);
+    let currentArray = eval(`diaA` + i);
+
+    for (let j = 0; j < currentText.length; j++) {
+      let letter = currentText.substring(j, j + 1);
+      currentArray.push(letter);
+    }
   }
+
+
+  //Arrays for dialogue in the intro
+  // for (let i = 0; i < dia.a1.length; i++) {
+  //   let letter = dia.a1.substring(i, i + 1);
+  //   diaA1.push(letter);
+  // }
 }
 
 //Displays the title screen image
@@ -506,29 +599,36 @@ function introScene() {
   else {
     image(img.introCarLights, 0, 0 + 4);
   }
-  pop();
 
+  //Text for dialogues (dia)
+  pop();
   push();
-  textSize(32);
+  textSize(20);
   fill(255);
   textFont(dia.yoster);
 
-  if (frameCount % dia.textSpeedSlow === 0 && dia.delay <= dia.a.length) {
+  let currentText = eval(`dia.a` + dia.textSwitch);
+  let currentTextArray = eval(`diaA` + dia.textSwitch);
+
+  if (frameCount % dia.textSpeed === 0 && dia.delay <= currentText.length) {
     dia.delay++;
   }
   let offset = 0
   for (let i = 0; i < dia.delay; i++) {
-    text(diaA[i], 50 + offset, 50);
-    offset += textWidth(diaA[i]);
+
+    if (25 + offset > width - 25) {
+      text(currentTextArray[i], 25 + offset - width + 43, 70);
+    }
+    else {
+      text(currentTextArray[i], 25 + offset, 50);
+    }
+
+    offset += textWidth(currentTextArray[i]);
+
   }
-
-
-
-
-  // for (let i = 0; i < dia.a.length; i++) {
-  //   text(diaA[i], 50 + offset, 50);
-  //   offset += textWidth(diaA[i]);
-  // }
+  if (dia.delay === currentText.length) {
+    dia.done = true;
+  }
   pop();
 }
 
@@ -1187,14 +1287,168 @@ function keyPressed() {
     snd.lightRain.loop();
     state = `title`;
   }
-  if (state === `title` && stateDelay > 15) {
+  if (state === `title` && stateDelay > 1) {
     stateDelay = 0;
     snd.titleMusic.stop();
     snd.lightRain.stop();
     snd.carRain.loop();
     state = `intro`;
+    //dia.textSwitch++;
   }
-  else if (state === `intro` && stateDelay > 15) {
+
+  else if (state === `intro` && stateDelay > 1) {
+    if (dia.textSpeed === dia.slow && dia.done === false) {
+      stateDelay = 0;
+      dia.textSpeed = dia.fast;
+    }
+    else if (dia.done === true) {
+    stateDelay = 0;
+    dia.done = false;
+    dia.delay = 0;
+    dia.textSpeed = dia.slow;
+    dia.textSwitch++;
+    }
+
+    if (dia.textSwitch === dia.totalDialogues) {
+    stateDelay = 0;
+    state = `introEnd`;
+    }
+  }
+
+  /*
+  else if (state === `intro` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.fast;
+  }
+  else if (state === `intro` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `c2`;
+  }
+  else if (introState === `c2` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `c3`;
+  }
+  else if (introState === `c3` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `c4`;
+  }
+  else if (introState === `c4` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `c5`;
+  }
+  else if (introState === `c5` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b1`;
+  }
+  else if (introState === `b1` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a2`;
+  }
+  else if (introState === `a2` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b3`;
+  }
+  else if (introState === `b3` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b4`;
+  }
+  else if (introState === `b4` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b5`;
+  }
+  else if (introState === `b5` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a4`;
+  }
+  else if (introState === `a4` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a5`;
+  }
+  else if (introState === `a5` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a6`;
+  }
+  else if (introState === `a6` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b7`;
+  }
+  else if (introState === `b7` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a7`;
+  }
+  else if (introState === `a7` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a8`;
+  }
+  else if (introState === `a8` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a9`;
+  }
+  else if (introState === `a9` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a10`;
+  }
+  else if (introState === `a10` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a11`;
+  }
+  else if (introState === `a11` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a12`;
+  }
+  else if (introState === `a12` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a13`;
+  }
+  else if (introState === `a13` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b8`;
+  }
+  else if (introState === `b8` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `b9`;
+  }
+  else if (introState === `b9` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a14`;
+  }
+  else if (introState === `a14` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `a15`;
+  }
+  else if (introState === `a15` && stateDelay > 1) {
+    stateDelay = 0;
+    dia.textSpeed = dia.slow;
+    introState = `end`;
+  }
+  */
+
+  else if (state === `introEnd` && stateDelay > 1) {
+    stateDelay = 0;
     snd.carRain.stop();
     snd.titleMusic.stop();
     snd.lightRain.stop();
