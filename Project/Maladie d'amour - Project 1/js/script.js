@@ -33,10 +33,10 @@ TODO LIST Project 1
 
 UPDATED TODO LIST:
 * Do the Outro
-- Add the controls informations
-- Add the voice Acting
+* Add the controls informations
+* Add the voice Acting
 - Fix the car collisions
-- Fix the decelerate function for the car
+* Fix the decelerate function for the car
 * Fix the difficulty level switch event
 - Fix the Parachute vs Bird
 - Bonus: adding animated whippers to the intro scene
@@ -48,7 +48,7 @@ let canvasWidth = 650;
 let canvasHeight = 500;
 let collision = 0;
 
-//Images This could very much be a single object
+//Images
 let img = {
   loverSpriteJump: undefined,
   loverSpriteStd: undefined,
@@ -88,7 +88,7 @@ let img = {
   zoom: 0
 }
 
-//Sound
+//Sounds
 let snd = {
   titleMusic: undefined,
   gameMusic: undefined,
@@ -117,7 +117,7 @@ let snd = {
   stress: undefined
 }
 
-//dialogues
+//sounds for dialogues
 let sndDia = {
   a1: undefined,
   a2: undefined,
@@ -153,6 +153,7 @@ let state = `titleNoSound`;
 let introState = false;
 let carMoving = 0;
 
+//Keeps track of failed attempt and switches the difficulty setting.
 let difficulty = {
   easy: false,
   counter: 0,
@@ -184,19 +185,19 @@ let dia = { //dia means dialogue
   a11:"MLa j'commence à m'dire que t'es p'tête tombée                  su'à'tête!",
   a12:"LS't'es la dernière soirée, tu l'sais qu'demain, a part         pis a r'viens plus.",
   a13:"LLa madame au dep m'a dit que la grand route est bloquéefac on passe par icitte, c'est toute.",
-  a14:"MHmm... J'comprends même pas qu'est-ce tu veuxfaire.",
+  a14:"MHmm... J'comprends même pas qu'est-ce tu veux faire.",
   a15:"LCiboire, j't'ai déjà toute expliqué...",
-  a16:"LLa route est farmé, on passe par le chemin Tramblay.",
+  a16:"LLa route est farmé, on passe par le chemin Tremblay.",
   a17:"LRendu dans le parking du sentier des moulins, On prend la trampoline du p'ti Michel",
   a18:"Lpis tu t'arranges pour que j'me ramasse en haut d'la     falaise.",
   a19:"LAnyway, chie pas dans tes culottes. En cas que j'tombe, j'ai ramassé l'gros foulard à ma mère.",
   a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
   a21:"L...",
   a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
-  totalDialogues: 22
+  totalDialogues: 2
   }
 
-//Did not manage to automate that operation sor here are all the arrays!
+//Did not manage to automate this operation so here are all the arrays for the dialogue!
 let diaA1 = [];
 let diaA2 = [];
 let diaA3 = [];
@@ -322,6 +323,13 @@ let trampo = {
   mouseTrigger: 0
 }
 
+let car = {
+  x: undefined,
+  y: undefined,
+  h: 17,
+  w: 100
+}
+
 let wall = {
   x:450,
   y:50,
@@ -387,7 +395,7 @@ let birdTriangle = {
   y3: birdSign.yRect
 }
 
-let endingEvent = {
+let endingEvent = { //way too many booleans to control the game's ending... Did not find a more efficient method in time.
   a: true,
   b: false,
   c: false,
@@ -405,7 +413,7 @@ const RAIN_AMOUNT = 300;
 let rainDrops = [];
 
 /**
-PreLoad images and music
+PreLoad images and sounds, dialogues and fonts
 */
 function preload() {
   dia.yoster = loadFont("assets/fonts/yoster.ttf");
@@ -503,7 +511,7 @@ function preload() {
 }
 
 /**
-Setup canvas and starting properties fo wall, ground, trampo and bird
+Setup canvas and starting properties fo wall, ground, trampo, tree and bird.
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
@@ -523,10 +531,12 @@ function setup() {
   //Set the bird properties
   bird.distX = bird.endX - bird.beginX;
   bird.distY = bird.endY - bird.beginY;
+  car.x = trampo.x - 291/2 //The width of the image used for the car (Puts the car.x in the center of the car sprite)
+  car.y = trampo.y - 24 //Height of the car sprite image
 }
 
 /**
-Deals with functions and parts of the game that I haven't put in functions like the bird trigger
+Deals with functions, game state and the birdTrigger (that should be in it's own function).
 */
 function draw() {
   background(0, 1, 10);
@@ -632,22 +642,22 @@ function draw() {
 
 
 
-  // console.log(`wind.xSpeed: ${wind.xSpeed}`);
-  // console.log(`lover.y: ${lover.y}`);
-  // console.log(`tree.rotation: ${tree.rotation}`);
-  // console.log(`tree.go: ${tree.go}`);
-  // console.log(`carMoving: ${carMoving}`);
-  // console.log(`dia.textSwitch: ${dia.textSwitch}`);
-  // console.log(`img.delay: ${img.delay}`);
-  // console.log(`state: ${state}`);
-  console.log(`A: ${endingEvent.a}`);
-  console.log(`B: ${endingEvent.b}`);
-  console.log(`C: ${endingEvent.c}`);
-  console.log(`D: ${endingEvent.d}`);
-  console.log(`E: ${endingEvent.e}`);
-  console.log(`F: ${endingEvent.f}`);
-  console.log(`G: ${endingEvent.g}`);
-  console.log(`H: ${endingEvent.h}`);
+  console.log(`lover.x: ${lover.x}`);
+  console.log(`lover.y: ${lover.y}`);
+  console.log(`car.x: ${trampo.x + car.w/2}`);
+  console.log(`car.y: ${trampo.y - car.h/2}`);
+  console.log(`carMoving: ${carMoving}`);
+  console.log(`dia.textSwitch: ${dia.textSwitch}`);
+  console.log(`img.delay: ${img.delay}`);
+  console.log(`state: ${state}`);
+  // console.log(`A: ${endingEvent.a}`);
+  // console.log(`B: ${endingEvent.b}`);
+  // console.log(`C: ${endingEvent.c}`);
+  // console.log(`D: ${endingEvent.d}`);
+  // console.log(`E: ${endingEvent.e}`);
+  // console.log(`F: ${endingEvent.f}`);
+  // console.log(`G: ${endingEvent.g}`);
+  // console.log(`H: ${endingEvent.h}`);
 }
 
 //Creates the Arrays in the setup of the program
@@ -745,7 +755,11 @@ function introScene() {
     else {
       image(img.introCarLights, 0, carMoving + 4);
     }
+    if (carMoving === 0) {
+      snd.carAccelerates.play();
+    }
     carMoving += 3;
+
     if (carMoving > 200) {
       stateDelay = 0;
       state = `introEnd`;
@@ -1061,6 +1075,12 @@ function loverBounce() {
     lover.y = ground.y - lover.size/2;
     lover.vy = -(lover.vy) + 2;
   }
+  //Bounce on the car
+  else if (lover.y + lover.size/2 >= trampo.y - car.h && lover.x + lover.size >= trampo.x - trampo.w/2 - car.w && lover.x - lover.size <= trampo.x - trampo.w/2 - 40) {
+    lover.y = car.y - lover.size/2;
+    lover.vy = -(lover.vy) + 2;
+  }
+
   //Check if the lover has stopped bouncing
   if (lover.y >= 472 && lover.y <= 475) {
     lover.counter += 1;
@@ -1346,9 +1366,9 @@ function carControl() {
   if (state === `onGround`){
       if (trampo.x + trampo.w/2 > lover.x - lover.size/2 && trampo.x - trampo.w/2 < lover.x + lover.size/2) {
         trampo.vx = 0;
-        trampo.x -= 1;
+        trampo.x -= 1.5;
       }
-      if (trampo.x - trampo.w/2 < lover.x + lover.size/2 && trampo.x + trampo.w/2 > lover.x - lover.size/2) {
+      if (trampo.x - trampo.w/2 - car.w - 20 < lover.x + lover.size/2 && trampo.x + trampo.w/2 > lover.x - lover.size/2) {
         trampo.vx = 0;
         trampo.x += 1.5;
       }
@@ -1762,6 +1782,7 @@ function ending() {
   imageMode(CENTER);
   translate(width/2, height/2);
 
+  //Plays the THUNDER sound
   if (endingEvent.e && snd.stress.isPlaying() === false) {
     snd.lightRain.loop();
     snd.thunderClose.play();
@@ -1773,6 +1794,7 @@ function ending() {
     thunder.count = 0;
   }
 
+  //Displays the Thunder visual effect
   if (endingEvent.f) {
     thunder.count++;
 
@@ -1793,6 +1815,7 @@ function ending() {
 
   }
 
+  //Plays the footsteps and HeavyRain
   if (endingEvent.a) {
     snd.gameMusic.stop();
     snd.carEngine.stop();
@@ -1803,20 +1826,21 @@ function ending() {
     endingEvent.a = false;
     endingEvent.b = true;
   }
-  if (endingEvent.b && snd.footsteps.isPlaying() === false) {
+  if (endingEvent.b && snd.footsteps.isPlaying() === false) { //Plays the doorBang
     snd.doorBang.play();
     endingEvent.b = false;
     endingEvent.c = true;
     endingEvent.d = true;
   }
 
-  if (endingEvent.d && snd.doorBang.isPlaying() === false) {
+  if (endingEvent.d && snd.doorBang.isPlaying() === false) { //Plays the stress sound
     snd.heavyRain.stop();
     snd.stress.play();
     endingEvent.d = false;
     endingEvent.e = true;
   }
 
+  //Displays the house
   if (endingEvent.c && snd.doorBang.isPlaying() === false) {
 
       image(img.endingSilouette, 0, 0);
@@ -1825,18 +1849,6 @@ function ending() {
       if (snd.stress.isPlaying()) {
         image(img.endingDoor, 0, 0);
       }
-      // if (img.delay < 300 && endingEvent.d === false) {
-      //   image(img.endingDoor, 0, 0);
-      //   snd.doorOpen.play();
-      //   img.delay++;
-      // }
-      // else if (endingEvent.d === false) {
-      //   snd.heavyRain.stop();
-      //   snd.doorOpen.stop();
-      //   img.delay = 0;
-      //   endingEvent.d = true;
-      //   endingEvent.e = true;
-      // }
 
     if (frameCount % 30 < 15/2) {
       image(img.endingBackground1, 0, 0);
@@ -1848,6 +1860,7 @@ function ending() {
       image(img.endingBackground3, 0, 0);
     }
 
+    //Displays the final images with hardcoded numbers :(
     if (endingEvent.g && snd.thunderClose.isPlaying() === false) {
       img.delay++;
       image(img.whoAreYou, 0, 0);
@@ -1866,9 +1879,9 @@ function ending() {
         //if (img.delay === 349) {snd.endMusic.play();}
         if (img.delay > 650) {
           snd.lightRain.stop();
-          snd.doorOpen.play();
+          snd.doorOpen.play(); //Used to create a weird sound because it plays every frame
           img.zoom += 2;
-          img.deception.resize(width+img.zoom, height+img.zoom);
+          img.deception.resize(width+img.zoom, height+img.zoom); //Zoom on the guys face with distortion caused by the width and height being different
         }
         if (img.delay > 900) {
           snd.doorOpen.stop();
@@ -1879,28 +1892,13 @@ function ending() {
       }
     }
 
+    //Final blackScreen and music
     if (endingEvent.h) {
       //snd.doorOpen.stop();
+      snd.lightRain.stop();
       snd.endMusic.play();
       endingEvent.h = false;
     }
 
   }
-
-
-
-  // image(img.whoAreYou, width/2, height/2);
-  //
-  // if (img.delay > 150 && img.delay < 300) {
-  //   image(img.noLove, width/2, height/2);
-  // }
-  // else if (img.delay > 300) {
-  //   image(img.deception, width/2, height/2);
-  //   if (img.delay === 349) {snd.endMusic.play();}
-  //   if (img.delay > 350) {
-  //     snd.gameMusic.stop();
-  //     img.zoom += 2;
-  //     img.deception.resize(width+img.zoom, height+img.zoom);
-  //   }
-  // }
 }
