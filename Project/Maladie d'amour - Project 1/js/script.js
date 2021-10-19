@@ -4,6 +4,7 @@ Lucien Cusson-Fradet
 
 This Project uses the code of Exercice 3 as a starting point.
 The program is part animation, part game.
+!! To avoid sound glitches, please use with Firefox !!
 
 KEYBOARD CONTROLS are displayed on the game screen but, if it's a bit confusing, here they are:
 - SPACEBAR: Jump OR Deploy Parachute OR Hide Parachute OR Triggers the Bird

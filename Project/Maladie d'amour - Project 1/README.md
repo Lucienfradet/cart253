@@ -4,6 +4,7 @@ La tempête
 Lucien Cusson-Fradet
 
 The program is part animation, part game.
+!! To avoid sound glitches, please use with Firefox !!
 
 KEYBOARD CONTROLS are displayed on the game screen but, if it's a bit confusing, here they are:
 - SPACEBAR: Jump / Deploy Parachute / Hide Parachute / Triggers the Bird
