@@ -77,6 +77,13 @@ let img = {
   endingBackground1: undefined,
   endingSilouette: undefined,
   endingDoor: undefined,
+  accelerateur: undefined,
+  accelerateurActive: undefined,
+  frein: undefined,
+  freinActive: undefined,
+  shift: undefined,
+  parachute: undefined,
+  parachuteActive: undefined,
   delay: 0,
   zoom: 0
 }
@@ -137,7 +144,8 @@ let sndDia = {
   laisseFaire: undefined,
   ouvreLaPorte: undefined,
   sacrament: undefined,
-  tabarnack: undefined
+  tabarnack: undefined,
+  reconnait: undefined
 }
 
 //State of the program
@@ -401,6 +409,7 @@ PreLoad images and music
 */
 function preload() {
   dia.yoster = loadFont("assets/fonts/yoster.ttf");
+
   img.loverSpriteStd = loadImage("assets/images/loverSpriteStd.png");
   img.loverSpriteJump = loadImage("assets/images/loverSpriteJump.png");
   img.loverSpriteRot = loadImage("assets/images/loverSpriteRot.png");
@@ -428,6 +437,14 @@ function preload() {
   img.endingBackground3 = loadImage("assets/images/endingBackground3.png");
   img.endingSilouette = loadImage("assets/images/endingSilouette.png");
   img.endingDoor = loadImage("assets/images/endingDoor.png");
+  img.accelerateur = loadImage("assets/images/accelerateur.png");
+  img.accelerateurActive = loadImage("assets/images/accelerateurActive.png");
+  img.frein = loadImage("assets/images/frein.png");
+  img.freinActive = loadImage("assets/images/freinActive.png");
+  img.parachute = loadImage("assets/images/parachute.png");
+  img.parachuteActive = loadImage("assets/images/parachuteActive.png");
+  img.shift = loadImage("assets/images/shift.png");
+
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
@@ -480,6 +497,7 @@ function preload() {
   sndDia.ouvreLaPorte = loadSound("assets/sounds/dialogues/ouvreLaPorte.wav");
   sndDia.sacrament = loadSound("assets/sounds/dialogues/sacrament.wav");
   sndDia.tabarnack = loadSound("assets/sounds/dialogues/tabarnack.wav");
+  sndDia.reconnait = loadSound("assets/sounds/dialogues/reconnait.wav");
 
 
 }
@@ -820,6 +838,36 @@ function backgroundElements() {
   imageMode(CENTER);
   image(img.gameBackground, width/2, height/2);
   pop();
+
+  push();
+  translate(width/2, height/2);
+  imageMode(CENTER);
+
+  if (keyIsDown(87)) {
+    image(img.accelerateurActive, 0, 0);
+  }
+  else {
+    image(img.accelerateur, 0, 0);
+  }
+
+  if (keyIsDown(83)) {
+    image(img.freinActive, 0, 0);
+  }
+  else {
+    image(img.frein, 0, 0);
+  }
+
+  if (keyIsDown(32)) {
+    image(img.parachuteActive, 0, 0);
+  }
+  else {
+    image(img.parachute, 0, 0);
+  }
+
+  image(img.shift, 0, 0);
+  pop();
+
+
 }
 
 //Controls the tree that falls the first time you hit the left limit with the car
@@ -1212,6 +1260,21 @@ function carControl() {
     }
   }
 
+  //Controls the deceleration after a keyRelease
+  if (trampo.decelerationState) {
+    if (trampo.vx > 0) {
+      trampo.vx -= trampo.deceleration;
+      if (trampo.vx < 0) {trampo.decelerationState = false;}
+    }
+    else if (trampo.vx < 0) {
+      trampo.vx += trampo.deceleration;
+      if (trampo.vx > 0) {trampo.decelerationState = false;}
+    }
+    if (trampo.vx === 0) {
+      trampo.decelerationState = false;
+    }
+  }
+
   //Yet Another test with car controls using A and D keys and Shift as a Breaks
   /*
   //Starts the car if iddle
@@ -1340,14 +1403,15 @@ function easeUp() {
   }
 
   if (difficulty.counter === 1) {
-
+    sndDia.sacrament.play();
     difficulty.counter = 2;
   }
   if (difficulty.counter === 3) {
-
+    sndDia.tabarnack.play();
     difficulty.counter = 4;
   }
   if (difficulty.counter === 5) {
+    sndDia.laisseFaire.play();
     difficulty.easy = true;
     trampo.mouseTrigger = mouseX;
     difficulty.counter = 6;
@@ -1391,10 +1455,10 @@ function trampoDraw() {
   //Temporaire? Illustrates the active gear
   textSize(32);
   if (trampo.gear) {
-    text(`D`, width - 40, height - 20);
+    text(`D`, width - 47, height - 35);
   }
   else {
-    text(`R`, width - 40, height - 20);
+    text(`R`, width - 47, height - 35);
   }
   pop();
 }
@@ -1469,28 +1533,33 @@ function keyPressed() {
   }
 
   else if (state === `intro` && stateDelay > 1) {
-    if (dia.textSpeed === dia.slow && dia.done === false && dia.textSwitch !== dia.totalDialogues) {
+    if (dia.textSpeed === dia.slow && dia.done === false) {
       stateDelay = 0;
       dia.textSpeed = dia.fast;
     }
-    else if (dia.done === true || dia.textSpeed === dia.fast && dia.textSwitch < dia.totalDialogues) {
-      stateDelay = 0;
-      dia.done = false;
-      dia.delay = 0;
-      dia.textSpeed = dia.slow;
-      dia.textSwitch++;
+    else if (dia.textSwitch < dia.totalDialogues) {
+      if (dia.done === true || dia.textSpeed === dia.fast) {
+        dia.textSwitch++;
+        stateDelay = 0;
+        dia.done = false;
+        dia.delay = 0;
+        dia.textSpeed = dia.slow;
 
-      //Stop the last dialogue
-      let pastTextSwitch = dia.textSwitch - 1;
-      let pastDialogue = eval(`sndDia.a` + pastTextSwitch);
-      pastDialogue.stop();
+        //Stop the last dialogue
+        let pastTextSwitch = dia.textSwitch - 1;
+        let pastDialogue = eval(`sndDia.a` + pastTextSwitch);
+        pastDialogue.stop();
 
-      //Play the new dialogue
-      let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
-      currentDialogue.play();
+        //Play the new dialogue
+        let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
+        currentDialogue.play();
 
+      }
     }
+
     else if (dia.textSwitch === dia.totalDialogues) {
+    let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
+    currentDialogue.stop();
     stateDelay = 0;
     introState = true;
     }
@@ -1728,6 +1797,7 @@ function ending() {
     snd.gameMusic.stop();
     snd.carEngine.stop();
     snd.heavyRain.loop();
+    sndDia.ouvreLaPorte.play();
     snd.footsteps.play();
 
     endingEvent.a = false;
@@ -1781,20 +1851,26 @@ function ending() {
     if (endingEvent.g && snd.thunderClose.isPlaying() === false) {
       img.delay++;
       image(img.whoAreYou, 0, 0);
-
-      if (img.delay > 150 && img.delay < 300) {
-        image(img.noLove, 0, 0);
+      if (img.delay === 1) {
+        snd.stress.play();
       }
-      else if (img.delay > 300) {
+
+      if (img.delay > 200 && img.delay < 550) {
+        image(img.noLove, 0, 0);
+        if (img.delay === 500) {
+          sndDia.reconnait.play();
+        }
+      }
+      else if (img.delay > 550) {
         image(img.deception, 0, 0);
         //if (img.delay === 349) {snd.endMusic.play();}
-        if (img.delay > 390) {
+        if (img.delay > 650) {
           snd.lightRain.stop();
           snd.doorOpen.play();
           img.zoom += 2;
           img.deception.resize(width+img.zoom, height+img.zoom);
         }
-        if (img.delay > 540) {
+        if (img.delay > 900) {
           snd.doorOpen.stop();
           endingEvent.g = false;
           endingEvent.h = true;
