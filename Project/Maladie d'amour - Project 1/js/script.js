@@ -88,6 +88,7 @@ let img = {
   shift: undefined,
   parachute: undefined,
   parachuteActive: undefined,
+  mouse: undefined,
   delay: 0,
   zoom: 0
 }
@@ -198,7 +199,7 @@ let dia = { //dia means dialogue
   a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
   a21:"L...",
   a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
-  totalDialogues: 22
+  totalDialogues: 2
   }
 
 //Did not manage to automate this operation so here are all the arrays for the dialogue!
@@ -456,6 +457,7 @@ function preload() {
   img.parachute = loadImage("assets/images/parachute.png");
   img.parachuteActive = loadImage("assets/images/parachuteActive.png");
   img.shift = loadImage("assets/images/shift.png");
+  img.mouse = loadImage("assets/images/mouse.png");
 
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
@@ -475,7 +477,7 @@ function preload() {
   snd.carEngine = loadSound("assets/sounds/carEngine.wav");
   snd.carGearSwitch = loadSound("assets/sounds/carGearSwitch.wav");
   snd.carAccelerates = loadSound("assets/sounds/carAccelerates.wav");
-  snd.carRain = loadSound("assets/sounds/carRain.wav"); 
+  snd.carRain = loadSound("assets/sounds/carRain.wav");
   snd.heavyRain = loadSound("assets/sounds/heavyRain.wav");
   snd.footsteps = loadSound("assets/sounds/footsteps.wav");
   snd.thunderClose = loadSound("assets/sounds/thunderClose.wav");
@@ -858,22 +860,11 @@ function backgroundElements() {
   pop();
 
   push();
+
+
+
   translate(width/2, height/2);
   imageMode(CENTER);
-
-  if (keyIsDown(87)) {
-    image(img.accelerateurActive, 0, 0);
-  }
-  else {
-    image(img.accelerateur, 0, 0);
-  }
-
-  if (keyIsDown(83)) {
-    image(img.freinActive, 0, 0);
-  }
-  else {
-    image(img.frein, 0, 0);
-  }
 
   if (keyIsDown(32)) {
     image(img.parachuteActive, 0, 0);
@@ -882,7 +873,38 @@ function backgroundElements() {
     image(img.parachute, 0, 0);
   }
 
-  image(img.shift, 0, 0);
+  if (easeUp() === false) {
+    if (keyIsDown(87)) {
+      image(img.accelerateurActive, 0, 0);
+    }
+    else {
+      image(img.accelerateur, 0, 0);
+    }
+
+    if (keyIsDown(83)) {
+      image(img.freinActive, 0, 0);
+    }
+    else {
+      image(img.frein, 0, 0);
+    }
+
+    push();
+    //Temporaire? Illustrates the active gear
+    textSize(32);
+    fill(255);
+    textFont(dia.yoster);
+    if (trampo.gear) {
+      text(`D`, width/2 - 47, height/2 - 35);
+    }
+    else {
+      text(`R`, width/2 - 47, height/2 - 35);
+    }
+    pop();
+    image(img.shift, 0, 0);
+  }
+  else {
+    image(img.mouse, 0, 0);
+  }
   pop();
 
 
@@ -1474,15 +1496,6 @@ function trampoDraw() {
   }
   else {
     image(trampo.carSprite, trampo.x, trampo.y);
-  }
-
-  //Temporaire? Illustrates the active gear
-  textSize(32);
-  if (trampo.gear) {
-    text(`D`, width - 47, height - 35);
-  }
-  else {
-    text(`R`, width - 47, height - 35);
   }
   pop();
 }
