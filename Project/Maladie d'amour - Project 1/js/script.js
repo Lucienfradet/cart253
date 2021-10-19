@@ -566,8 +566,10 @@ function draw() {
       break;
 
     case `introEnd`:
-      rainDropEffect();
+      //rainDropEffect();
+      controlsTextBox();
       stateDelay++
+      break;
 
     case `bouncing`:
       tunderEffect();
@@ -723,8 +725,9 @@ function titleScreen() {
     push();
     fill(255);
     textAlign(CENTER);
+    textFont(dia.yoster);
     textSize(17);
-    text(`Press any key`, width/2, height/2);
+    text(`Appuyez sur une touche`, width/2, height/2);
     pop();
   }
 }
@@ -1550,6 +1553,32 @@ function birdTrigger() {
     text(birdSign.text, birdSign.xRect, birdSign.yRect + birdSign.h/2 - 4);
     pop();
   }
+}
+
+//Text box explaining the controls
+function controlsTextBox() {
+  push();
+  textAlign();
+  textFont(dia.yoster);
+  translate(width/2, height/2);
+  textSize(15);
+
+  push();
+  rectMode(CENTER);
+  strokeWeight(5);
+  stroke(255);
+  noFill();
+  rect(0, 0, width - 230, height - 330);
+  pop();
+
+  fill(255);
+  text(`W: Pédale d'Accélérateur
+S: Pédale de Frein
+SHIFT: Levier de vitesse, Drive ou Reverse
+SPACEBAR: Saut OU Parachute
+
+Appuyer sur une touche pour continuer`, -width/4, 0 - 45);
+  pop();
 }
 
 //Controls the keyboard inputs
