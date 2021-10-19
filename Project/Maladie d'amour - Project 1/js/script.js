@@ -1,24 +1,29 @@
 /**
-Le grand Amour!
+La tempête
 Lucien Cusson-Fradet
 
-I've run out of time a little bit. The program is missing some key information and needs a little explaining and imagination to understand it.
+This Project uses the code of Exercice 3 as a starting point.
+The program is part animation, part game.
 
-- On the title screen, pressing any key will start the title music. Doing that again will start the game.
-- On the game screen, a white ball represent a desperate lover that is trying to get to the top of a cliff and reach his loved one's house (the white rectangle).
-- Using the SPACEBAR, the lover jumps in the air and starts bouncing. If he bounces on the floor, he looses momentum until he comes to a stop.
-- Using A and D keys allows his partner in the "car" to move. The car is deleberatly hard to control in order to make the lover's mission hard.
-  (Every press of the A and D keys accelerates or decelerates the car.)
-- The little white line at the bottom represents a trampoline attached to the invisible car. If the lover bounces in it's center, he goes higher. Whatch the sides!
-- If the Lover reaches a certain height, using the SPACEBAR again will trigger a flying bird (white ball again) and if the two connect, the lover is dropped at his loved one's house.
-- The Ending scene ensues.
+KEYBOARD CONTROLS are displayed on the game screen but, if it's a bit confusing, here they are:
+- SPACEBAR: Jump OR Deploy Parachute OR Hide Parachute OR Triggers the Bird
+- SHIFT: Shifts gears of the car (Between Drive and Reverse)
+- W: Gas pedal
+- S: Break pedal
+- BACKSPACE: secret key, allows to skip the game and witness the ending.
 
-As you can experience for yourself, finding love is pretty f**ing hard.
-If you are ready to give up, you can press BACKSPACE during gameplay to go directly to the ending.
+!!!DISCLAIMER!!! The characters in the game are voiced and use offensive québécois swear words! !!!DISCLAIMER!!!
 
-Thank you!
-I hope to upgrade this little program further in a near future!
+Song Credit:
+  Chaplin, Charlie. "Afternoon - From `City Lights`" Charlie Chaplin Film Music Anthology, ED., Roy Export SAS, 2019
+  2. Spotify, URL(https://open.spotify.com/track/12WdxB3jtDP61Awq3xuOql?si=69863b423a964a10)
 
+  Classels, Les. "Avant de me dire adieu" Les 16 Plus Grands Succès, ED., Disques Mérite, 1997
+  16. Spotify, URL(https://open.spotify.com/track/2gBAkCt13G1Di0398fIgTE?si=3ca45b0aa8fd421e)
+
+*/
+
+/* TODOLIST
 TODO LIST Project 1
 - Add graphics to the game
 - Add an intro section with animated rain drops?
@@ -35,12 +40,11 @@ UPDATED TODO LIST:
 * Do the Outro
 * Add the controls informations
 * Add the voice Acting
-- Fix the car collisions
+* Fix the car collisions
 * Fix the decelerate function for the car
 * Fix the difficulty level switch event
 - Fix the Parachute vs Bird
 - Bonus: adding animated whippers to the intro scene
-
 */
 
 "use strict";
@@ -194,7 +198,7 @@ let dia = { //dia means dialogue
   a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
   a21:"L...",
   a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
-  totalDialogues: 2
+  totalDialogues: 22
   }
 
 //Did not manage to automate this operation so here are all the arrays for the dialogue!
