@@ -32,11 +32,14 @@ TODO LIST Project 1
 - Adding choice in the dialogue?
 
 UPDATED TODO LIST:
-- Do the Outro
+* Do the Outro
+- Add the controls informations
 - Add the voice Acting
 - Fix the car collisions
 - Fix the decelerate function for the car
-- Fix the difficulty level switch event
+* Fix the difficulty level switch event
+- Fix the Parachute vs Bird
+- Bonus: adding animated whippers to the intro scene
 
 */
 
@@ -69,6 +72,11 @@ let img = {
   introCar: undefined,
   introCarLights: undefined,
   introCarInterior: undefined,
+  endingBackground1: undefined,
+  endingBackground1: undefined,
+  endingBackground1: undefined,
+  endingSilouette: undefined,
+  endingDoor: undefined,
   delay: 0,
   zoom: 0
 }
@@ -93,12 +101,49 @@ let snd = {
   carEngine: undefined,
   carGearSwitch: undefined,
   carAccelerates: undefined,
-  carRain: undefined
+  carRain: undefined,
+  heavyRain: undefined,
+  footsteps: undefined,
+  thunderClose: undefined,
+  doorOpen: undefined,
+  doorBang: undefined,
+  stress: undefined
+}
+
+//dialogues
+let sndDia = {
+  a1: undefined,
+  a2: undefined,
+  a3: undefined,
+  a4: undefined,
+  a6: undefined,
+  a5: undefined,
+  a7: undefined,
+  a8: undefined,
+  a9: undefined,
+  a10: undefined,
+  a11: undefined,
+  a12: undefined,
+  a13: undefined,
+  a14: undefined,
+  a15: undefined,
+  a16: undefined,
+  a17: undefined,
+  a18: undefined,
+  a19: undefined,
+  a20: undefined,
+  a21: undefined,
+  a22: undefined,
+  laisseFaire: undefined,
+  ouvreLaPorte: undefined,
+  sacrament: undefined,
+  tabarnack: undefined
 }
 
 //State of the program
 let state = `titleNoSound`;
-let introState = `a1`;
+let introState = false;
+let carMoving = 0;
 
 let difficulty = {
   easy: false,
@@ -113,33 +158,33 @@ let dia = { //dia means dialogue
   yoster: undefined,
   delay: 0,
   offset: 0,
-  slow:5,
+  slow:2,
   fast:1,
-  textSpeed: 5,
+  textSpeed: 2,
   textSwitch: 1,
   done: false,
-  a1:"Louis-Joseph: Écoûte!",
-  a2:"RADIO: La tempête qui s'abat sur l'ouest de la province fait des ravages.",
-  a3:"RADIO:  Les dommages causé par des vents de plus de 80 km heure bloque l'accès à plusieurs routes.",
-  a4:"RADIO:  Hydro Québec est en état d'alarme...",
-  a5:"*shkt*",
-  a6:"Maurice: M'a virer d'bord calice!",
-  a7:"Louis-Joseph: Hey ciboire!",
-  a8:"Maurice: Tu m'fais pogner l'ch'min dans l'bois!",
-  a9:"Maurice: Avec la trampoline de mon gars dans l'trailer   en arrière!",
-  a10:"Maurice: pis y pleut comme une chienne!",
-  a11:"Maurice: J'commence à m'dire que t'es p'tête tombée       su'à'tête!",
-  a12:"Louis-Joseph: S't'es la dernière soirée, tu l'sais bin      qu'a part demain.",
-  a13:"Louis-Joseph: La madame au dep m'a dit que la grand     route est bloquée fac on passe par icitte, c'est toute.",
-  a14:"Maurice: Hmm... J'comprends même pas qu'est-ce tu veuxfaire.",
-  a15:"Louis-Joseph: Ciboire, j't'ai déjà toute expliqué...",
-  a16:"Louis-Joseph: La route est farmé, on passe par le         chemin Tramblay.",
-  a17:"Louis-Joseph: Rendu dans le parking du sentier des      moulins, On utilise la trampoline du p'ti Michel",
-  a18:"Louis-Joseph: pis tu t'arranges pour que j'me ramasse en haut d'la falaise.",
-  a19:"Louis-Joseph: Anyway, s'pas dangereux, j'ai amené       l'grand foulard de Germaine pour ralentir ma chute.",
-  a20:"Maurice: Eh sacrament... Pis tu penses qu'à va faire      quoi quand a va voir ta vielle gueule à sa porte?",
-  a21:"...",
-  a22:"Louis-Joseph: Ralentis, c'est icitte à gauche! r'garde la pancarte!",
+  a1:"LHey! Écoûte s'qu'y disent!",
+  a2:"RLa tempête qui s'abat sur l'ouest de la province fait     des ravages.",
+  a3:"RLes dommages causé par des vents de plus de 80 km        heure bloque l'accès à plusieurs routes.",
+  a4:"RHydro Québec est en état d'alarme...",
+  a5:"R*shkt*",
+  a6:"MM'a virer d'bord calice!",
+  a7:"LHey ciboire!",
+  a8:"MCriss, Tu m'fais pogner l'ch'min dans l'bois!",
+  a9:"MAvec la trampoline de mon gars dans l'trailer                   en arrière!",
+  a10:"MPis y pleut comme une chienne!",
+  a11:"MLa j'commence à m'dire que t'es p'tête tombée                  su'à'tête!",
+  a12:"LS't'es la dernière soirée, tu l'sais qu'demain, a part         pis a r'viens plus.",
+  a13:"LLa madame au dep m'a dit que la grand route est bloquéefac on passe par icitte, c'est toute.",
+  a14:"MHmm... J'comprends même pas qu'est-ce tu veuxfaire.",
+  a15:"LCiboire, j't'ai déjà toute expliqué...",
+  a16:"LLa route est farmé, on passe par le chemin Tramblay.",
+  a17:"LRendu dans le parking du sentier des moulins, On prend la trampoline du p'ti Michel",
+  a18:"Lpis tu t'arranges pour que j'me ramasse en haut d'la     falaise.",
+  a19:"LAnyway, chie pas dans tes culottes. En cas que j'tombe, j'ai ramassé l'gros foulard à ma mère.",
+  a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
+  a21:"L...",
+  a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
   totalDialogues: 22
   }
 
@@ -196,6 +241,13 @@ let diaA22 = [];
 *vielle gueule à sa porte?
 **...
 **Ralentis, c'est icitte à gauche! r'garde la pancarte!
+
+*************
+
+**T'essaye tu d'me tuer?
+**Sacrament Maurice, faut tu m'ratrappe!
+**T'as tu tes liscences ciboire!?
+**Ok laisse faire, utilise la souris pour contoler l'char
 
 *************
 
@@ -258,7 +310,8 @@ let trampo = {
   h:8,
   carSoundTrigger: true,
   carSprite: undefined,
-  carJumpTrigger: false
+  carJumpTrigger: false,
+  mouseTrigger: 0
 }
 
 let wall = {
@@ -326,6 +379,17 @@ let birdTriangle = {
   y3: birdSign.yRect
 }
 
+let endingEvent = {
+  a: true,
+  b: false,
+  c: false,
+  d: false,
+  e: false,
+  f: false,
+  g: false,
+  h: false
+}
+
 const DROP_NUM = 10;
 let waterDrops = [];
 
@@ -359,6 +423,11 @@ function preload() {
   img.introCar = loadImage("assets/images/introCar.png");
   img.introCarLights = loadImage("assets/images/introCarLights.png");
   img.introCarInterior = loadImage("assets/images/introCarInterior.png");
+  img.endingBackground1 = loadImage("assets/images/endingBackground1.png");
+  img.endingBackground2 = loadImage("assets/images/endingBackground2.png");
+  img.endingBackground3 = loadImage("assets/images/endingBackground3.png");
+  img.endingSilouette = loadImage("assets/images/endingSilouette.png");
+  img.endingDoor = loadImage("assets/images/endingDoor.png");
   snd.titleMusic = loadSound("assets/sounds/titleMusic.mp3");
   snd.gameMusic = loadSound("assets/sounds/gameMusic.mp3");
   snd.endMusic = loadSound("assets/sounds/endMusic.mp3");
@@ -378,6 +447,41 @@ function preload() {
   snd.carGearSwitch = loadSound("assets/sounds/carGearSwitch.wav");
   snd.carAccelerates = loadSound("assets/sounds/carAccelerates.wav");
   snd.carRain = loadSound("assets/sounds/carRain.wav");
+  snd.heavyRain = loadSound("assets/sounds/heavyRain.wav");
+  snd.footsteps = loadSound("assets/sounds/footsteps.wav");
+  snd.thunderClose = loadSound("assets/sounds/thunderClose.wav");
+  snd.doorOpen = loadSound("assets/sounds/doorOpen.wav");
+  snd.doorBang = loadSound("assets/sounds/doorBang.mp3");
+  snd.stress = loadSound("assets/sounds/stress.wav");
+
+  sndDia.a1 = loadSound("assets/sounds/dialogues/1.wav");
+  sndDia.a2 = loadSound("assets/sounds/dialogues/2.wav");
+  sndDia.a3 = loadSound("assets/sounds/dialogues/3.wav");
+  sndDia.a4 = loadSound("assets/sounds/dialogues/4.wav");
+  sndDia.a5 = loadSound("assets/sounds/dialogues/5.wav");
+  sndDia.a6 = loadSound("assets/sounds/dialogues/6.wav");
+  sndDia.a7 = loadSound("assets/sounds/dialogues/7.wav");
+  sndDia.a8 = loadSound("assets/sounds/dialogues/8.wav");
+  sndDia.a9 = loadSound("assets/sounds/dialogues/9.wav");
+  sndDia.a10 = loadSound("assets/sounds/dialogues/10.wav");
+  sndDia.a11 = loadSound("assets/sounds/dialogues/11.wav");
+  sndDia.a12 = loadSound("assets/sounds/dialogues/12.wav");
+  sndDia.a13 = loadSound("assets/sounds/dialogues/13.wav");
+  sndDia.a14 = loadSound("assets/sounds/dialogues/14.wav");
+  sndDia.a15 = loadSound("assets/sounds/dialogues/15.wav");
+  sndDia.a16 = loadSound("assets/sounds/dialogues/16.wav");
+  sndDia.a17 = loadSound("assets/sounds/dialogues/17.wav");
+  sndDia.a18 = loadSound("assets/sounds/dialogues/18.wav");
+  sndDia.a19 = loadSound("assets/sounds/dialogues/19.wav");
+  sndDia.a20 = loadSound("assets/sounds/dialogues/20.wav");
+  sndDia.a21 = loadSound("assets/sounds/dialogues/21.wav");
+  sndDia.a22 = loadSound("assets/sounds/dialogues/22.wav");
+  sndDia.laisseFaire = loadSound("assets/sounds/dialogues/laisseFaire.wav");
+  sndDia.ouvreLaPorte = loadSound("assets/sounds/dialogues/ouvreLaPorte.wav");
+  sndDia.sacrament = loadSound("assets/sounds/dialogues/sacrament.wav");
+  sndDia.tabarnack = loadSound("assets/sounds/dialogues/tabarnack.wav");
+
+
 }
 
 /**
@@ -423,8 +527,13 @@ function draw() {
     case `intro`:
       introScene();
       rainDropEffect();
+      drawDialogue();
       stateDelay++;
       break;
+
+    case `introEnd`:
+      rainDropEffect();
+      stateDelay++
 
     case `bouncing`:
       tunderEffect();
@@ -505,13 +614,22 @@ function draw() {
 
 
 
-  console.log(`wind.xSpeed: ${wind.xSpeed}`);
-  console.log(`lover.y: ${lover.y}`);
-  console.log(`tree.rotation: ${tree.rotation}`);
-  console.log(`tree.go: ${tree.go}`);
-  console.log(`keyIsDown: ${keyIsDown(65)}`);
-
-  console.log(`state: ${state}`);
+  // console.log(`wind.xSpeed: ${wind.xSpeed}`);
+  // console.log(`lover.y: ${lover.y}`);
+  // console.log(`tree.rotation: ${tree.rotation}`);
+  // console.log(`tree.go: ${tree.go}`);
+  // console.log(`carMoving: ${carMoving}`);
+  // console.log(`dia.textSwitch: ${dia.textSwitch}`);
+  // console.log(`img.delay: ${img.delay}`);
+  // console.log(`state: ${state}`);
+  console.log(`A: ${endingEvent.a}`);
+  console.log(`B: ${endingEvent.b}`);
+  console.log(`C: ${endingEvent.c}`);
+  console.log(`D: ${endingEvent.d}`);
+  console.log(`E: ${endingEvent.e}`);
+  console.log(`F: ${endingEvent.f}`);
+  console.log(`G: ${endingEvent.g}`);
+  console.log(`H: ${endingEvent.h}`);
 }
 
 //Creates the Arrays in the setup of the program
@@ -557,13 +675,6 @@ function createArrays() {
       currentArray.push(letter);
     }
   }
-
-
-  //Arrays for dialogue in the intro
-  // for (let i = 0; i < dia.a1.length; i++) {
-  //   let letter = dia.a1.substring(i, i + 1);
-  //   diaA1.push(letter);
-  // }
 }
 
 //Displays the title screen image
@@ -588,6 +699,8 @@ function introScene() {
   push();
   translate(width/2, height/2);
   imageMode(CENTER);
+
+  //Drawing the animated background
   if (frameCount % 30 < 15/2) {
     image(img.introBackground1, 0, 0);
   }
@@ -598,24 +711,51 @@ function introScene() {
     image(img.introBackground3, 0, 0);
   }
 
-  if (frameCount % 10 < 5) {
-    image(img.introCarInterior, 0, 0 + 1);
-    image(img.introCar, 0, 0 + 1);
+  if (introState) {
+    if (frameCount % 10 < 5) {
+      image(img.introCarInterior, 0, carMoving + 1);
+      image(img.introCar, 0, carMoving + 1);
+    }
+    else {
+      image(img.introCarInterior, 0, carMoving);
+      image(img.introCar, 0, carMoving);
+    }
+
+    if (frameCount % 15 < 5) {
+      image(img.introCarLights, 0, carMoving + 2);
+    }
+    else {
+      image(img.introCarLights, 0, carMoving + 4);
+    }
+    carMoving += 3;
+    if (carMoving > 200) {
+      stateDelay = 0;
+      state = `introEnd`;
+    }
   }
   else {
-    image(img.introCarInterior, 0, 0);
-    image(img.introCar, 0, 0);
+    if (frameCount % 10 < 5) {
+      image(img.introCarInterior, 0, 0 + 1);
+      image(img.introCar, 0, 0 + 1);
+    }
+    else {
+      image(img.introCarInterior, 0, 0);
+      image(img.introCar, 0, 0);
+    }
+
+    if (frameCount % 15 < 5) {
+      image(img.introCarLights, 0, 0 + 2);
+    }
+    else {
+      image(img.introCarLights, 0, 0 + 4);
+    }
   }
 
-  if (frameCount % 15 < 5) {
-    image(img.introCarLights, 0, 0 + 2);
-  }
-  else {
-    image(img.introCarLights, 0, 0 + 4);
-  }
-
-  //Text for dialogues (dia)
   pop();
+}
+
+//Text for dialogues (dia)
+function drawDialogue() {
   push();
   textSize(20);
   fill(255);
@@ -624,11 +764,23 @@ function introScene() {
   let currentText = eval(`dia.a` + dia.textSwitch);
   let currentTextArray = eval(`diaA` + dia.textSwitch);
 
+  //Changes the colors of the text
+  if (currentTextArray[0] === `R` || currentTextArray[0] === `*`) {
+    fill(200);
+  }
+  else if (currentTextArray[0] === `L`) {
+    fill(255);
+  }
+  else if (currentTextArray[0] === `M`) {
+    fill (`#FFFECF`);
+  }
+
+  //Displays one letter at a time
   if (frameCount % dia.textSpeed === 0 && dia.delay <= currentText.length) {
     dia.delay++;
   }
   let offset = 0
-  for (let i = 0; i < dia.delay; i++) {
+  for (let i = 1; i < dia.delay; i++) {
 
     if (25 + offset > width - 25) {
       text(currentTextArray[i], 25 + offset - width + 43, 70);
@@ -638,8 +790,8 @@ function introScene() {
     }
 
     offset += textWidth(currentTextArray[i]);
-
   }
+
   if (dia.delay === currentText.length) {
     dia.done = true;
   }
@@ -670,6 +822,7 @@ function backgroundElements() {
   pop();
 }
 
+//Controls the tree that falls the first time you hit the left limit with the car
 function treeFalling() {
   if (tree.trigger && trampo.x - trampo.w/2 <= 0) {
     tree.go = true;
@@ -1166,15 +1319,18 @@ function carColisionSound() {
 
 //Controls the car with mouseX
 function carControlEasy() {
-  trampo.x = mouseX;
-  trampo.x = constrain(trampo.x, 0 + trampo.w/2, wall.x - trampo.w/2);
+
+  if (mouseX !== trampo.mouseTrigger) {
+    trampo.x = mouseX;
+    trampo.x = constrain(trampo.x, 0 + trampo.w/2, wall.x - trampo.w/2);
+  }
 
   trampoDraw();
 }
 
 function easeUp() {
   //Check if the lover reaches mid screen
-  if (lover.y < height/2) {
+  if (lover.y < height/3 * 2) {
     difficulty.niceAttempt = true;
   }
   //Checks if the lover crashes on the ground
@@ -1193,6 +1349,7 @@ function easeUp() {
   }
   if (difficulty.counter === 5) {
     difficulty.easy = true;
+    trampo.mouseTrigger = mouseX;
     difficulty.counter = 6;
   }
 
@@ -1301,31 +1458,41 @@ function keyPressed() {
     snd.lightRain.loop();
     state = `title`;
   }
-  if (state === `title` && stateDelay > 1) {
+
+  else if (state === `title` && stateDelay > 1) {
     stateDelay = 0;
     snd.titleMusic.stop();
     snd.lightRain.stop();
     snd.carRain.loop();
+    sndDia.a1.play();
     state = `intro`;
-    //dia.textSwitch++;
   }
 
   else if (state === `intro` && stateDelay > 1) {
-    if (dia.textSpeed === dia.slow && dia.done === false) {
+    if (dia.textSpeed === dia.slow && dia.done === false && dia.textSwitch !== dia.totalDialogues) {
       stateDelay = 0;
       dia.textSpeed = dia.fast;
     }
-    else if (dia.done === true) {
-    stateDelay = 0;
-    dia.done = false;
-    dia.delay = 0;
-    dia.textSpeed = dia.slow;
-    dia.textSwitch++;
-    }
+    else if (dia.done === true || dia.textSpeed === dia.fast && dia.textSwitch < dia.totalDialogues) {
+      stateDelay = 0;
+      dia.done = false;
+      dia.delay = 0;
+      dia.textSpeed = dia.slow;
+      dia.textSwitch++;
 
-    if (dia.textSwitch === dia.totalDialogues) {
+      //Stop the last dialogue
+      let pastTextSwitch = dia.textSwitch - 1;
+      let pastDialogue = eval(`sndDia.a` + pastTextSwitch);
+      pastDialogue.stop();
+
+      //Play the new dialogue
+      let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
+      currentDialogue.play();
+
+    }
+    else if (dia.textSwitch === dia.totalDialogues) {
     stateDelay = 0;
-    state = `introEnd`;
+    introState = true;
     }
   }
 
@@ -1463,9 +1630,8 @@ function keyPressed() {
 
   else if (state === `introEnd` && stateDelay > 1) {
     stateDelay = 0;
+    //Getting out the car sound
     snd.carRain.stop();
-    snd.titleMusic.stop();
-    snd.lightRain.stop();
     snd.gameMusic.loop();
     snd.rainForest.loop();
     snd.carEngine.loop();
@@ -1524,21 +1690,141 @@ function keyReleased() {
 
 //End screens once the lover has reached the house
 function ending() {
-  img.delay++;
-
   imageMode(CENTER);
-  image(img.whoAreYou, width/2, height/2);
+  translate(width/2, height/2);
 
-  if (img.delay > 150 && img.delay < 300) {
-    image(img.noLove, width/2, height/2);
+  if (endingEvent.e && snd.stress.isPlaying() === false) {
+    snd.lightRain.loop();
+    snd.thunderClose.play();
+
+
+    endingEvent.e = false;
+    endingEvent.f = true;
+    thunder.state = true;
+    thunder.count = 0;
   }
-  else if (img.delay > 300) {
-    image(img.deception, width/2, height/2);
-    if (img.delay === 349) {snd.endMusic.play();}
-    if (img.delay > 350) {
-      snd.gameMusic.stop();
-      img.zoom += 2;
-      img.deception.resize(width+img.zoom, height+img.zoom);
+
+  if (endingEvent.f) {
+    thunder.count++;
+
+    if (thunder.state && thunder.count < 5) {
+      background(255);
     }
+    if (thunder.state && thunder.count > 10) {
+      background(255);
+    }
+    if (thunder.state && thunder.count > 15) {
+      thunder.state = false;
+      thunder.count = 0;
+    }
+    if (thunder.state === false) {
+      endingEvent.f = false;
+      endingEvent.g = true;
+    }
+
   }
+
+  if (endingEvent.a) {
+    snd.gameMusic.stop();
+    snd.carEngine.stop();
+    snd.heavyRain.loop();
+    snd.footsteps.play();
+
+    endingEvent.a = false;
+    endingEvent.b = true;
+  }
+  if (endingEvent.b && snd.footsteps.isPlaying() === false) {
+    snd.doorBang.play();
+    endingEvent.b = false;
+    endingEvent.c = true;
+    endingEvent.d = true;
+  }
+
+  if (endingEvent.d && snd.doorBang.isPlaying() === false) {
+    snd.heavyRain.stop();
+    snd.stress.play();
+    endingEvent.d = false;
+    endingEvent.e = true;
+  }
+
+  if (endingEvent.c && snd.doorBang.isPlaying() === false) {
+
+      image(img.endingSilouette, 0, 0);
+      rainDropEffect();
+
+      if (snd.stress.isPlaying()) {
+        image(img.endingDoor, 0, 0);
+      }
+      // if (img.delay < 300 && endingEvent.d === false) {
+      //   image(img.endingDoor, 0, 0);
+      //   snd.doorOpen.play();
+      //   img.delay++;
+      // }
+      // else if (endingEvent.d === false) {
+      //   snd.heavyRain.stop();
+      //   snd.doorOpen.stop();
+      //   img.delay = 0;
+      //   endingEvent.d = true;
+      //   endingEvent.e = true;
+      // }
+
+    if (frameCount % 30 < 15/2) {
+      image(img.endingBackground1, 0, 0);
+    }
+    else if (frameCount % 15 < 15/2) {
+      image(img.endingBackground2, 0, 0);
+    }
+    else if (frameCount % 15/2 < 15/2) {
+      image(img.endingBackground3, 0, 0);
+    }
+
+    if (endingEvent.g && snd.thunderClose.isPlaying() === false) {
+      img.delay++;
+      image(img.whoAreYou, 0, 0);
+
+      if (img.delay > 150 && img.delay < 300) {
+        image(img.noLove, 0, 0);
+      }
+      else if (img.delay > 300) {
+        image(img.deception, 0, 0);
+        //if (img.delay === 349) {snd.endMusic.play();}
+        if (img.delay > 390) {
+          snd.lightRain.stop();
+          snd.doorOpen.play();
+          img.zoom += 2;
+          img.deception.resize(width+img.zoom, height+img.zoom);
+        }
+        if (img.delay > 540) {
+          snd.doorOpen.stop();
+          endingEvent.g = false;
+          endingEvent.h = true;
+          endingEvent.c = false;
+        }
+      }
+    }
+
+    if (endingEvent.h) {
+      //snd.doorOpen.stop();
+      snd.endMusic.play();
+      endingEvent.h = false;
+    }
+
+  }
+
+
+
+  // image(img.whoAreYou, width/2, height/2);
+  //
+  // if (img.delay > 150 && img.delay < 300) {
+  //   image(img.noLove, width/2, height/2);
+  // }
+  // else if (img.delay > 300) {
+  //   image(img.deception, width/2, height/2);
+  //   if (img.delay === 349) {snd.endMusic.play();}
+  //   if (img.delay > 350) {
+  //     snd.gameMusic.stop();
+  //     img.zoom += 2;
+  //     img.deception.resize(width+img.zoom, height+img.zoom);
+  //   }
+  // }
 }
