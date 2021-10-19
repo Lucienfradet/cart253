@@ -123,6 +123,8 @@ let snd = {
   stress: undefined
 }
 
+let sndDialogues = [];
+
 //sounds for dialogues
 let sndDia = {
   a1: undefined,
@@ -176,56 +178,35 @@ let dia = { //dia means dialogue
   slow:2,
   fast:1,
   textSpeed: 2,
-  textSwitch: 1,
+  textSwitch: 0,
   done: false,
-  a1:"LHey! Écoûte s'qu'y disent!",
-  a2:"RLa tempête qui s'abat sur l'ouest de la province fait     des ravages.",
-  a3:"RLes dommages causé par des vents de plus de 80 km        heure bloque l'accès à plusieurs routes.",
-  a4:"RHydro Québec est en état d'alarme...",
-  a5:"R*shkt*",
-  a6:"MM'a virer d'bord calice!",
-  a7:"LHey ciboire!",
-  a8:"MCriss, Tu m'fais pogner l'ch'min dans l'bois!",
-  a9:"MAvec la trampoline de mon gars dans l'trailer                   en arrière!",
-  a10:"MPis y pleut comme une chienne!",
-  a11:"MLa j'commence à m'dire que t'es p'tête tombée                  su'à'tête!",
-  a12:"LS't'es la dernière soirée, tu l'sais qu'demain, a part         pis a r'viens plus.",
-  a13:"LLa madame au dep m'a dit que la grand route est bloquéefac on passe par icitte, c'est toute.",
-  a14:"MHmm... J'comprends même pas qu'est-ce tu veux faire.",
-  a15:"LCiboire, j't'ai déjà toute expliqué...",
-  a16:"LLa route est farmé, on passe par le chemin Tremblay.",
-  a17:"LRendu dans le parking du sentier des moulins, On prend la trampoline du p'ti Michel",
-  a18:"Lpis tu t'arranges pour que j'me ramasse en haut d'la     falaise.",
-  a19:"LAnyway, chie pas dans tes culottes. En cas que j'tombe, j'ai ramassé l'gros foulard à ma mère.",
-  a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
-  a21:"L...",
-  a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
-  totalDialogues: 22
+  a0:"LHey! Écoûte s'qu'y disent!",
+  a1:"RLa tempête qui s'abat sur l'ouest de la province fait     des ravages.",
+  a2:"RLes dommages causé par des vents de plus de 80 km        heure bloque l'accès à plusieurs routes.",
+  a3:"RHydro Québec est en état d'alarme...",
+  a4:"R*shkt*",
+  a5:"MM'a virer d'bord calice!",
+  a6:"LHey ciboire!",
+  a7:"MCriss, Tu m'fais pogner l'ch'min dans l'bois!",
+  a8:"MAvec la trampoline de mon gars dans l'trailer                   en arrière!",
+  a9:"MPis y pleut comme une chienne!",
+  a10:"MLa j'commence à m'dire que t'es p'tête tombée                  su'à'tête!",
+  a11:"LS't'es la dernière soirée, tu l'sais qu'demain, a part         pis a r'viens plus.",
+  a12:"LLa madame au dep m'a dit que la grand route est bloquéefac on passe par icitte, c'est toute.",
+  a13:"MHmm... J'comprends même pas qu'est-ce tu veux faire.",
+  a14:"LCiboire, j't'ai déjà toute expliqué...",
+  a15:"LLa route est farmé, on passe par le chemin Tremblay.",
+  a16:"LRendu dans le parking du sentier des moulins, On prend la trampoline du p'ti Michel",
+  a17:"Lpis tu t'arranges pour que j'me ramasse en haut d'la     falaise.",
+  a18:"LAnyway, chie pas dans tes culottes. En cas que j'tombe, j'ai ramassé l'gros foulard à ma mère.",
+  a19:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
+  a20:"L...",
+  a21:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
+  totalDialogues: 21
   }
 
-//Did not manage to automate this operation so here are all the arrays for the dialogue!
-let diaA1 = [];
-let diaA2 = [];
-let diaA3 = [];
-let diaA4 = [];
-let diaA5 = [];
-let diaA6 = [];
-let diaA7 = [];
-let diaA8 = [];
-let diaA9 = [];
-let diaA10 = [];
-let diaA11 = [];
-let diaA12 = [];
-let diaA13 = [];
-let diaA14 = [];
-let diaA15 = [];
-let diaA16 = [];
-let diaA17 = [];
-let diaA18 = [];
-let diaA19 = [];
-let diaA20 = [];
-let diaA21 = [];
-let diaA22 = [];
+//the array for the dialogue audio!
+let dialogues = [];
 
 //dialogues script
 /*
@@ -486,28 +467,11 @@ function preload() {
   snd.doorBang = loadSound("assets/sounds/doorBang.mp3");
   snd.stress = loadSound("assets/sounds/stress.wav");
 
-  sndDia.a1 = loadSound("assets/sounds/dialogues/1.wav");
-  sndDia.a2 = loadSound("assets/sounds/dialogues/2.wav");
-  sndDia.a3 = loadSound("assets/sounds/dialogues/3.wav");
-  sndDia.a4 = loadSound("assets/sounds/dialogues/4.wav");
-  sndDia.a5 = loadSound("assets/sounds/dialogues/5.wav");
-  sndDia.a6 = loadSound("assets/sounds/dialogues/6.wav");
-  sndDia.a7 = loadSound("assets/sounds/dialogues/7.wav");
-  sndDia.a8 = loadSound("assets/sounds/dialogues/8.wav");
-  sndDia.a9 = loadSound("assets/sounds/dialogues/9.wav");
-  sndDia.a10 = loadSound("assets/sounds/dialogues/10.wav");
-  sndDia.a11 = loadSound("assets/sounds/dialogues/11.wav");
-  sndDia.a12 = loadSound("assets/sounds/dialogues/12.wav");
-  sndDia.a13 = loadSound("assets/sounds/dialogues/13.wav");
-  sndDia.a14 = loadSound("assets/sounds/dialogues/14.wav");
-  sndDia.a15 = loadSound("assets/sounds/dialogues/15.wav");
-  sndDia.a16 = loadSound("assets/sounds/dialogues/16.wav");
-  sndDia.a17 = loadSound("assets/sounds/dialogues/17.wav");
-  sndDia.a18 = loadSound("assets/sounds/dialogues/18.wav");
-  sndDia.a19 = loadSound("assets/sounds/dialogues/19.wav");
-  sndDia.a20 = loadSound("assets/sounds/dialogues/20.wav");
-  sndDia.a21 = loadSound("assets/sounds/dialogues/21.wav");
-  sndDia.a22 = loadSound("assets/sounds/dialogues/22.wav");
+  for (let i = 1; i <= dia.totalDialogues + 1; i++) {
+    let sndDialogue = loadSound("assets/sounds/dialogues/" + i + ".wav");
+    sndDialogues.push(sndDialogue);
+  }
+
   sndDia.laisseFaire = loadSound("assets/sounds/dialogues/laisseFaire.wav");
   sndDia.ouvreLaPorte = loadSound("assets/sounds/dialogues/ouvreLaPorte.wav");
   sndDia.sacrament = loadSound("assets/sounds/dialogues/sacrament.wav");
@@ -703,14 +667,15 @@ function createArrays() {
   }
 
   //Creates the arrays of letters for the intro dialogues
-  for (let i = 1; i < dia.totalDialogues; i++) {
-    let currentText = eval(`dia.a` + i);
-    let currentArray = eval(`diaA` + i);
+  for (let i = 0; i <= dia.totalDialogues; i++) {
+    let dialogue = [];
+    let currentString = eval(`dia.a` + i);
 
-    for (let j = 0; j < currentText.length; j++) {
-      let letter = currentText.substring(j, j + 1);
-      currentArray.push(letter);
+    for (let j = 0; j < currentString.length; j++) {
+      let letter = currentString.substring(j, j + 1);
+      dialogue.push(letter);
     }
+    dialogues.push(dialogue);
   }
 }
 
@@ -803,41 +768,44 @@ function drawDialogue() {
   fill(255);
   textFont(dia.yoster);
 
-  let currentText = eval(`dia.a` + dia.textSwitch);
-  let currentTextArray = eval(`diaA` + dia.textSwitch);
+  let currentDialogue = dialogues[dia.textSwitch];
+  //let currentTextArray = eval(`diaA` + dia.textSwitch);
 
   //Changes the colors of the text
-  if (currentTextArray[0] === `R` || currentTextArray[0] === `*`) {
-    fill(200);
-  }
-  else if (currentTextArray[0] === `L`) {
-    fill(255);
-  }
-  else if (currentTextArray[0] === `M`) {
-    fill (`#FFFECF`);
-  }
+  if (dia.textSwitch <=  dia.totalDialogues) {
 
-  //Displays one letter at a time
-  if (frameCount % dia.textSpeed === 0 && dia.delay <= currentText.length) {
-    dia.delay++;
-  }
-  let offset = 0
-  for (let i = 1; i < dia.delay; i++) {
-
-    if (25 + offset > width - 25) {
-      text(currentTextArray[i], 25 + offset - width + 43, 70);
+    if (currentDialogue[0] === `R` || currentDialogue[0] === `*`) {
+      fill(200);
     }
-    else {
-      text(currentTextArray[i], 25 + offset, 50);
+    else if (currentDialogue[0] === `L`) {
+      fill(255);
+    }
+    else if (currentDialogue[0] === `M`) {
+      fill (`#FFFECF`);
     }
 
-    offset += textWidth(currentTextArray[i]);
-  }
+    //Displays one letter at a time
+    if (frameCount % dia.textSpeed === 0 && dia.delay <= currentDialogue.length) {
+      dia.delay++;
+    }
+    let offset = 0
+    for (let i = 1; i < dia.delay; i++) {
 
-  if (dia.delay === currentText.length) {
-    dia.done = true;
+      if (25 + offset > width - 25) {
+        text(currentDialogue[i], 25 + offset - width + 43, 70);
+      }
+      else {
+        text(currentDialogue[i], 25 + offset, 50);
+      }
+
+      offset += textWidth(currentDialogue[i]);
+    }
+
+    if (dia.delay === currentDialogue.length) {
+      dia.done = true;
+    }
+    pop();
   }
-  pop();
 }
 
 //Displays elements in the foreground
@@ -1595,15 +1563,17 @@ function keyPressed() {
     snd.titleMusic.stop();
     snd.lightRain.stop();
     snd.carRain.loop();
-    sndDia.a1.play();
+    sndDialogues[0].play();
     state = `intro`;
   }
 
   else if (state === `intro` && stateDelay > 1) {
+
     if (dia.textSpeed === dia.slow && dia.done === false) {
       stateDelay = 0;
       dia.textSpeed = dia.fast;
     }
+
     else if (dia.textSwitch < dia.totalDialogues) {
       if (dia.done === true || dia.textSpeed === dia.fast) {
         dia.textSwitch++;
@@ -1613,156 +1583,20 @@ function keyPressed() {
         dia.textSpeed = dia.slow;
 
         //Stop the last dialogue
-        let pastTextSwitch = dia.textSwitch - 1;
-        let pastDialogue = eval(`sndDia.a` + pastTextSwitch);
-        pastDialogue.stop();
+        sndDialogues[dia.textSwitch - 1].stop();
 
         //Play the new dialogue
-        let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
-        currentDialogue.play();
-
+          sndDialogues[dia.textSwitch].play();
       }
     }
 
-    else if (dia.textSwitch === dia.totalDialogues) {
-    let currentDialogue = eval(`sndDia.a` + dia.textSwitch);
-    currentDialogue.stop();
+    else if (dia.textSwitch === dia.totalDialogues ) {
+    sndDialogues[dia.textSwitch].stop();
     stateDelay = 0;
     introState = true;
     }
-  }
 
-  /*
-  else if (state === `intro` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.fast;
   }
-  else if (state === `intro` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `c2`;
-  }
-  else if (introState === `c2` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `c3`;
-  }
-  else if (introState === `c3` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `c4`;
-  }
-  else if (introState === `c4` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `c5`;
-  }
-  else if (introState === `c5` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b1`;
-  }
-  else if (introState === `b1` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a2`;
-  }
-  else if (introState === `a2` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b3`;
-  }
-  else if (introState === `b3` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b4`;
-  }
-  else if (introState === `b4` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b5`;
-  }
-  else if (introState === `b5` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a4`;
-  }
-  else if (introState === `a4` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a5`;
-  }
-  else if (introState === `a5` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a6`;
-  }
-  else if (introState === `a6` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b7`;
-  }
-  else if (introState === `b7` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a7`;
-  }
-  else if (introState === `a7` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a8`;
-  }
-  else if (introState === `a8` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a9`;
-  }
-  else if (introState === `a9` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a10`;
-  }
-  else if (introState === `a10` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a11`;
-  }
-  else if (introState === `a11` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a12`;
-  }
-  else if (introState === `a12` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a13`;
-  }
-  else if (introState === `a13` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b8`;
-  }
-  else if (introState === `b8` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `b9`;
-  }
-  else if (introState === `b9` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a14`;
-  }
-  else if (introState === `a14` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `a15`;
-  }
-  else if (introState === `a15` && stateDelay > 1) {
-    stateDelay = 0;
-    dia.textSpeed = dia.slow;
-    introState = `end`;
-  }
-  */
 
   else if (state === `introEnd` && stateDelay > 1) {
     stateDelay = 0;
@@ -1777,6 +1611,7 @@ function keyPressed() {
     snd.carGearSwitch.play();
     trampo.gear = !trampo.gear; //Puts the car in Drive or Backwards with the SHIFT key
   }
+
   /* Used by the original shitty car controls
   else if (keyCode === 65) { //LEFT A
     trampo.vx -= 0.3;
@@ -1785,6 +1620,7 @@ function keyPressed() {
     trampo.vx += 0.3;
   }
   */
+
   else if (keyCode === 8 && state !== `title` && state !== `ending` && state !== `titleNoSound`) { //BACKSPACE
     state = `ending`;
   }
