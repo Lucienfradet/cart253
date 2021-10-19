@@ -199,7 +199,7 @@ let dia = { //dia means dialogue
   a20:"MEh sacrament... Pis tu penses qu'à va faire quoi quand    a va voir ta vielle gueule à sa porte?",
   a21:"L...",
   a22:"LS't'icitte, à gauche! Break ciboire! Check la pancarte!",
-  totalDialogues: 2
+  totalDialogues: 22
   }
 
 //Did not manage to automate this operation so here are all the arrays for the dialogue!
