@@ -32,6 +32,9 @@ function createParticle() {
     positionV: createVector(0, 0, 0),
     speedV: p5.Vector.random3D(),
     accelerationV: createVector(),
+    r: 179,
+    g: 255,
+    b: random(150, 255),
     trail: [],
     maxTrail: 0
   }
@@ -64,9 +67,15 @@ function draw() {
 
   for (let i = 0; i < particles.length; i++) {
     moveParticle(particles[i]);
+    cohesion(particles[i]);
     displayParticle(particles[i]);
+
   }
 
+  // saveCanvas('capture' + frameCount);
+  // if (frameCount > 60 * 5) {
+  //   noLoop();
+  //}
   //capturer.capture(document.getElementById('defaultCanvas0'));
   //saveFrames('out', 'png', 1, 25, data => {print(data);});
 }
@@ -78,8 +87,11 @@ function moveParticle(particle) {
     particle.speedV.setMag(random(1, 2));
   }
 
+  let steering = cohesion(particle);
+  particle.speedV.add(steering);
   particle.positionV.add(particle.speedV);
 
+  //Creates a Trail
   let currentVx = constrain(particle.positionV.x, -150, 150);
   let currentVy = constrain(particle.positionV.y, -100, 100);
   let currentVz = constrain(particle.positionV.z, -100, 100);
@@ -93,21 +105,44 @@ function moveParticle(particle) {
   }
 }
 
+function cohesion(particle) {
+  let perceptionRadius = 50;
+  let steering = createVector();
+  let total = 0;
+
+  for (let i = 0; i < particle.length; i++) {
+    for (let j = 0; j < particle.length; j++) {
+      let d = dist(particle[i].x, particle[i].y, particle[j].x, particle[j].y);
+
+      if (particle[i] !== particle[j] && d < perceptionRadius) {
+        steering.add(particle[j].speedV);
+        total++
+      }
+    }
+
+    if (total > 0) {
+      steering.div(total);
+      steering.setMag(2);
+      steering.sub(particle[i].speedV);
+    }
+  }
+  return steering;
+}
+
 function displayParticle(particle) {
   push();
   for (let i = 0; i < particle.trail.length; i++) {
     let trail = particle.trail[i];
     strokeWeight(3);
-    let alpha = map(i, 0, particle.trail.length, 0, 255);
-    stroke(alpha);
+    let alpha = map(i, 0, particle.trail.length, 255, 0);
+    stroke(particle.r - alpha, particle.g - alpha, particle.b - alpha);
     point(trail.x, trail.y, trail.z);
   }
   pop();
 
   push();
-  stroke(255);
+  stroke(particle.r, particle.g, particle.b);
   strokeWeight(3);
   point(particle.positionV.x, particle.positionV.y, particle.positionV.z);
   pop();
-
 }
