@@ -38,7 +38,7 @@ let souris = {
 let rotationAngle = 0;
 
 //Array of particles
-const NUM_PARTICLES = 100;
+const NUM_PARTICLES = 200;
 let particles = [];
 
 let aquarium = {
@@ -74,7 +74,7 @@ function createParticle() {
     g: 255,
     b: random(150, 255),
     trail: [],
-    maxTrail: 5,
+    maxTrail: 0,
   }
   particle.speedV.setMag(random(2, 4));
 
@@ -89,11 +89,11 @@ function setup() {
   canvas.position(200, 200);
   canvas.mouseWheel(sourisZposition);
   background(0);
-  alignmentSlider = createSlider(0, 2, 1.6, 0.1);
+  alignmentSlider = createSlider(0, 2, 1, 0.1); //1.6 0.1 1.4
   alignmentSlider.position(70, 70);
-  cohesionSlider = createSlider(0, 2, 0.1, 0.1);
+  cohesionSlider = createSlider(0, 2, 1, 0.1);
   cohesionSlider.position(70, 100);
-  separationSlider = createSlider(0, 2, 1.4, 0.1);
+  separationSlider = createSlider(0, 2, 1, 0.1);
   separationSlider.position(70, 130);
 
   msg1 = createP('Separation');
@@ -277,7 +277,7 @@ function alignment(particle) {
 
   //Checks if other particles are in the perception radius and steer in the same direction as the others
   for (let i = 0; i < particles.length; i++) {
-    let d = dist(particle.positionV.x, particle.positionV.y, particles[i].positionV.x, particles[i].positionV.y);
+    let d = dist(particle.positionV.x, particle.positionV.y, particle.positionV.z, particles[i].positionV.x, particles[i].positionV.y, particles[i].positionV.z);
     if (particle !== particles[i] && d < perceptionRadius) {
       steering.add(particles[i].speedV);
       total++;
@@ -301,7 +301,7 @@ function cohesion(particle) {
 
   //Checks if other particles are in the perception radius and steer towards the particles
   for (let i = 0; i < particles.length; i++) {
-    let d = dist(particle.positionV.x, particle.positionV.y, particles[i].positionV.x, particles[i].positionV.y);
+    let d = dist(particle.positionV.x, particle.positionV.y, particle.positionV.z, particles[i].positionV.x, particles[i].positionV.y, particles[i].positionV.z);
     if (particle !== particles[i] && d < perceptionRadius) {
       steering.add(particles[i].positionV);
       total++;
@@ -326,7 +326,7 @@ function separation(particle) {
 
   //Checks if other particles are in the perception radius and steer away from the average location of all the others
   for (let i = 0; i < particles.length; i++) {
-    let d = dist(particle.positionV.x, particle.positionV.y, particles[i].positionV.x, particles[i].positionV.y);
+    let d = dist(particle.positionV.x, particle.positionV.y, particle.positionV.z, particles[i].positionV.x, particles[i].positionV.y, particles[i].positionV.z);
     if (particle !== particles[i] && d < perceptionRadius) {
       let difference = p5.Vector.sub(particle.positionV, particles[i].positionV);
       difference.div(d); //inversly proportional to the distance of the other particle
