@@ -69,12 +69,12 @@ function createParticle() {
     accelerationV: createVector(),
     maxForce: 1,
     maxSpeed: 4,
-    visionRadius: 5,
+    visionRadius: 30,
     r: 179,
     g: 255,
     b: random(150, 255),
     trail: [],
-    maxTrail: 0,
+    maxTrail: 3,
   }
   particle.speedV.setMag(random(2, 4));
 
@@ -91,7 +91,7 @@ function setup() {
   background(0);
   alignmentSlider = createSlider(0, 2, 1, 0.1); //1.6 0.1 1.4
   alignmentSlider.position(70, 70);
-  cohesionSlider = createSlider(0, 2, 1, 0.1);
+  cohesionSlider = createSlider(0, 2, 0.9, 0.1);
   cohesionSlider.position(70, 100);
   separationSlider = createSlider(0, 2, 1, 0.1);
   separationSlider.position(70, 130);
@@ -347,7 +347,7 @@ function separation(particle) {
 
 //Changes the color of the particles that get moused by the player
 function runAway(particle) {
-  let thing = createVector(mouseX - width/2, mouseY - height/2, souris.z);
+  let thing = createVector(mouseX + souris.radius - width/2, mouseY + souris.radius - height/2, souris.z + souris.radius);
   let d = dist(particle.positionV.x, particle.positionV.y, thing.x, thing.y);
 
   if (d < souris.radius && particle.r !== 255) {
@@ -405,13 +405,15 @@ function sourisDisplay() {
 
 //Swithes between gameMode and Simulation Mode
 function mousePressed() {
-  gameState = true;
-  if (state !== `worse` && gameState) {
-    if (state === `showingOff`) {
-      state = `mouse`;
-    }
-    else {
-      state = `showingOff`;
+  if (mouseX > 0 && mouseY > 0) {
+    gameState = true;
+    if (state !== `worse` && gameState) {
+      if (state === `showingOff`) {
+        state = `mouse`;
+      }
+      else {
+        state = `showingOff`;
+      }
     }
   }
 }
