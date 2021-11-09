@@ -9,8 +9,9 @@ OK Add perlin noise
   - Normal Force
   - Angular momentum
   - Friction
+  !!NOPE. Will try using matter.js library instead!!
 - Add a "jump" event
-- Make the tunnel a tunnel (3D perlin noise)
+OK Make the tunnel a tunnel (3D perlin noise)
 - Add a radar thing
 - Spawn objects and make them follow the tunnel
 - Collision with the main object
