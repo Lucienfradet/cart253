@@ -1,9 +1,11 @@
+//This is me trying to build my own physics engine but I will use matter.js instead.
+
 let gravityForce = 0.005;
 
 class MeatBall {
   constructor() {
     this.position = createVector(5, 10);
-    this.speed = createVector(0, 0);
+    this.speed = createVector(0, 10);
     //this.speed.setMag(3);
     this.acceleration = createVector();
     this.rotation = 0;

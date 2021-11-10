@@ -2,6 +2,13 @@
 Project 2 prototype
 Lucien Cusson-Fradet
 
+I ran out of time doing the prototype. Parts of it ended up being more complicated than anticipated.
+This serves as a basic representation of the visuals that the game will have.
+
+At the moment, it is possible to rotate the tunnel using A and D keys.
+
+
+TODO LIST:
 OK Create a tunnel with single layer
 OK Add perlin noise
 - Add an object that follows the tunnel edges based on a physics system
@@ -12,7 +19,7 @@ OK Add perlin noise
   !!NOPE. Will try using matter.js library instead!!
 - Add a "jump" event
 OK Make the tunnel a tunnel (3D perlin noise)
-- Add a radar thing
+OK? Add a radar thing
 - Spawn objects and make them follow the tunnel
 - Collision with the main object
 - Implement dithering effect!?
@@ -31,10 +38,11 @@ let tunnel = [];
 
 let meatBall;
 let radar;
+let item;
 
 
 /**
-Description of preload
+--
 */
 function preload() {
 
@@ -67,13 +75,21 @@ function draw() {
   time = frameCount/60;
 
   //Deploys the tunnel after an amount of time
-  if (time > 0) {
+  if (time > 5) {
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].deploy();
       radar.display();
       radar.rotate();
     }
   }
+
+  // let r = random();
+  // if (r < 0.1) {
+  //   item = new Item(radar.position.x, radar.position.y, radar.position.z);
+  // }
+
+  //item.display();
+  //item.followTunnel();
 
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();
