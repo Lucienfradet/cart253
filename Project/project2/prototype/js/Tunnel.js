@@ -8,7 +8,7 @@ class Tunnel {
     this.position = createVector(0, 0, 0);
     this.radius = 150; //radius of the tunnel entrance
     this.radiusOffset = 25; //amount of space that the perlin noise will have to affect the radius
-    this.noiseZoff = 0.3;
+    this.noiseZoff = -0.3; //a negative number makes it look like the tunnel is moving toward the viewer
     this.zoff = 0 - this.noiseZoff * this.layer; //third dimension of perlin noise
     this.rotation = 0; //actually the phase
     this.rotationSpeed = 0.05;
@@ -35,7 +35,6 @@ class Tunnel {
   }
 
   display() {
-
     push();
     //Begin the tunnel with only one layer visible
     if (deploy) {

@@ -26,10 +26,11 @@ let canvasHeight = 550;
 
 let time;
 
-const RING_NUM = 50;
+const NUM_RING = 50;
 let tunnel = [];
 
 let meatBall;
+let radar;
 
 
 /**
@@ -47,13 +48,14 @@ function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
   background(0);
 
-  for (let i = 0; i < RING_NUM; i++) {
+  for (let i = 0; i < NUM_RING; i++) {
     let layer = i;
     let tunnelRing = new Tunnel(layer);
     tunnel.push(tunnelRing);
   }
 
   meatBall = new MeatBall();
+  radar = new Radar();
 }
 
 
@@ -65,11 +67,13 @@ function draw() {
   time = frameCount/60;
 
   //Deploys the tunnel after an amount of time
-  // if (time > 3) {
-  //   for (let i = 0; i < tunnel.length; i++) {
-  //     tunnel[i].deploy();
-  //   }
-  // }
+  if (time > 0) {
+    for (let i = 0; i < tunnel.length; i++) {
+      tunnel[i].deploy();
+      radar.display();
+      radar.rotate();
+    }
+  }
 
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();

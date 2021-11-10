@@ -14,7 +14,6 @@ class MeatBall {
 
   move() {
     let gravity = createVector(0, gravityForce);
-    console.log(`tunnelRadius: ${tunnel[1].radius}`);
 
     let d = dist(this.position.x, this.position.y, tunnel[1].position.x, tunnel[1].position.y);
     //Code greatly inspired by this StackOverflow post https://stackoverflow.com/questions/69330329/circle-inside-of-a-circle-collision-resolution-in-p5-js (Consulted on November 9th 2021)
@@ -42,7 +41,6 @@ class MeatBall {
    this.acceleration.add(gravity);
    this.speed.add(this.acceleration);
    this.position.add(this.speed);
-   console.log(`d: ${d}`);
   }
 
   display() {
