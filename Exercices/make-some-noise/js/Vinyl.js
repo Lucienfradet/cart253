@@ -24,13 +24,14 @@ class Vinyl {
   }
 
   musicPlaying() {
+    //rotate the visual disc
     if (this.playing && this.dragging === false) {
       this.angle += 2*PI / 360;
     }
 
 
     if (this.dragging) {
-      //calculate the angle in degrees
+      //convert the radian angle in degrees
       let calcAngle;
 
       if (this.angle < 0) {
@@ -41,21 +42,13 @@ class Vinyl {
       }
       calcAngle = degrees(calcAngle);
 
-      let difference = (calcAngle - this.anglePast) * -1;
+      let difference = (calcAngle - this.anglePast) * -1; ///get the difference between this angle and the one at the fram before.
       difference = constrain(difference, -5, 5);
-      difference = map(difference, -5, 5, -1, 1);
+      difference = map(difference, -5, 5, -1, 1); //trying to map it to an interesting value for the rate
+
       this.sample.rate(difference);
 
-      console.log(`difference: ${difference}`);
-      console.log(`past: ${this.anglePast}`);
       this.anglePast = calcAngle; //get ready for the next frame
-      console.log(`differenceAFTER: ${difference}`);
-
-      // let speedX = abs(winMouseX - pwinMouseX);
-      //console.log(`speedX ${speedX}`);
-      // speedX = map(speedX, -5, 5, -1, 1);
-      //console.log(`speedX ${speedX}`);
-
     }
   }
 
@@ -70,11 +63,13 @@ class Vinyl {
   }
 
   display() {
-    //DisplayVinyl
+
     push();
+    //rotate the disc acording to the angle
     translate(this.x, this.y);
     rotate(this.angle);
 
+    //DisplayVinyl
     fill(this.color);
     noStroke();
     ellipseMode(CENTER);
@@ -124,6 +119,7 @@ class Vinyl {
       this.offsetAngle = atan2(dy, dx) - this.angle;
     }
 
+    //check if the mouse is pressing a button
     if (mouseX > this.playX - this.playSize / 2 && mouseX < this.playX + this.playSize / 2 && mouseY > this.playY - this.playSize / 2 && mouseY < this.playY + this.playSize / 2) {
       if (this.playing === false) {
         this.playing = !this.playing;
@@ -138,6 +134,7 @@ class Vinyl {
   }
 
   mouseReleased() {
+    //reset the rate, stop the music
     this.dragging = false;
     this.sample.rate(1);
   }

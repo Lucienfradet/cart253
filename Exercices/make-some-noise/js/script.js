@@ -2,12 +2,18 @@
 Make some noise - exercice
 Lucien Cusson-Fradet
 
-- Make a turning vinyl with the mouse
-- drop a needle lol
-- Make a sound play when the sound bar passes the needle and affect the rate based on the mouseSpeed?
-- Add a second table with a god damn BANGER playing
-- add more samples
-- add buttons to swith between samples
+Some kind of vinyl/scratching simulator.
+White disc play songs when you click the small square underneath.
+Pale grey ones play samples.
+
+The movement of the visual discs can be controlled with the mouse.
+It also controls the sound playback rate.
+I tried programming it so it would follow the sound back and forth with the movements, but it doesn't really work as intended.
+It is however possible to play with sounds in some interesting ways, mainly by doing small movements with the mouse.
+
+Personal recommendation: Playing the two top vinyls, or the two others, together.
+
+See README for song credits.
 
 */
 
@@ -17,30 +23,13 @@ let canvasWidth = 600;
 let canvasHeight = 500;
 
 let vinyl = [];
-let vinylRight;
-const NUM_VINYL = 2;
-
-let startingMouseX;
-let startingMouseY;
-let endingMouseX;
-let endingMouseY;
 
 /**
-Description of preload
-*/
-function preload() {
-
-}
-
-
-/**
-Description of setup
+Canvas and create the array of vinyls (manually... yeah)
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight);
   background(0);
-
-
 
   vinyl[0] = new Vinyl(canvasWidth/4, canvasHeight/4 * 3, `capote.mp3`, 0.6, 255);
   vinyl[1] = new Vinyl(canvasWidth/4 * 3, canvasHeight/4 * 3, `ahh-fresh.mp3`, 0.6, 200);
@@ -50,7 +39,7 @@ function setup() {
 
 
 /**
-Description of draw()
+Displays and controls basic vinyl functions
 */
 function draw() {
   background(0);

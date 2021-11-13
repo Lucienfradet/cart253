@@ -1,3 +1,8 @@
 # Template p5 project
 
-This is the README file for the entire project. For more official projects you should write information here about the nature of the project, your name, any special explanations of how the project works, etc.
+Song Credit:
+  Benefitde - de l’album: "Fog FM". par Anthony Naples.
+  Bandcamp, URL(https://anthonynaples.bandcamp.com/track/benefit)
+
+  Capoté - de l’album: "Les maigres blancs d'Amérique du Noir". par Alaclair Ensemble.
+  Bandcamp, URL(https://alaclairensemble.bandcamp.com/track/capot)
