@@ -13,6 +13,16 @@ Lucien Cusson-Fradet
 
 "use strict";
 
+let canvasWidth = 600;
+let canvasHeight = 500;
+
+let vinyl;
+
+let startingMouseX;
+let startingMouseY;
+let endingMouseX;
+let endingMouseY;
+
 /**
 Description of preload
 */
@@ -25,7 +35,10 @@ function preload() {
 Description of setup
 */
 function setup() {
+  createCanvas(canvasWidth, canvasHeight);
+  background(0);
 
+  vinyl = new Vinyl();
 }
 
 
@@ -33,5 +46,16 @@ function setup() {
 Description of draw()
 */
 function draw() {
+  background(0);
 
+  vinyl.rotate();
+  vinyl.display();
+}
+
+function mousePressed() {
+  vinyl.mousePressed();
+}
+
+function mouseReleased() {
+  vinyl.mouseReleased();
 }
