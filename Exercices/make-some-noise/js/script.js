@@ -16,7 +16,9 @@ Lucien Cusson-Fradet
 let canvasWidth = 600;
 let canvasHeight = 500;
 
-let vinyl;
+let vinylLeft;
+let vinylRight;
+const NUM_VINYL = 2;
 
 let startingMouseX;
 let startingMouseY;
@@ -38,7 +40,8 @@ function setup() {
   createCanvas(canvasWidth, canvasHeight);
   background(0);
 
-  vinyl = new Vinyl();
+  vinylLeft = new Vinyl(canvasWidth/4, canvasHeight/2, `capote.mp3`);
+  vinylRight = new Vinyl(canvasWidth/4 * 3, canvasHeight/2, `ahh-fresh.mp3`);
 }
 
 
@@ -48,14 +51,20 @@ Description of draw()
 function draw() {
   background(0);
 
-  vinyl.rotate();
-  vinyl.display();
+  vinylLeft.rotate();
+  vinylLeft.display();
+  vinylLeft.musicPlaying();
+  vinylRight.rotate();
+  vinylRight.display();
+  vinylRight.musicPlaying();
 }
 
 function mousePressed() {
-  vinyl.mousePressed();
+  vinylLeft.mousePressed();
+  vinylRight.mousePressed();
 }
 
 function mouseReleased() {
-  vinyl.mouseReleased();
+  vinylLeft.mouseReleased();
+  vinylRight.mouseReleased();
 }
