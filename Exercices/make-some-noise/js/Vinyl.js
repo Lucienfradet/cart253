@@ -1,6 +1,6 @@
 class Vinyl {
   constructor(x, y, sample, volume, color) {
-    this.sample = loadSound('assets/sounds/'+sample); //this is not in setup because I plan on making it interchangeable
+    this.sample = sample;
     this.volume = volume;
     this.x = x;
     this.y = y;

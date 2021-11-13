@@ -22,7 +22,20 @@ See README for song credits.
 let canvasWidth = 600;
 let canvasHeight = 500;
 
+let capote;
+let ahFresh;
+let organ;
+let benefit;
+
+
 let vinyl = [];
+
+function preload() {
+  capote = loadSound('assets/sounds/capote.mp3');
+  ahFresh = loadSound('assets/sounds/ahh-fresh.mp3');
+  organ = loadSound('assets/sounds/organ.wav');
+  benefit = loadSound('assets/sounds/benefit.mp3');
+}
 
 /**
 Canvas and create the array of vinyls (manually... yeah)
@@ -31,10 +44,10 @@ function setup() {
   createCanvas(canvasWidth, canvasHeight);
   background(0);
 
-  vinyl[0] = new Vinyl(canvasWidth/4, canvasHeight/4 * 3, `capote.mp3`, 0.6, 255);
-  vinyl[1] = new Vinyl(canvasWidth/4 * 3, canvasHeight/4 * 3, `ahh-fresh.mp3`, 0.6, 200);
-  vinyl[2] = new Vinyl(canvasWidth/4, canvasHeight/4, `organ.wav`, 5, 200);
-  vinyl[3] = new Vinyl(canvasWidth/4 * 3, canvasHeight/4, `benefit.mp3`, 0.6, 255);
+  vinyl[0] = new Vinyl(canvasWidth/4, canvasHeight/4 * 3, capote, 0.6, 255);
+  vinyl[1] = new Vinyl(canvasWidth/4 * 3, canvasHeight/4 * 3, ahFresh, 0.6, 200);
+  vinyl[2] = new Vinyl(canvasWidth/4, canvasHeight/4, organ, 5, 200);
+  vinyl[3] = new Vinyl(canvasWidth/4 * 3, canvasHeight/4, benefit, 0.6, 255);
 }
 
 
