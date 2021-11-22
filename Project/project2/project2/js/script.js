@@ -28,6 +28,11 @@ OK? Add a radar thing
 
 "use strict";
 
+//module aliases
+let Engine = Matter.Engine,
+    World = Matter.World,
+    Bodies = Matter.Bodies;
+
 let canvasWidth = 700;
 let canvasHeight = 550;
 
@@ -75,13 +80,13 @@ function draw() {
   time = frameCount/60;
 
   //Deploys the tunnel after an amount of time
-  if (time > 5) {
-    for (let i = 0; i < tunnel.length; i++) {
-      tunnel[i].deploy();
-      radar.display();
-      radar.rotate();
-    }
-  }
+  // if (time > 5) {
+  //   for (let i = 0; i < tunnel.length; i++) {
+  //     tunnel[i].deploy();
+  //     radar.display();
+  //     radar.rotate();
+  //   }
+  // }
 
   // let r = random();
   // if (r < 0.1) {
