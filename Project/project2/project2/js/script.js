@@ -16,24 +16,19 @@ TODO LIST:
 - Collision with the main object
 - Implement a life system
 - Add different functions like a ring of spikes that you have to jump over
+- Implement States as objects
+
 - Implement dithering effect!?
 
 */
 
 "use strict";
-
-/* ---> matter.js <--- PHYSICS ENGINE */
-//module aliases
-let Engine = Matter.Engine,
-    World = Matter.World,
-    Bodies = Matter.Bodies;
-
-let engine;
-
 let canvasWidth = 700;
 let canvasHeight = 550;
 
 let time;
+
+let world;
 
 const NUM_RING = 50;
 let tunnel = [];
@@ -56,8 +51,9 @@ Description of setup
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
-  engine = Engine.create();
   background(0);
+
+  world = new Physics();
 
   for (let i = 0; i < NUM_RING; i++) {
     let layer = i;
@@ -65,8 +61,12 @@ function setup() {
     tunnel.push(tunnelRing);
   }
 
-  meatBall = new MeatBall();
+  meatBall = new MeatBall(0, 0, 25);
+  meatBall.addToWorld();
+
   radar = new Radar();
+
+  world.runWorld();
 }
 
 
@@ -76,6 +76,11 @@ Description of draw()
 function draw() {
   background(0);
   time = frameCount/60;
+
+
+
+  meatBall.display();
+
 
   //Deploys the tunnel after an amount of time
   // if (time > 5) {
@@ -98,7 +103,4 @@ function draw() {
     tunnel[i].display();
     tunnel[i].rotate();
   }
-
-  meatBall.move();
-  meatBall.display();
 }
