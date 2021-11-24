@@ -9,29 +9,26 @@ At the moment, it is possible to rotate the tunnel using A and D keys.
 
 
 TODO LIST:
-OK Create a tunnel with single layer
-OK Add perlin noise
-- Add an object that follows the tunnel edges based on a physics system
-  - Gravity
-  - Normal Force
-  - Angular momentum
-  - Friction
-  !!NOPE. Will try using matter.js library instead!!
-- Add a "jump" event
-OK Make the tunnel a tunnel (3D perlin noise)
-OK? Add a radar thing
+- Create matter.js objects for matter.js
+- Visualise the objects with p5.js
+- tweak the parameters so the controls feel nice
 - Spawn objects and make them follow the tunnel
 - Collision with the main object
+- Implement a life system
+- Add different functions like a ring of spikes that you have to jump over
 - Implement dithering effect!?
 
 */
 
 "use strict";
 
+/* ---> matter.js <--- PHYSICS ENGINE */
 //module aliases
 let Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies;
+
+let engine;
 
 let canvasWidth = 700;
 let canvasHeight = 550;
@@ -59,6 +56,7 @@ Description of setup
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
+  engine = Engine.create();
   background(0);
 
   for (let i = 0; i < NUM_RING; i++) {
