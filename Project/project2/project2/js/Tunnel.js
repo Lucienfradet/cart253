@@ -14,16 +14,17 @@ class Tunnel {
     this.rotation = 0; //actually the phase
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
-
   }
 
   rotate() {
     if (keyIsDown(65)) { //A key
       this.rotation -= this.rotationSpeed;
+      Body.rotate(wheel.body, -0.0005);
     }
 
     if (keyIsDown(68)) { //D key
       this.rotation += this.rotationSpeed;
+      Body.rotate(wheel.body, 0.0005);
     }
   }
 

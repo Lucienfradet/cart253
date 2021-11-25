@@ -33,9 +33,16 @@ let world;
 const NUM_RING = 50;
 let tunnel = [];
 
+let wheel;
+
 let meatBall;
+
 let radar;
+
 let item;
+
+const NUM_SLIDER = 1;
+let sliders = [];
 
 
 /**
@@ -54,6 +61,8 @@ function setup() {
   background(0);
 
   world = new Physics();
+  world.runWorld();
+  console.log(world.engine);
 
   for (let i = 0; i < NUM_RING; i++) {
     let layer = i;
@@ -61,12 +70,20 @@ function setup() {
     tunnel.push(tunnelRing);
   }
 
-  meatBall = new MeatBall(0, 0, 25);
-  meatBall.addToWorld();
+  wheel = new Wheel();
+  wheel.createWheel();
+
+  meatBall = new MeatBall(0, 0, 15);
 
   radar = new Radar();
 
-  world.runWorld();
+  sliders[0] = new Slider({
+    min: 0,
+    max: 1,
+    defaut: 0.1,
+    step: 0.01,
+    name: 'ballFriction'
+  });
 }
 
 
@@ -77,7 +94,9 @@ function draw() {
   background(0);
   time = frameCount/60;
 
+  debuggingSliders();
 
+  wheel.display();
 
   meatBall.display();
 
@@ -103,4 +122,12 @@ function draw() {
     tunnel[i].display();
     tunnel[i].rotate();
   }
+}
+
+function debuggingSliders() {
+  for (let i = 0; i < NUM_SLIDER; i++) {
+    sliders[i].display(i);
+    sliders[i].update(meatBall.friction);
+  }
+
 }

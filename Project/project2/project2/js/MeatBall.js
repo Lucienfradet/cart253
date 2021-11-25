@@ -1,22 +1,31 @@
 class MeatBall {
-  constructor(x, y, size) {
-    this.size = size;
-    this.body = Bodies.circle(x, y, this.size);
+  constructor(x, y, radius) {
+    this.radius = radius;
+    this.friction = 1; //from 0 to 1 -- default 0.1
     this.detail = 7;
-  }
+    this.body = Bodies.circle(x, y, this.radius, {friction: this.friction, frictionStatic: 0.1, inertia: 100});
+    World.add(world.world, this.body);
+    console.log(this.body);
 
-  addToWorld() {
-    Composite.add(world, this.size);
   }
 
   display() {
     let pos = this.body.position;
+    let angle = this.body.angle;
 
     push();
+    translate(pos.x, pos.y);
+    rotate(angle);
     fill(255);
     noStroke();
+    //stroke(255);
+    //strokeWeight(1);
     ellipseMode(CENTER);
-    ellipse(pos.x, pos.y, this.size, this.size, this.detail);
+    ellipse(0, 0, this.radius * 2, this.radius * 2, this.detail);
+
+    stroke(255, 0, 0);
+    strokeWeight(1);
+    line(0, 0, 0 + this.radius, 0);
     pop();
   }
 
