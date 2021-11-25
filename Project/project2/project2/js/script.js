@@ -9,8 +9,8 @@ At the moment, it is possible to rotate the tunnel using A and D keys.
 
 
 TODO LIST:
-- Create matter.js objects for matter.js
-- Visualise the objects with p5.js
+OK Create matter.js objects for matter.js
+OK Visualise the objects with p5.js
 - tweak the parameters so the controls feel nice
 - Spawn objects and make them follow the tunnel
 - Collision with the main object
