@@ -22,7 +22,6 @@ class Slider {
 
   display(i) {
     this.slider.position(0, 0 + i * 30);
-    this.slider.style('100px', '100px');
     this.text1 = createP(this.name);
     this.text1.position(140, -15 + i * 30);
 

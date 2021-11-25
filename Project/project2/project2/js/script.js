@@ -26,6 +26,7 @@ TODO LIST:
 let canvasWidth = 700;
 let canvasHeight = 550;
 
+//fonts
 let yoster;
 
 let time;
@@ -43,7 +44,7 @@ let radar;
 
 let item;
 
-const NUM_SLIDER = 2;
+//sliders for debugging
 let sliders = [];
 
 
@@ -75,7 +76,7 @@ function setup() {
   wheel = new Wheel();
   wheel.createWheel();
 
-  meatBall = new MeatBall(0, 0, 15);
+  meatBall = new MeatBall(0, 0, 30);
 
   radar = new Radar();
 
@@ -83,7 +84,7 @@ function setup() {
     value: undefined,
     min: 0,
     max: 1,
-    defaut: 0.1,
+    defaut: 0.8,
     step: 0.01,
     name: 'ballFriction'
   });

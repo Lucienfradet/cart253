@@ -12,6 +12,7 @@ class Tunnel {
     this.zoff = 0 - this.noiseZoff * this.layer; //third dimension of perlin noise
     this.noiseProgressionSpeed = 0.05;
     this.rotation = 0; //actually the phase
+    this.wheelRotationSpeed = 0.0005;
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
   }
@@ -19,12 +20,12 @@ class Tunnel {
   rotate() {
     if (keyIsDown(65)) { //A key
       this.rotation -= this.rotationSpeed;
-      Body.rotate(wheel.body, -0.0001);
+      Body.rotate(wheel.body, -this.wheelRotationSpeed);
     }
 
     if (keyIsDown(68)) { //D key
       this.rotation += this.rotationSpeed;
-      Body.rotate(wheel.body, 0.0001);
+      Body.rotate(wheel.body, this.wheelRotationSpeed);
     }
   }
 

@@ -1,6 +1,6 @@
 class Wheel {
   constructor() {
-    this.NUM_PARTS = 25;
+    this.NUM_PARTS = 30;
     this.parts = [];
     this.body;
     this.friction;
