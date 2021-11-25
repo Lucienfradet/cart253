@@ -1,17 +1,17 @@
 class Wheel {
   constructor() {
-    this.NUM_PARTS = 50;
+    this.NUM_PARTS = 25;
     this.parts = [];
     this.body;
-    this.friction = 1;
-    this.h = 50;
-    this.radius = tunnel[0].radius + this.h / 6 * 4;
-    this.w = 2 * PI * this.radius / this.NUM_PARTS;
+    this.friction;
+    this.h = 40;
+    this.radius = tunnel[0].radius + this.h;
+    this.w = TWO_PI * this.radius / this.NUM_PARTS;
   }
 
   createWheel() {
     for(let i = 0; i < this.NUM_PARTS; i++) {
-        let angle = i + 1 / this.NUM_PARTS * TWO_PI;
+        let angle = i / this.NUM_PARTS * TWO_PI;
         let x = cos(angle);
         let y = sin(angle);
         let cx = x * this.radius;
@@ -49,7 +49,7 @@ class Wheel {
   }
 
   display() {
-    for (let i = 1; i < this.NUM_PARTS; i++) { //Starting at 1 because the createBody function pushes the whole array and inserts a "self reference to the current body instance" in the [0] spot
+    for (let i = 1; i <= this.NUM_PARTS; i++) { //Starting at 1 because the createBody function pushes the whole array and inserts a "self reference to the current body instance" in the [0] spot
       let pos = this.parts[i].position;
       let angle = this.parts[i].angle;
 

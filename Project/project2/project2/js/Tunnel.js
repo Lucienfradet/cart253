@@ -19,12 +19,12 @@ class Tunnel {
   rotate() {
     if (keyIsDown(65)) { //A key
       this.rotation -= this.rotationSpeed;
-      Body.rotate(wheel.body, -0.0005);
+      Body.rotate(wheel.body, -0.0001);
     }
 
     if (keyIsDown(68)) { //D key
       this.rotation += this.rotationSpeed;
-      Body.rotate(wheel.body, 0.0005);
+      Body.rotate(wheel.body, 0.0001);
     }
   }
 

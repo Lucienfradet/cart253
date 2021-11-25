@@ -26,6 +26,8 @@ TODO LIST:
 let canvasWidth = 700;
 let canvasHeight = 550;
 
+let yoster;
+
 let time;
 
 let world;
@@ -41,7 +43,7 @@ let radar;
 
 let item;
 
-const NUM_SLIDER = 1;
+const NUM_SLIDER = 2;
 let sliders = [];
 
 
@@ -49,7 +51,7 @@ let sliders = [];
 --
 */
 function preload() {
-
+  yoster = loadFont('assets/fonts/yoster.ttf');
 }
 
 
@@ -78,11 +80,44 @@ function setup() {
   radar = new Radar();
 
   sliders[0] = new Slider({
+    value: undefined,
     min: 0,
     max: 1,
     defaut: 0.1,
     step: 0.01,
     name: 'ballFriction'
+  });
+  sliders[1] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1,
+    defaut: 0.1,
+    step: 0.01,
+    name: 'wheelFriction'
+  });
+  sliders[2] = new Slider({
+    value: undefined,
+    min: -5,
+    max: 5,
+    defaut: 1,
+    step: 0.1,
+    name: 'gravityY'
+  });
+  sliders[3] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1,
+    defaut: 0.5,
+    step: 0.01,
+    name: 'ballFrictionStatic'
+  });
+  sliders[4] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1,
+    defaut: 0.5,
+    step: 0.01,
+    name: 'wheelFrictionStatic'
   });
 }
 
@@ -94,14 +129,13 @@ function draw() {
   background(0);
   time = frameCount/60;
 
-  debuggingSliders();
+  //debuggingSliders();
 
   wheel.display();
 
   meatBall.display();
 
-
-  //Deploys the tunnel after an amount of time
+  // Deploys the tunnel after an amount of time
   // if (time > 5) {
   //   for (let i = 0; i < tunnel.length; i++) {
   //     tunnel[i].deploy();
@@ -125,9 +159,9 @@ function draw() {
 }
 
 function debuggingSliders() {
-  for (let i = 0; i < NUM_SLIDER; i++) {
-    sliders[i].display(i);
-    sliders[i].update(meatBall.friction);
-  }
-
+    meatBall.friction = sliders[0].display(0);
+    wheel.friction = sliders[1].display(1);
+    world.engine.gravity.y = sliders[2].display(2);
+    meatBall.frictionStatic = sliders[3].display(3);
+    wheel.frictionStatic = sliders[4].display(4);
 }

@@ -38,7 +38,7 @@ let souris = {
 let rotationAngle = 0;
 
 //Array of particles
-const NUM_PARTICLES = 200;
+const NUM_PARTICLES = 50;
 let particles = [];
 
 let aquarium = {
