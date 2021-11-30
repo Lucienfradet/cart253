@@ -3,10 +3,19 @@ class Wheel {
     this.NUM_PARTS = 30;
     this.parts = [];
     this.body;
-    this.friction;
+    this.startingFriction;
     this.h = 40;
     this.radius = tunnel[0].radius + this.h;
     this.w = TWO_PI * this.radius / this.NUM_PARTS;
+
+    this.constraint;
+    this.constraintOptions = {
+      pointA: { x: 0, y: 0 },
+      bodyB: this.body,
+      pointB: { x: -10, y: -10 },
+      stiffness: 0.7,
+      length: 5
+    };
   }
 
   createWheel() {
@@ -23,15 +32,21 @@ class Wheel {
           h: this.h,
           options: {
              angle: angle,
-             isStatic: true
+             isStatic: false
             }
-        }
+        };
         let circle = this.addRect(config);
 
         this.parts.push(circle);
       }
 
+
+    //Create a Constraint
+    this.constraint = Constraint.create(this.constraintOptions);
+    World.add(world.world, this.constraint);
+
     this.createBody(this.parts);
+
   }
 
   addRect({ x, y, w, h, options = {} }) {
@@ -45,7 +60,7 @@ class Wheel {
   }
 
   createBody(parts) {
-    this.body = Body.create({ parts: parts, isStatic: true, friction: this.friction });
+    this.body = Body.create({ parts: parts, isStatic: true, friction: this.startingFriction });
   }
 
   display() {
@@ -61,8 +76,15 @@ class Wheel {
       strokeWeight(1);
       stroke(255);
       rect(0, 0, this.w, this.h);
+      line(this.constraint.pointA.x, this.constraint.pointA.y, this.body.position.x, this.body.position.x);
       pop();
+      //console.log(this.body.position.y);
     }
+  }
 
+  sautillance() {
+    if (keyIsDown(32)) { //SpaceBar
+
+    }
   }
 }

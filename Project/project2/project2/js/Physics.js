@@ -6,7 +6,8 @@ let Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body,
     Composite = Matter.Composite,
-    Runner = Matter.Runner;
+    Runner = Matter.Runner,
+    Constraint = Matter.Constraint;
 
 class Physics {
   constructor() {

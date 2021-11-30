@@ -44,6 +44,8 @@ let radar;
 
 let item;
 
+let rampTest;
+
 //sliders for debugging
 let sliders = [];
 
@@ -76,7 +78,7 @@ function setup() {
   wheel = new Wheel();
   wheel.createWheel();
 
-  meatBall = new MeatBall(0, 0, 30);
+  meatBall = new MeatBall(0, -10, 30);
 
   radar = new Radar();
 
@@ -86,7 +88,11 @@ function setup() {
     max: 1,
     defaut: 0.8,
     step: 0.01,
-    name: 'ballFriction'
+    name: 'ballFriction',
+    id: 0,
+    callback: function (event) {
+      meatBall.body.friction = sliders[0].update(0);
+    }
   });
   sliders[1] = new Slider({
     value: undefined,
@@ -94,7 +100,11 @@ function setup() {
     max: 1,
     defaut: 0.1,
     step: 0.01,
-    name: 'wheelFriction'
+    name: 'wheelFriction',
+    id: 1,
+    callback: function (event) {
+      wheel.body.friction = sliders[1].update(1);
+    }
   });
   sliders[2] = new Slider({
     value: undefined,
@@ -102,7 +112,11 @@ function setup() {
     max: 5,
     defaut: 1,
     step: 0.1,
-    name: 'gravityY'
+    name: 'gravityY',
+    id: 2,
+    callback: function (event) {
+      world.engine.gravity.y = sliders[2].update(2);
+    }
   });
   sliders[3] = new Slider({
     value: undefined,
@@ -110,7 +124,11 @@ function setup() {
     max: 1,
     defaut: 0.5,
     step: 0.01,
-    name: 'ballFrictionStatic'
+    name: 'ballFrictionStatic',
+    id: 3,
+    callback: function (event) {
+      meatBall.body.frictionStatic = sliders[3].update(3);
+    }
   });
   sliders[4] = new Slider({
     value: undefined,
@@ -118,8 +136,15 @@ function setup() {
     max: 1,
     defaut: 0.5,
     step: 0.01,
-    name: 'wheelFrictionStatic'
+    name: 'wheelFrictionStatic',
+    id: 4,
+    callback: function (event) {
+      wheel.body.frictionStatic = sliders[4].update(4);
+    }
   });
+
+  rampTest = Bodies.rectangle(0, 0, 200, 30, {angle: TWO_PI/16, isStatic: true});
+  World.add(world.world, rampTest);
 }
 
 
@@ -130,7 +155,8 @@ function draw() {
   background(0);
   time = frameCount/60;
 
-  //debuggingSliders();
+  debuggingSliders();
+  //console.log(meatBall);
 
   wheel.display();
 
@@ -160,9 +186,7 @@ function draw() {
 }
 
 function debuggingSliders() {
-    meatBall.friction = sliders[0].display(0);
-    wheel.friction = sliders[1].display(1);
-    world.engine.gravity.y = sliders[2].display(2);
-    meatBall.frictionStatic = sliders[3].display(3);
-    wheel.frictionStatic = sliders[4].display(4);
+  for (let i = 0; i < sliders.length; i++) {
+    sliders[i].update(i);
+  }
 }

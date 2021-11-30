@@ -5,7 +5,7 @@ class MeatBall {
     this.detail = 7;
     this.body = Bodies.circle(x, y, this.radius, {friction: this.friction});
     World.add(world.world, this.body);
-    console.log(this.body);
+
 
   }
 
@@ -27,6 +27,7 @@ class MeatBall {
     strokeWeight(1);
     line(0, 0, 0 + this.radius, 0);
     pop();
+    //console.log(this.body.position.y);
   }
 
 
