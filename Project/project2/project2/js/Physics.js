@@ -6,6 +6,7 @@ let Engine = Matter.Engine,
     Bodies = Matter.Bodies,
     Body = Matter.Body,
     Composite = Matter.Composite,
+    Composites = Matter.Composites,
     Runner = Matter.Runner,
     Constraint = Matter.Constraint;
 

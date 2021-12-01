@@ -1,24 +1,16 @@
 class Wheel {
   constructor() {
-    this.NUM_PARTS = 30;
+    //Parameters to create the Wheel obect
+    this.NUM_PARTS = 20;
     this.parts = [];
-    this.body;
+    this.compoundBody;
+    this.composite;
     this.startingFriction;
     this.h = 40;
     this.radius = tunnel[0].radius + this.h;
     this.w = TWO_PI * this.radius / this.NUM_PARTS;
 
-    this.constraint;
-    this.constraintOptions = {
-      pointA: { x: 0, y: 0 },
-      bodyB: this.body,
-      pointB: { x: -10, y: -10 },
-      stiffness: 0.7,
-      length: 5
-    };
-  }
-
-  createWheel() {
+    //Creates a rectangle body for every part of the wheel
     for(let i = 0; i < this.NUM_PARTS; i++) {
         let angle = i / this.NUM_PARTS * TWO_PI;
         let x = cos(angle);
@@ -32,26 +24,41 @@ class Wheel {
           h: this.h,
           options: {
              angle: angle,
-             isStatic: false
+             isStatic: false,
+             inertia: Infinity //Prevents the parts from rotating on their axies! Merci jésus marie joseph bonne enfant.
             }
         };
-        let circle = this.addRect(config);
-
-        this.parts.push(circle);
+        //Function that creates the bodies
+        let square = this.addRect(config);
+        this.parts.push(square);
       }
 
+    //Create the compoundBody with the different parts
+    this.createBody(this.parts);
+
+    //Parameters fot the center joint constraint
+    this.constraint;
+    this.constraintOptions = {
+      pointA: { x: 0, y: 0 },
+      bodyB: this.compoundBody,
+      pointB: { x: 0, y: 0 },
+      stiffness: 0.7,
+      length: 0
+    }
 
     //Create a Constraint
     this.constraint = Constraint.create(this.constraintOptions);
-    World.add(world.world, this.constraint);
+    //World.add(world.world, this.constraint);
 
-    this.createBody(this.parts);
+    this.composite = Composite.create();
+    this.composite = Composite.add(world.world, [this.compoundBody, this.constraint]);
+    console.log(this.constraint);
 
   }
 
   addRect({ x, y, w, h, options = {} }) {
 	let body = Bodies.rectangle(x, y, w, h, options);
-	this.addBody(body);
+	//this.addBody(body);
 	return body;
   }
 
@@ -60,7 +67,11 @@ class Wheel {
   }
 
   createBody(parts) {
-    this.body = Body.create({ parts: parts, isStatic: true, friction: this.startingFriction });
+    this.compoundBody = Body.create({ parts: parts });
+    //Body.setParts(this.compoundBody, parts);
+    //this.addBody(this.body);
+
+    console.log(this.compoundBody);
   }
 
   display() {
@@ -70,16 +81,20 @@ class Wheel {
 
       push();
       translate(pos.x, pos.y);
-      rotate(angle);
+      rotate(angle - this.compoundBody.angle);
       rectMode(CENTER);
       fill(177);
       strokeWeight(1);
       stroke(255);
       rect(0, 0, this.w, this.h);
-      line(this.constraint.pointA.x, this.constraint.pointA.y, this.body.position.x, this.body.position.x);
       pop();
-      //console.log(this.body.position.y);
     }
+
+    //Visualisation of the constraint as a line
+    push();
+    stroke(255);
+    line(this.constraint.pointA.x, this.constraint.pointA.y, this.compoundBody.position.x, this.compoundBody.position.y);
+    pop();
   }
 
   sautillance() {

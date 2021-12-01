@@ -76,6 +76,7 @@ function setup() {
   }
 
   wheel = new Wheel();
+  wheel.createWheel();
 
   meatBall = new MeatBall(0, -10, 30);
 
@@ -97,12 +98,12 @@ function setup() {
     value: undefined,
     min: 0,
     max: 1,
-    defaut: 0.8,
+    defaut: 0.1,
     step: 0.01,
     name: 'wheelFriction',
     id: 1,
     callback: function (event) {
-      wheel.compoundBody.friction = sliders[1].update(1);
+      wheel.body.friction = sliders[1].update(1);
     }
   });
   sliders[2] = new Slider({
@@ -138,11 +139,11 @@ function setup() {
     name: 'wheelFrictionStatic',
     id: 4,
     callback: function (event) {
-      wheel.compoundBody.frictionStatic = sliders[4].update(4);
+      wheel.body.frictionStatic = sliders[4].update(4);
     }
   });
 
-  rampTest = Bodies.rectangle(0, 0, 180, 30, {angle: TWO_PI/16, isStatic: true});
+  rampTest = Bodies.rectangle(0, 0, 200, 30, {angle: TWO_PI/16, isStatic: true});
   World.add(world.world, rampTest);
 }
 

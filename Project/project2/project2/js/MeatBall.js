@@ -4,7 +4,7 @@ class MeatBall {
     this.friction; //from 0 to 1 -- default 0.1
     this.detail = 7;
     this.body = Bodies.circle(x, y, this.radius, {friction: this.friction});
-    World.add(world.world, this.body);
+    Composite.add(world.world, this.body);
 
 
   }
