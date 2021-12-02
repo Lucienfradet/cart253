@@ -9,6 +9,7 @@ class Wheel {
     this.h = 40;
     this.radius = tunnel[0].radius + this.h;
     this.w = TWO_PI * this.radius / this.NUM_PARTS;
+    this.wheelRotationSpeed = 0.02;
 
     //Creates a rectangle body for every part of the wheel
     for(let i = 0; i < this.NUM_PARTS; i++) {
@@ -42,7 +43,7 @@ class Wheel {
       pointA: { x: 0, y: 0 },
       bodyB: this.compoundBody,
       pointB: { x: 0, y: 0 },
-      stiffness: 0.7,
+      stiffness: 0.4,
       length: 0
     }
 
@@ -97,9 +98,20 @@ class Wheel {
     pop();
   }
 
-  sautillance() {
-    if (keyIsDown(32)) { //SpaceBar
+  rotate() {
+    if (keyIsDown(65)) { //A key
+      Body.setAngularVelocity(this.compoundBody, -this.wheelRotationSpeed);
+    }
 
+    if (keyIsDown(68)) { //D key
+      Body.setAngularVelocity(this.compoundBody, this.wheelRotationSpeed);
+    }
+  }
+
+  keyPressed() {
+    if (keyCode === 32) { //SpaceBar
+      Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: 0, y: -10} );
+      console.log('caca');
     }
   }
 }

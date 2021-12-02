@@ -141,9 +141,23 @@ function setup() {
       wheel.compoundBody.frictionStatic = sliders[4].update(4);
     }
   });
+  sliders[5] = new Slider({
+    value: undefined,
+    min: 0.001,
+    max: 0.5,
+    defaut: 0.02,
+    step: 0.001,
+    name: 'wheelRotationSpeed',
+    id: 5,
+    callback: function (event) {
+      wheel.wheelRotationSpeed = sliders[5].update(5);
+    }
+  });
 
-  rampTest = Bodies.rectangle(0, 0, 180, 30, {angle: TWO_PI/16, isStatic: true});
-  World.add(world.world, rampTest);
+
+  //Ramp Test
+  // rampTest = Bodies.rectangle(0, 0, 180, 30, {angle: TWO_PI/16, isStatic: true});
+  // World.add(world.world, rampTest);
 }
 
 
@@ -158,6 +172,7 @@ function draw() {
   //console.log(meatBall);
 
   wheel.display();
+  wheel.rotate();
 
   meatBall.display();
 
@@ -188,4 +203,8 @@ function debuggingSliders() {
   for (let i = 0; i < sliders.length; i++) {
     sliders[i].update(i);
   }
+}
+
+function keyPressed() {
+  wheel.keyPressed();
 }

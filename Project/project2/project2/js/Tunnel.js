@@ -20,12 +20,10 @@ class Tunnel {
   rotate() {
     if (keyIsDown(65)) { //A key
       this.rotation -= this.rotationSpeed;
-      Body.setAngularVelocity(wheel.compoundBody, -this.wheelRotationSpeed);
     }
 
     if (keyIsDown(68)) { //D key
       this.rotation += this.rotationSpeed;
-      Body.setAngularVelocity(wheel.compoundBody, this.wheelRotationSpeed);
     }
   }
 
