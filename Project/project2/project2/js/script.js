@@ -177,13 +177,13 @@ function draw() {
   meatBall.display();
 
   // Deploys the tunnel after an amount of time
-  // if (time > 5) {
-  //   for (let i = 0; i < tunnel.length; i++) {
-  //     tunnel[i].deploy();
-  //     radar.display();
-  //     radar.rotate();
-  //   }
-  // }
+  if (time > 5) {
+    for (let i = 0; i < tunnel.length; i++) {
+      tunnel[i].deploy();
+      radar.display();
+      radar.rotate();
+    }
+  }
 
   // let r = random();
   // if (r < 0.1) {
