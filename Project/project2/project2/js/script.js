@@ -12,7 +12,7 @@ TODO LIST:
 OK Create matter.js objects for matter.js
 OK Visualise the objects with p5.js
 - tweak the parameters so the controls feel nice
-- Spawn objects and make them follow the tunnel
+OK Spawn objects and make them follow the tunnel
 - Collision with the main object
 - Implement a life system
 - Add different functions like a ring of spikes that you have to jump over
@@ -35,6 +35,7 @@ let world;
 
 const NUM_RING = 50;
 let tunnel = [];
+let tunnelPositionHistory = [];
 
 let wheel;
 
@@ -42,7 +43,7 @@ let meatBall;
 
 let radar;
 
-let item;
+let item = [];
 
 let rampTest;
 
@@ -177,26 +178,61 @@ function draw() {
   meatBall.display();
 
   // Deploys the tunnel after an amount of time
-  if (time > 5) {
+  if (time > 0) {
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].deploy();
       radar.display();
       radar.rotate();
+      }
+
+      let r = random();
+      if (r < 0.2) {
+        let newItem = new Item(radar.position.x, radar.position.y, radar.centerPositionZ);
+        item.push(newItem);
+      }
+
+      for (let i = 0; i < item.length; i++) {;
+        item[i].display();
+        item[i].followTunnel();
+        if (item[i].isOffScreen()) {
+          item.splice(i, 1);
+          i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
+        }
     }
   }
 
-  // let r = random();
-  // if (r < 0.1) {
-  //   item = new Item(radar.position.x, radar.position.y, radar.position.z);
-  // }
-
-  //item.display();
-  //item.followTunnel();
+  // console.log(`radar.position.x: ${radar.position.x}`);
+  // console.log(`radar.position.y: ${radar.position.y}`);
+  // console.log(`mouseX: ${mouseX - width/2}`);
+  // console.log(`mouseY: ${mouseY - height/2}`);
 
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();
     tunnel[i].rotate();
   }
+  delayTunnel();
+
+}
+
+function delayTunnel() {
+  if (tunnelPositionHistory.length > NUM_RING - 2) {
+    tunnelPositionHistory.splice(0, 1);
+  }
+
+  let pos = wheel.compoundBody.position;
+  tunnel[0].position.x = pos.x;
+  tunnel[0].position.y = pos.y;
+
+  tunnelPositionHistory.push(pos);
+
+  for (let i = tunnelPositionHistory.length - 1; i >= 1; i--) {
+    tunnel[tunnelPositionHistory.length - i].position.x = tunnelPositionHistory[i].x;
+    tunnel[tunnelPositionHistory.length - i].position.y = tunnelPositionHistory[i].y;
+  }
+
+  console.log(tunnelPositionHistory[0]);
+  console.log(tunnelPositionHistory[48]);
+
 }
 
 function debuggingSliders() {

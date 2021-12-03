@@ -4,20 +4,24 @@
 class Item {
   constructor(x, y, z) {
     this.position = createVector(x, y, z);
+    this.speed = 10;
     this.frame = 0;
   }
 
   followTunnel() {
-    this.position.z = tunnel[tunnel.length - 1 - this.frame].position.z;
-    this.frame++;
+    this.position.z += this.speed;
   }
 
   display() {
     push();
     fill(255);
     noStroke();
-    translate(0, 0, this.position.z);
+    translate(this.position.x, this.position.y, this.position.z);
     ellipse(0, 0, 30);
     pop();
+  }
+
+  isOffScreen() {
+    return (this.position.z > 300);
   }
 }

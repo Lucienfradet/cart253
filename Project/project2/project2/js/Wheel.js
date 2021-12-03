@@ -43,7 +43,7 @@ class Wheel {
       pointA: { x: 0, y: 0 },
       bodyB: this.compoundBody,
       pointB: { x: 0, y: 0 },
-      stiffness: 0.4,
+      stiffness: 0.01,
       length: 0
     }
 
@@ -110,7 +110,7 @@ class Wheel {
 
   keyPressed() {
     if (keyCode === 32) { //SpaceBar
-      Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: 0, y: -10} );
+      Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: 0, y: -5} );
       console.log('caca');
     }
   }
