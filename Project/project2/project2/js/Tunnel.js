@@ -1,9 +1,10 @@
-let deploy = false;
+let deployed = false;
 
 class Tunnel {
   constructor(layer) {
     this.layer = layer;
     this.zPositionOffset = 0;
+    this.profondeur = 50;
     this.colorOpacity = 5 * layer;
     this.position = createVector(0, 0, 0);
     this.radius = 150; //radius of the tunnel entrance
@@ -15,30 +16,21 @@ class Tunnel {
     this.wheelRotationSpeed = 0.02;
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
+
+    this.history = [];
   }
 
-  rotate() {
-    if (keyIsDown(65)) { //A key
-      this.rotation -= this.rotationSpeed;
-    }
-
-    if (keyIsDown(68)) { //D key
-      this.rotation += this.rotationSpeed;
-    }
-  }
-
-  deploy() {
-    deploy = true;
-    if (this.zPositionOffset < 50) {
-      this.zPositionOffset += 1;
-      this.position.z = -this.zPositionOffset * this.layer;
+  update() {
+    if (this.layer === 0) {
+      this.position = wheel.compoundBody.position;
+      this.history.push(this.position);
     }
   }
 
   display() {
     push();
     //Begin the tunnel with only one layer visible
-    if (deploy) {
+    if (deployed) {
       stroke(255, 255 - this.colorOpacity); //Dilute the stroke as the cricles move back on the z axis
     }
     else if (this.layer === 0) {
@@ -67,8 +59,38 @@ class Tunnel {
     //this.phase += 0.01; //Allows to "rotate" the whole tunnel. It actually affects the xoff and yoff values.
     //this.position.z += 0.01;
     //this.noiseMax *= 1.1;
+  }
 
+  rotate() {
+    if (keyIsDown(65)) { //A key
+      this.rotation -= this.rotationSpeed;
+    }
 
+    if (keyIsDown(68)) { //D key
+      this.rotation += this.rotationSpeed;
+    }
+  }
 
+  deploy() {
+    deployed = true;
+    if (this.zPositionOffset < this.profondeur) {
+      this.zPositionOffset += 1;
+      this.position.z = -this.zPositionOffset * this.layer;
+    }
+  }
+
+  saveHistory() {
+    if (this.history.length > NUM_RING - 2) {
+      this.history.splice(0, 1);
+    }
+
+    this.position = wheel.compoundBody.position;
+
+    this.history.push(this.position);
+    console.log(tunnel[0].history);
+  }
+
+  applyHistory(i) {
+    this.position = tunnel[0].history[i];
   }
 }

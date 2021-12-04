@@ -178,12 +178,12 @@ function draw() {
   meatBall.display();
 
   // Deploys the tunnel after an amount of time
-  if (time > 0) {
+  if (time > 5) {
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].deploy();
+      }
       radar.display();
       radar.rotate();
-      }
 
       let r = random();
       if (r < 0.2) {
@@ -212,6 +212,14 @@ function draw() {
   }
   delayTunnel();
 
+  // tunnel[0].saveHistory();
+  //
+  // for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
+  //   let size = map(tunnel[0].history[i].y, -100, 100, 25, 100);
+  //   let xPos = map(i, 0, 49, -width/2, width/2);
+  //   ellipse(xPos, 0, size);
+  // }
+
 }
 
 function delayTunnel() {
@@ -226,12 +234,14 @@ function delayTunnel() {
   tunnelPositionHistory.push(pos);
 
   for (let i = tunnelPositionHistory.length - 1; i >= 1; i--) {
+    let size = map(tunnelPositionHistory[i].y, -100, 100, 25, 100);
+    let xPos = map(i, 0, 49, -width/2, width/2);
+
+    ellipse(xPos, 0, size);
+
     tunnel[tunnelPositionHistory.length - i].position.x = tunnelPositionHistory[i].x;
     tunnel[tunnelPositionHistory.length - i].position.y = tunnelPositionHistory[i].y;
   }
-
-  console.log(tunnelPositionHistory[0]);
-  console.log(tunnelPositionHistory[48]);
 
 }
 

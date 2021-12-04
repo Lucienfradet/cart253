@@ -38,7 +38,7 @@ let souris = {
 let rotationAngle = 0;
 
 //Array of particles
-const NUM_PARTICLES = 50;
+const NUM_PARTICLES = 10;
 let particles = [];
 
 let aquarium = {
@@ -74,7 +74,7 @@ function createParticle() {
     g: 255,
     b: random(150, 255),
     trail: [],
-    maxTrail: 3,
+    maxTrail: 30,
   }
   particle.speedV.setMag(random(2, 4));
 

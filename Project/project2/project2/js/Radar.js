@@ -2,7 +2,7 @@ class Radar {
   constructor() {
     this.position = createVector(tunnel[0].radius, tunnel[0].radius, 0);
     this.centerPositionZ = 0; //Z position of the center point
-    this.angle = 0.001;
+    this.angle = 0.05;
     this.amplitude = tunnel[0].radius;
     this.rotationAxis = createVector(0, 0, 1);
   }
