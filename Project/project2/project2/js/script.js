@@ -154,6 +154,18 @@ function setup() {
       wheel.wheelRotationSpeed = sliders[5].update(5);
     }
   });
+  sliders[6] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 20,
+    defaut: 5,
+    step: 0.1,
+    name: 'wheelJumpForce',
+    id: 6,
+    callback: function (event) {
+      wheel.jumpForce = sliders[6].update(6);
+    }
+  });
 
 
   //Ramp Test
@@ -169,16 +181,13 @@ function draw() {
   background(0);
   time = frameCount/60;
 
-  debuggingSliders();
-  //console.log(meatBall);
-
   wheel.display();
   wheel.rotate();
 
   meatBall.display();
 
   // Deploys the tunnel after an amount of time
-  if (time > 5) {
+  if (time > 0) {
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].deploy();
       }
@@ -220,6 +229,7 @@ function draw() {
   //   ellipse(xPos, 0, size);
   // }
 
+  debuggingSliders();
 }
 
 function delayTunnel() {
@@ -231,13 +241,15 @@ function delayTunnel() {
   tunnel[0].position.x = pos.x;
   tunnel[0].position.y = pos.y;
 
-  tunnelPositionHistory.push(pos);
+  let vPos = createVector(pos.x, pos.y);
+
+  tunnelPositionHistory.push(vPos);
 
   for (let i = tunnelPositionHistory.length - 1; i >= 1; i--) {
     let size = map(tunnelPositionHistory[i].y, -100, 100, 25, 100);
     let xPos = map(i, 0, 49, -width/2, width/2);
 
-    ellipse(xPos, 0, size);
+    //ellipse(xPos, 0, size);
 
     tunnel[tunnelPositionHistory.length - i].position.x = tunnelPositionHistory[i].x;
     tunnel[tunnelPositionHistory.length - i].position.y = tunnelPositionHistory[i].y;
