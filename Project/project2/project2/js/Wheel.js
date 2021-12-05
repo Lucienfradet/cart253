@@ -10,7 +10,7 @@ class Wheel {
     this.radius = tunnel[0].radius + this.h;
     this.w = TWO_PI * this.radius / this.NUM_PARTS;
     this.wheelRotationSpeed = 0.02;
-    this.jumpForce = 5;
+    this.jumpForce = 2;
 
     //Creates a rectangle body for every part of the wheel
     for(let i = 0; i < this.NUM_PARTS; i++) {
@@ -44,7 +44,7 @@ class Wheel {
       pointA: { x: 0, y: 0 },
       bodyB: this.compoundBody,
       pointB: { x: 0, y: 0 },
-      stiffness: 0.01,
+      stiffness: 0.1,
       length: 0
     }
 

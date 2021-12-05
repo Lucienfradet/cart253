@@ -13,7 +13,7 @@ OK Create matter.js objects for matter.js
 OK Visualise the objects with p5.js
 - tweak the parameters so the controls feel nice
 OK Spawn objects and make them follow the tunnel
-- Collision with the main object
+OK Collision with the main object
 - Implement a life system
 - Add different functions like a ring of spikes that you have to jump over
 - Implement States as objects
@@ -24,11 +24,11 @@ OK Spawn objects and make them follow the tunnel
 
 "use strict";
 // 1160 893
-// let canvasWidth = 700;
-// let canvasHeight = 550;
+let canvasWidth = 700;
+let canvasHeight = 550;
 
-let canvasWidth = 1160;
-let canvasHeight = 893;
+// let canvasWidth = 1160;
+// let canvasHeight = 893;
 
 let img = {
   backgroundTest: undefined
@@ -91,7 +91,7 @@ function setup() {
 
   radar = new Radar();
 
-  spawner = new Spawner({state: 'random'});
+  spawner = new Spawner({state: ''});
 
   sliders[0] = new Slider({
     value: undefined,
@@ -169,7 +169,7 @@ function setup() {
     value: undefined,
     min: 0,
     max: 20,
-    defaut: 5,
+    defaut: 2,
     step: 0.1,
     name: 'wheelJumpForce',
     id: 6,
@@ -241,43 +241,28 @@ function draw() {
       }
       radar.display();
       radar.rotate();
-
-      let r = random();
-      if (r < 0.2) {
-        let newItem = new Item(radar.position.x, radar.position.y, radar.centerPositionZ);
-        item.push(newItem);
-      }
-
-      for (let i = 0; i < item.length; i++) {
-        item[i].followTunnel();
-        item[i].display();
-
-        if (item[i].isOffScreen() || item[i].collision()) {
-          item.splice(i, 1);
-          i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
-        }
-    }
   }
 
-  // console.log(`radar.position.x: ${radar.position.x}`);
-  // console.log(`radar.position.y: ${radar.position.y}`);
-  // console.log(`mouseX: ${mouseX - width/2}`);
-  // console.log(`mouseY: ${mouseY - height/2}`);
+  spawner.update();
+
+  //display and update Items
+  for (let i = 0; i < item.length; i++) {
+    item[i].followTunnel();
+    item[i].display();
+
+    if (item[i].isOffScreen() || item[i].collision()) {
+      item.splice(i, 1);
+      i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
+    }
+  }
 
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();
   }
   delayTunnel();
 
-  // tunnel[0].saveHistory();
-  //
-  // for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
-  //   let size = map(tunnel[0].history[i].y, -100, 100, 25, 100);
-  //   let xPos = map(i, 0, 49, -width/2, width/2);
-  //   ellipse(xPos, 0, size);
-  // }
-  imageMode(CENTER);
-  image(img.backgroundTest, 0, 0);
+  // imageMode(CENTER);
+  // image(img.backgroundTest, 0, 0);
 }
 
 function delayTunnel() {
@@ -313,4 +298,5 @@ function debuggingSliders() {
 
 function keyPressed() {
   wheel.keyPressed();
+  spawner.keyPressed();
 }

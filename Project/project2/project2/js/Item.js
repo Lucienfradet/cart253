@@ -2,13 +2,14 @@
 //These will be the items that the radar will spawm and that the MeatBall will have to avoid or catch.
 
 class Item {
-  constructor(x, y, z) {
+  constructor(x, y, z, id) {
     this.position = createVector(x, y, z);
-    this.speed = createVector(0, 0, sliders[7].value);
+    this.speed = createVector(0, 0, sliders[7].value); //Watch out!! this is just for testing
     this.size = 30;
     this.offset = 0;
     this.pastAngle = 0;
     this.angle = 0;
+    this.id = id;
   }
 
   followTunnel() {
