@@ -40,7 +40,11 @@ class Radar {
     //Displays the line
     this.centerPositionZ = tunnel[tunnel.length - 1].position.z; //Follow the tunnel expension
     this.position.setMag(this.amplitude);
+
     push();
+
+    rotateZ(wheel.compoundBody.angle);
+
     noFill();
     stroke(255);
     strokeWeight(20);

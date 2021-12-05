@@ -13,7 +13,7 @@ class Tunnel {
     this.zoff = 0 - this.noiseZoff * this.layer; //third dimension of perlin noise
     this.noiseProgressionSpeed = 0.05;
     this.rotation = 0; //actually the phase
-    this.wheelRotationSpeed = 0.02;
+    this.wheelRotationSpeed = 0.05;
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
 
@@ -29,6 +29,7 @@ class Tunnel {
 
   display() {
     push();
+    rotateZ(wheel.compoundBody.angle);
     //Begin the tunnel with only one layer visible
     if (deployed) {
       stroke(255, 255 - this.colorOpacity); //Dilute the stroke as the cricles move back on the z axis
@@ -61,14 +62,14 @@ class Tunnel {
     //this.noiseMax *= 1.1;
   }
 
-  rotate() {
-    if (keyIsDown(65)) { //A key
-      this.rotation -= this.rotationSpeed;
-    }
-
-    if (keyIsDown(68)) { //D key
-      this.rotation += this.rotationSpeed;
-    }
+  rotate() { //Function using the offset which doen't work really. *Should delete*
+    // if (keyIsDown(65)) { //A key
+    //   this.rotation += this.rotationSpeed;
+    // }
+    //
+    // if (keyIsDown(68)) { //D key
+    //   this.rotation -= this.rotationSpeed;
+    // }
   }
 
   deploy() {

@@ -18,8 +18,6 @@ class Slider {
     this.name = name;
     this.id = id;
     this.callback = callback;
-    this.text1;
-    this.text2;
 
     this.slider = createSlider(this.min, this.max, this.defaut, this.step);
 

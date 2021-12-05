@@ -1,7 +1,7 @@
 class Wheel {
   constructor() {
     //Parameters to create the Wheel obect
-    this.NUM_PARTS = 20;
+    this.NUM_PARTS = 30;
     this.parts = [];
     this.compoundBody;
     this.composite;
@@ -83,10 +83,10 @@ class Wheel {
 
       push();
       translate(pos.x, pos.y);
-      rotate(angle - this.compoundBody.angle);
+      rotate(angle + this.compoundBody.angle); //add or remove compoundBody.angle (acts as an offset to display the parts still or rotating on their own axes (NOTE: matter.js doesn't see them as rotating)
       rectMode(CENTER);
-      fill(177);
-      strokeWeight(1);
+      noFill();
+      strokeWeight(3);
       stroke(255);
       rect(0, 0, this.w, this.h);
       pop();
@@ -100,11 +100,11 @@ class Wheel {
   }
 
   rotate() {
-    if (keyIsDown(65)) { //A key
+    if (keyIsDown(68)) { //D key
       Body.setAngularVelocity(this.compoundBody, -this.wheelRotationSpeed);
     }
 
-    if (keyIsDown(68)) { //D key
+    if (keyIsDown(65)) { //A key
       Body.setAngularVelocity(this.compoundBody, this.wheelRotationSpeed);
     }
   }

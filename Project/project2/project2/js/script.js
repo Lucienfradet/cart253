@@ -23,8 +23,16 @@ OK Spawn objects and make them follow the tunnel
 */
 
 "use strict";
-let canvasWidth = 700;
-let canvasHeight = 550;
+// 1160 893
+// let canvasWidth = 700;
+// let canvasHeight = 550;
+
+let canvasWidth = 1160;
+let canvasHeight = 893;
+
+let img = {
+  backgroundTest: undefined
+}
 
 //fonts
 let yoster;
@@ -45,7 +53,7 @@ let radar;
 
 let item = [];
 
-let rampTest;
+let spawner;
 
 //sliders for debugging
 let sliders = [];
@@ -56,6 +64,7 @@ let sliders = [];
 */
 function preload() {
   yoster = loadFont('assets/fonts/yoster.ttf');
+  img.backgroundTest = loadImage('assets/images/backgroundTest.png');
 }
 
 
@@ -81,6 +90,8 @@ function setup() {
   meatBall = new MeatBall(0, -10, 30);
 
   radar = new Radar();
+
+  spawner = new Spawner({state: 'random'});
 
   sliders[0] = new Slider({
     value: undefined,
@@ -166,11 +177,47 @@ function setup() {
       wheel.jumpForce = sliders[6].update(6);
     }
   });
+  sliders[7] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 30,
+    defaut: 10,
+    step: 0.5,
+    name: 'ItemSpeed',
+    id: 7,
+    callback: function (event) {
+      for (let i = 0; i < item.length; i++) {
+        item[i].speed.z = sliders[7].update(7);
+      }
 
-
-  //Ramp Test
-  // rampTest = Bodies.rectangle(0, 0, 180, 30, {angle: TWO_PI/16, isStatic: true});
-  // World.add(world.world, rampTest);
+    }
+  });
+  sliders[8] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1,
+    defaut: 0.05,
+    step: 0.005,
+    name: 'radarSpeed',
+    id: 8,
+    callback: function (event) {
+        radar.angle = sliders[8].update(8);
+    }
+  });
+  sliders[9] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1000,
+    defaut: 25,
+    step: 1,
+    name: 'TunnelradiusOffset',
+    id: 9,
+    callback: function (event) {
+      for (let i = 0; i < item.length; i++) {
+        tunnel[i].radiusOffset = sliders[9].update(9);
+      }
+    }
+  });
 }
 
 
@@ -180,6 +227,7 @@ Description of draw()
 function draw() {
   background(0);
   time = frameCount/60;
+  debuggingSliders();
 
   wheel.display();
   wheel.rotate();
@@ -200,10 +248,11 @@ function draw() {
         item.push(newItem);
       }
 
-      for (let i = 0; i < item.length; i++) {;
-        item[i].display();
+      for (let i = 0; i < item.length; i++) {
         item[i].followTunnel();
-        if (item[i].isOffScreen()) {
+        item[i].display();
+
+        if (item[i].isOffScreen() || item[i].collision()) {
           item.splice(i, 1);
           i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
         }
@@ -217,7 +266,6 @@ function draw() {
 
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();
-    tunnel[i].rotate();
   }
   delayTunnel();
 
@@ -228,8 +276,8 @@ function draw() {
   //   let xPos = map(i, 0, 49, -width/2, width/2);
   //   ellipse(xPos, 0, size);
   // }
-
-  debuggingSliders();
+  imageMode(CENTER);
+  image(img.backgroundTest, 0, 0);
 }
 
 function delayTunnel() {
