@@ -11,11 +11,14 @@ At the moment, it is possible to rotate the tunnel using A and D keys.
 TODO LIST:
 OK Create matter.js objects for matter.js
 OK Visualise the objects with p5.js
-- tweak the parameters so the controls feel nice
+- tweak the parameters so the controls feel nice !!!
 OK Spawn objects and make them follow the tunnel
 OK Collision with the main object
-- Implement a life system
+- Implement a life system ???
 - Add different functions like a ring of spikes that you have to jump over
+- Make the jump be perpandicular to the last point of contact with the MeatBall
+- add a little angular momentum to the meatball to help with the movements?
+OK fix the tunnel jump delay...
 - Implement States as objects
 
 - Implement dithering effect!?
@@ -43,7 +46,6 @@ let world;
 
 const NUM_RING = 50;
 let tunnel = [];
-let tunnelPositionHistory = [];
 
 let wheel;
 
@@ -75,24 +77,28 @@ function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
   background(0);
 
+  //Creates the Physics engine and activates it
   world = new Physics();
   world.runWorld();
-  console.log(world.engine);
 
+  //Creates the tunnel
   for (let i = 0; i < NUM_RING; i++) {
     let layer = i;
     let tunnelRing = new Tunnel(layer);
     tunnel.push(tunnelRing);
   }
 
+  //Create the matter.js Wheel
   wheel = new Wheel();
 
+  //Create the main playable body, behold the MEATBALL
   meatBall = new MeatBall(0, -10, 30);
 
+  //Creates the Radar and the spawner
   radar = new Radar();
-
   spawner = new Spawner({state: ''});
 
+  //Creates sliders for debugging
   sliders[0] = new Slider({
     value: undefined,
     min: 0,
@@ -213,8 +219,22 @@ function setup() {
     name: 'TunnelradiusOffset',
     id: 9,
     callback: function (event) {
-      for (let i = 0; i < item.length; i++) {
+      for (let i = 0; i < tunnel.length; i++) {
         tunnel[i].radiusOffset = sliders[9].update(9);
+      }
+    }
+  });
+  sliders[10] = new Slider({
+    value: undefined,
+    min: 0,
+    max: 1,
+    defaut: 0.1,
+    step: 0.01,
+    name: 'noiseProgressionSpeed',
+    id: 10,
+    callback: function (event) {
+      for (let i = 0; i < tunnel.length; i++) {
+        tunnel[i].noiseProgressionSpeed = sliders[10].update(10);
       }
     }
   });
@@ -227,15 +247,18 @@ Description of draw()
 function draw() {
   background(0);
   time = frameCount/60;
-  debuggingSliders();
 
+  debuggingSlidersDisplay();
+
+  //Wheel Functions
   wheel.display();
   wheel.rotate();
 
+  //MeatBall Functions
   meatBall.display();
 
-  // Deploys the tunnel after an amount of time
-  if (time > 0) {
+  //Tunnel and radar functions
+  if (time > 0) { //Displays the tunnel after a time
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].deploy();
       }
@@ -243,6 +266,7 @@ function draw() {
       radar.rotate();
   }
 
+  //Spawner Functions
   spawner.update();
 
   //display and update Items
@@ -256,41 +280,22 @@ function draw() {
     }
   }
 
+  //Tunel Functions
   for (let i = 0; i < tunnel.length; i++) {
     tunnel[i].display();
   }
-  delayTunnel();
+
+  tunnel[0].saveHistory();
+
+  for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
+    tunnel[i].applyHistory(tunnel[0].history.length - i);
+  }
 
   // imageMode(CENTER);
   // image(img.backgroundTest, 0, 0);
 }
 
-function delayTunnel() {
-  if (tunnelPositionHistory.length > NUM_RING - 2) {
-    tunnelPositionHistory.splice(0, 1);
-  }
-
-  let pos = wheel.compoundBody.position;
-  tunnel[0].position.x = pos.x;
-  tunnel[0].position.y = pos.y;
-
-  let vPos = createVector(pos.x, pos.y);
-
-  tunnelPositionHistory.push(vPos);
-
-  for (let i = tunnelPositionHistory.length - 1; i >= 1; i--) {
-    let size = map(tunnelPositionHistory[i].y, -100, 100, 25, 100);
-    let xPos = map(i, 0, 49, -width/2, width/2);
-
-    //ellipse(xPos, 0, size);
-
-    tunnel[tunnelPositionHistory.length - i].position.x = tunnelPositionHistory[i].x;
-    tunnel[tunnelPositionHistory.length - i].position.y = tunnelPositionHistory[i].y;
-  }
-
-}
-
-function debuggingSliders() {
+function debuggingSlidersDisplay() {
   for (let i = 0; i < sliders.length; i++) {
     sliders[i].update(i);
   }

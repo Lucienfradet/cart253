@@ -9,22 +9,24 @@ class Tunnel {
     this.position = createVector(0, 0, 0);
     this.radius = 150; //radius of the tunnel entrance
     this.radiusOffset = 25; //amount of space that the perlin noise will have to affect the radius
-    this.noiseZoff = -0.3; //a negative number makes it look like the tunnel is moving toward the viewer
-    this.zoff = 0 - this.noiseZoff * this.layer; //third dimension of perlin noise
-    this.noiseProgressionSpeed = 0.05;
+    this.noiseZoff = 0.3; //a number makes it look like the tunnel is moving toward the viewer (not really what's happening, more like an illusion)
+    this.zoff = this.noiseZoff * this.layer; //third dimension of perlin noise
+    this.noiseProgressionSpeed = 0.08;
     this.rotation = 0; //actually the phase
     this.wheelRotationSpeed = 0.05;
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
 
-    this.history = [];
+    this.history = []; //Stores the tunnel[0] position history to input with a delay on the following tunnel rings
   }
 
   update() {
+
     if (this.layer === 0) {
       this.position = wheel.compoundBody.position;
       this.history.push(this.position);
     }
+    rotateZ(wheel.compoundBody.angle);
   }
 
   display() {
@@ -72,7 +74,7 @@ class Tunnel {
     // }
   }
 
-  deploy() {
+  deploy() { //deploys the tunnel to the set profondeur parameter
     deployed = true;
     if (this.zPositionOffset < this.profondeur) {
       this.zPositionOffset += 1;
@@ -80,18 +82,22 @@ class Tunnel {
     }
   }
 
-  saveHistory() {
+  saveHistory() { //pushes the tunnel history into the array
     if (this.history.length > NUM_RING - 2) {
       this.history.splice(0, 1);
     }
 
-    this.position = wheel.compoundBody.position;
+    let pos = wheel.compoundBody.position;
+    this.position.x = pos.x;
+    this.position.y = pos.y;
 
-    this.history.push(this.position);
-    console.log(tunnel[0].history);
+    let vPos = createVector(pos.x, pos.y);
+
+    this.history.push(vPos);
   }
 
   applyHistory(i) {
-    this.position = tunnel[0].history[i];
+    this.position.x = tunnel[0].history[i].x;
+    this.position.y = tunnel[0].history[i].y;
   }
 }

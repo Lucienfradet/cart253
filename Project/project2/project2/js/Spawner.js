@@ -31,6 +31,14 @@ class Spawner {
           this.barrage();
         }
         break;
+      case 'beam':
+        if (this.reseted === false) {
+          this.resetRadar();
+        }
+        else {
+          this.beam();
+        }
+        break;
     }
   }
 
@@ -47,6 +55,7 @@ class Spawner {
         if (radar.position.x > 0) {
           this.reseted = true;
         }
+        break;
     }
 
     if (radar.position.x > 0) {
@@ -55,15 +64,17 @@ class Spawner {
     else {
       this.resetPosition = 'left';
     }
+
+    this.angle = constrain(this.angle, 0, 0.01)
   }
 
   random() {
     radar.angle = 0.3;
 
     for (let i = 0; i < item.length; i++) {
-      if (item[i].id === 'random') {
+      //if (item[i].id === 'random') {
         item[i].speed.z = 25;
-      }
+      //}
     }
 
     let r = random();
@@ -96,8 +107,21 @@ class Spawner {
         }
       }
     }
-    console.log(this.counter);
     this.delay++;
+  }
+
+  beam() {
+    radar.angle = 0.02;
+
+    for (let i = 0; i < item.length; i++) {
+      //if (item[i].id === 'random') {
+        item[i].speed.z = random(25, 30);
+      //}
+    }
+
+    let newItem = new Item(radar.position.x, radar.position.y, radar.centerPositionZ, 'beam');
+    item.push(newItem);
+
   }
 
   wipeOut() {
@@ -109,6 +133,7 @@ class Spawner {
 
   keyPressed() {
     if (keyCode === 97) { //NUM_KEY 1
+      this.delay = 0;
       this.reseted = false;
       this.state = 'random';
     }
@@ -119,6 +144,14 @@ class Spawner {
       this.delay = 0;
       this.counter++;
       this.state = 'barrage';
+    }
+
+    if (keyCode === 99) { //NUM_KEY 3
+      this.wipeOut();
+      this.reseted = false;
+      this.counter = 0;
+      this.state = 'beam';
+
     }
 
     if (keyCode === 105) { //NUM_KEY 3

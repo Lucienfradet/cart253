@@ -44,7 +44,7 @@ class Wheel {
       pointA: { x: 0, y: 0 },
       bodyB: this.compoundBody,
       pointB: { x: 0, y: 0 },
-      stiffness: 0.1,
+      stiffness: 0.01,
       length: 0
     }
 
@@ -111,8 +111,34 @@ class Wheel {
 
   keyPressed() {
     if (keyCode === 32) { //SpaceBar
-      Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: 0, y: -this.jumpForce} );
-      console.log('caca');
+
+      //check if the arrays are empty or not
+      let col = world.engine.pairs.collisionActive.length;
+      if (col > 0) {
+        let contact = world.engine.pairs.collisionActive[0].activeContacts.length;
+        if (contact > 0) {
+          //Get the point of collision
+          let contactX = world.engine.pairs.collisionActive[0].activeContacts[0].vertex.x;
+          let contactY = world.engine.pairs.collisionActive[0].activeContacts[0].vertex.y;
+          //Creates a vector with the PoC (point of collision)
+          let contactVector = createVector(contactX, contactY);
+          //Normalize vector and multiply by the desired jumpForce
+          contactVector.normalize();
+          contactVector = p5.Vector.mult(contactVector, -this.jumpForce);
+          //Apply the force
+          Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: contactVector.x, y: contactVector.y} );
+        }
+      }
+      else { //if all hell breaks loose, apply a backUp force straight from the bottom
+        Body.applyForce( this.compoundBody, {x: this.compoundBody.position.x, y: this.compoundBody.position.y}, {x: 0, y: -this.jumpForce} );
+      }
+    }
+
+    if (keyCode === 68) {
+      Body.applyForce( meatBall.body, {x: meatBall.body.position.x, y: meatBall.body.position.y - meatBall.radius}, {x: -this.wheelRotationSpeed, y: 0} );
+    }
+    if (keyCode === 65) {
+      Body.applyForce( meatBall.body, {x: meatBall.body.position.x, y: meatBall.body.position.y - meatBall.radius}, {x: this.wheelRotationSpeed, y: 0} );
     }
   }
 }
