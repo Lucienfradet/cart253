@@ -25,10 +25,7 @@ class Beam extends Item {
     super.followTunnel();
 
     if (spawner.state !== 'beam') {
-      for (let i = 1; i < radar.length; i++) {
-        radar.splice(i, 1);
-        i--;
-      }
+      wipeRadar();
     }
   }
 

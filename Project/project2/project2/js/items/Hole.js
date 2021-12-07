@@ -1,4 +1,4 @@
-class Barrage extends Item {
+class Hole extends Item {
   constructor({
     x,
     y,
@@ -7,7 +7,8 @@ class Barrage extends Item {
     size,
     strokeWeight,
     id,
-    color
+    color,
+    rotationSpeed
   }) {
 
     super();
@@ -17,6 +18,7 @@ class Barrage extends Item {
     this.strokeWeight = strokeWeight;
     this.id = id;
     this.color = color;
+    this.rotationSpeed = rotationSpeed;
   }
 
   update() {
@@ -24,12 +26,12 @@ class Barrage extends Item {
     this.position.add(this.speed);
     super.followTunnel();
 
-    if (spawner.state !== 'barrage') {
-      for (let i = 0; i < item.barrage.length; i++) {
-        item.barrage[i].speed.z = 20;
+    if (spawner.state !== 'hole') {
+      wipeRadar();
+      for (let i = 0; i < item.hole.length; i++) {
+        item.hole[i].speed.z = 20;
       }
     }
-
   }
 
   display() {

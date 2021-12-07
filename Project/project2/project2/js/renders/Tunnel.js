@@ -14,7 +14,7 @@ class Tunnel {
     this.noiseProgressionSpeed = 0.08;
     this.phase = 0; //if this is incremented, you get a rotation effect (position doesn't change)
     this.wheelRotationSpeed = 0.05;
-    this.rotationSpeed = 0.05;
+    this.rotationSpeed = 0.02;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
 
     //rotation variables:
@@ -68,13 +68,13 @@ class Tunnel {
   }
 
   rotate() { //Function using the offset which doen't work really. *Should delete*
-    // if (keyIsDown(65)) { //A key
-    //   this.phase += this.rotationSpeed;
-    // }
-    //
-    // if (keyIsDown(68)) { //D key
-    //   this.phase -= this.rotationSpeed;
-    // }
+    if (keyIsDown(65)) { //A key
+      this.phase -= this.rotationSpeed;
+    }
+
+    if (keyIsDown(68)) { //D key
+      this.phase += this.rotationSpeed;
+    }
   }
 
   deploy() { //deploys the tunnel to the set profondeur parameter

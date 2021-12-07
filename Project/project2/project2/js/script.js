@@ -66,7 +66,8 @@ let item = {
   random: [],
   barrage: [],
   beam: [],
-  wheelOfDoom: []
+  wheelOfDoom: [],
+  hole: []
 };
 
 let spawner;
@@ -277,7 +278,7 @@ function draw() {
   meatBall.display();
 
   //Wheel Functions
-  wheel.display();
+  //wheel.display();
   wheel.rotate();
   wheel.storeCollisions();
 
@@ -313,6 +314,7 @@ function draw() {
     // tunnel[i].position.x = pos.x;
     // tunnel[i].position.y = pos.y;
     tunnel[i].display();
+    tunnel[i].rotate();
   }
   tunnel[0].update();
   tunnel[0].saveHistory();
@@ -362,11 +364,27 @@ function items() {
       i--;
     }
   }
+
+  for (let i = 0; i < item.hole.length; i++) {
+    item.hole[i].update();
+    item.hole[i].display();
+    if (item.hole[i].isOffScreen() || item.hole[i].collision()) {
+      item.hole.splice(i, 1);
+      i--;
+    }
+  }
 }
 
 function debuggingSlidersDisplay() {
   for (let i = 0; i < sliders.length; i++) {
     sliders[i].update(i);
+  }
+}
+
+function wipeRadar() {
+  for (let i = 1; i < radar.length; i++) {
+    radar.splice(i, 1);
+    i--;
   }
 }
 

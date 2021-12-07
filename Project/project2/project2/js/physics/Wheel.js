@@ -88,7 +88,7 @@ class Wheel {
       rotate(angle + this.compoundBody.angle); //add or remove compoundBody.angle (acts as an offset to display the parts still or rotating on their own axes (NOTE: matter.js doesn't see them as rotating)
       rectMode(CENTER);
       noFill();
-      strokeWeight(3);
+      strokeWeight(1);
       stroke(255);
       rect(0, 0, this.w, this.h);
       pop();

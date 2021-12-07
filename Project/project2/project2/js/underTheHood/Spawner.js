@@ -44,6 +44,15 @@ class Spawner {
       case 'wheelOfDoom':
         this.wheelOfDoom();
         break;
+
+      case 'hole':
+        if (this.reseted === false) {
+          this.resetRadar();
+        }
+        else {
+          this.hole();
+        }
+        break;
     }
   }
 
@@ -96,8 +105,53 @@ class Spawner {
     }
   }
 
+  hole() {
+    for (let i = 0; i < radar.length; i++) {
+      radar[i].angle = 0.1;
+    }
+
+    if (atan2(radar[0].position.x, radar[0].position.y) > -PI + PI/4 || this.delay < 5) {
+      for (let i = 0; i < item.hole.length; i++) {
+        if (item.hole[i].id === 'hole' + this.counter) {
+          item.hole[i].speed.z = 0;
+        }
+      }
+      if (this.delay > 1) {
+        for (let i = 0; i < radar.length; i++) {
+          if (frameCount % 2 < 1) {
+            let newItem = new Hole({
+              x: radar[i].position.x,
+              y: radar[i].position.y,
+              z: radar[i].centerPositionZ,
+              speed: 0,
+              size: 30,
+              strokeWeight: 3,
+              id: 'hole' + this.counter,
+              color: 255
+            });
+            item.hole.push(newItem);
+          }
+        }
+      }
+
+    }
+    else {
+      for (let i = 0; i < radar.length; i++) {
+        radar[i].angle = 0;
+      }
+      for (let i = 0; i < item.hole.length; i++) {
+        if (item.hole[i].id === 'hole' + this.counter) {
+          item.hole[i].speed.z = 20;
+        }
+      }
+    }
+    this.delay++;
+  }
+
   barrage() {
-    radar[0].angle = 0.1;
+    for (let i = 0; i < radar.length; i++) {
+      radar[i].angle = 0.1;
+    }
 
     if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
       for (let i = 0; i < item.barrage.length; i++) {
@@ -157,7 +211,6 @@ class Spawner {
 
   wheelOfDoom() {
     radar[0].angle = -0.03;
-    wheel.rotationSpeed;
 
     if (this.delay > 1) {
       for (let i = 0; i < radar.length; i++) {
@@ -221,13 +274,31 @@ class Spawner {
       this.state = 'beam';
     }
 
-    if (keyCode === 100) { //NUM_KEY 1
+    if (keyCode === 100) { //NUM_KEY 4
       this.delay = 0;
       this.reseted = false;
       this.state = 'wheelOfDoom';
     }
 
-    if (keyCode === 105) { //NUM_KEY 3
+    if (keyCode === 101) { //NUM_KEY 5
+      wipeRadar();
+      this.delay = 0;
+      this.counter++;
+
+      for (let i = 1; i < 4; i++) {
+        let newRadar = new Radar({
+          posX: radar[0].position.x,
+          posY: radar[0].position.y,
+          posZ: 0,
+          amp: tunnel[0].radius - i * 40
+        });
+        radar.push(newRadar)
+      }
+
+      this.state = 'hole';
+    }
+
+    if (keyCode === 105) { //NUM_KEY 9
       this.reseted = false;
       this.state = '';
       this.wipeOut();

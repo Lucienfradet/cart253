@@ -25,7 +25,7 @@ class MeatBall {
 
     stroke(255, 0, 0);
     strokeWeight(1);
-    line(0, 0, 0 + this.radius, 0);
+    //line(0, 0, 0 + this.radius, 0);
     pop();
     //console.log(this.body.position.y);
   }
