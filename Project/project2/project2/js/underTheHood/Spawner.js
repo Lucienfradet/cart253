@@ -100,22 +100,31 @@ class Spawner {
     radar[0].angle = 0.1;
 
     if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
-      for (let i = 0; i < item.length; i++) {
-        if (item[i].id === 'barrage' + this.counter) {
-          item[i].speed.z = 0;
+      for (let i = 0; i < item.barrage.length; i++) {
+        if (item.barrage[i].id === 'barrage' + this.counter) {
+          item.barrage[i].speed.z = 0;
         }
       }
 
       if (frameCount % 2 < 1) {
-        let newItem = new Item(radar[0].position.x, radar[0].position.y, radar[0].centerPositionZ, 'barrage' + this.counter);
-        item.push(newItem);
+        let newItem = new Barrage({
+          x: radar[0].position.x,
+          y: radar[0].position.y,
+          z: radar[0].centerPositionZ,
+          speed: 0,
+          size: 30,
+          strokeWeight: 3,
+          id: 'barrage' + this.counter,
+          color: 255
+        });
+        item.barrage.push(newItem);
       }
     }
     else {
       radar[0].angle = 0;
-      for (let i = 0; i < item.length; i++) {
-        if (item[i].id === 'barrage' + this.counter) {
-          item[i].speed.z = 20;
+      for (let i = 0; i < item.barrage.length; i++) {
+        if (item.barrage[i].id === 'barrage' + this.counter) {
+          item.barrage[i].speed.z = 20;
         }
       }
     }
@@ -127,32 +136,43 @@ class Spawner {
       radar[i].angle = 0.02;
     }
 
-    for (let i = 0; i < item.length; i++) {
-      //if (item[i].id === 'random') {
-        item[i].speed.z = random(25, 30);
-      //}
-    }
     if (this.delay > 1) {
       for (let i = 0; i < radar.length; i++) {
-        let newItem = new Item(radar[i].position.x, radar[i].position.y, radar[i].centerPositionZ, 'beam');
-        item.push(newItem);
+        let newItem = new Beam({
+          x: radar[i].position.x,
+          y: radar[i].position.y,
+          z: radar[i].centerPositionZ,
+          speed: random(25, 30),
+          size: 30,
+          strokeWeight: 1,
+          id: 'beam',
+          color: 255
+        });
+        item.beam.push(newItem);
       }
     }
+
     this.delay++;
   }
 
   wheelOfDoom() {
-    radar[0].angle = -0.09;
+    radar[0].angle = -0.03;
+    wheel.rotationSpeed;
 
-    for (let i = 0; i < item.length; i++) {
-      //if (item[i].id === 'random') {
-        item[i].speed.z = random(25, 30);
-      //}
-    }
     if (this.delay > 1) {
       for (let i = 0; i < radar.length; i++) {
-        let newItem = new Item(radar[i].position.x, radar[i].position.y, radar[i].centerPositionZ, 'wheelOfDoom');
-        item.push(newItem);
+        let newItem = new WheelOfDoom({
+          x: radar[i].position.x,
+          y: radar[i].position.y,
+          z: radar[i].centerPositionZ,
+          speed: 25,
+          size: 30,
+          strokeWeight: 3,
+          id: 'wheelOfDoom',
+          color: 255,
+          rotationSpeed: 0.5
+        });
+        item.wheelOfDoom.push(newItem);
       }
     }
     this.delay++;
@@ -185,9 +205,7 @@ class Spawner {
     }
 
     if (keyCode === 99) { //NUM_KEY 3
-      this.wipeOut();
       //this.reseted = false;
-      this.counter = 0;
       this.delay = 0;
 
       for (let i = 1; i < 4; i++) {

@@ -54,7 +54,10 @@ let meatBall;
 let radar = [];
 
 let item = {
-  random: []
+  random: [],
+  barrage: [],
+  beam: [],
+  wheelOfDoom: []
 };
 
 let spawner;
@@ -278,22 +281,7 @@ function draw() {
   rotator.update();
 
   //display and update Items
-  for (let i = 0; i < item.random.length; i++) {
-
-    // let pos = rotator.rotatorize(item[i].position);
-    // item[i].position.x = pos.x;
-    // item[i].position.y = pos.y;
-    // if (spawner.state !== 'barrage') {
-    //   item.random[i].followTunnel();
-    // }
-    item.random[i].update();
-    item.random[i].display();
-
-    if (item.random[i].isOffScreen() || item.random[i].collision()) {
-      item.random.splice(i, 1);
-      i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
-    }
-  }
+  items();
 
   //Tunel Functions
   //Tunnel and radar functions
@@ -326,6 +314,45 @@ function draw() {
 
   // imageMode(CENTER);
   // image(img.backgroundTest, 0, 0);
+}
+
+function items() {
+  for (let i = 0; i < item.random.length; i++) {
+    item.random[i].update();
+    item.random[i].display();
+    if (item.random[i].isOffScreen() || item.random[i].collision()) {
+      item.random.splice(i, 1);
+      i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
+    }
+  }
+
+
+  for (let i = 0; i < item.barrage.length; i++) {
+    item.barrage[i].update();
+    item.barrage[i].display();
+    if (item.barrage[i].isOffScreen() || item.barrage[i].collision()) {
+      item.barrage.splice(i, 1);
+      i--;
+    }
+  }
+
+  for (let i = 0; i < item.beam.length; i++) {
+    item.beam[i].update();
+    item.beam[i].display();
+    if (item.beam[i].isOffScreen() || item.beam[i].collision()) {
+      item.beam.splice(i, 1);
+      i--;
+    }
+  }
+
+  for (let i = 0; i < item.wheelOfDoom.length; i++) {
+    item.wheelOfDoom[i].update();
+    item.wheelOfDoom[i].display();
+    if (item.wheelOfDoom[i].isOffScreen() || item.wheelOfDoom[i].collision()) {
+      item.wheelOfDoom.splice(i, 1);
+      i--;
+    }
+  }
 }
 
 function debuggingSlidersDisplay() {

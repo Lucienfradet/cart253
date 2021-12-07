@@ -25,16 +25,6 @@ class Item {
     this.position.y = positionVector2D.y;
   }
 
-  display() {
-    push();
-    noFill();
-    strokeWeight(2);
-    stroke(255);
-    translate(this.position.x, this.position.y, this.position.z);
-    ellipse(0, 0, this.size);
-    pop();
-  }
-
   isOffScreen() {
     return (this.position.z > 300);
   }
