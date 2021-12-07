@@ -11,15 +11,24 @@ At the moment, it is possible to rotate the tunnel using A and D keys.
 TODO LIST:
 OK Create matter.js objects for matter.js
 OK Visualise the objects with p5.js
-- tweak the parameters so the controls feel nice !!!
+KINDA tweak the parameters so the controls feel nice !!!
 OK Spawn objects and make them follow the tunnel
 OK Collision with the main object
 - Implement a life system ???
-- Add different functions like a ring of spikes that you have to jump over
-- Make the jump be perpandicular to the last point of contact with the MeatBall
-- add a little angular momentum to the meatball to help with the movements?
+KINDA Add different functions like a ring of spikes that you have to jump over
+OK Make the jump be perpandicular to the last point of contact with the MeatBall
+OK add a little angular momentum to the meatball to help with the movements?
 OK fix the tunnel jump delay...
 - Implement States as objects
+- Create functions to switch between SpawnerFunctions and GAMEON baby!
+- Draw a couple graphics for an intro
+- Program an Intro
+- Write and record Voice acting
+- Add Text display??
+- Program an ending where shit goes MaaAAAAaaaaaD
+- Add sound effect and music? A song that changes with animation would be nice
+- Add a enter your name function and use it in the last statement in the end.
+
 
 - Implement dithering effect!?
 
