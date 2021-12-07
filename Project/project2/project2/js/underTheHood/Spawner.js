@@ -80,16 +80,19 @@ class Spawner {
   random() {
     radar[0].angle = 0.3;
 
-    for (let i = 0; i < item.length; i++) {
-      //if (item[i].id === 'random') {
-        item[i].speed.z = 25;
-      //}
-    }
-
     let r = random();
     if (r < 0.1) {
-      let newItem = new Item(radar[0].position.x, radar[0].position.y, radar[0].centerPositionZ, 'random');
-      item.push(newItem);
+      let newItem = new Random({
+        x: radar[0].position.x,
+        y: radar[0].position.y,
+        z: radar[0].centerPositionZ,
+        speed: 25,
+        size: 30,
+        strokeWeight: 3,
+        id: 'random',
+        color: 255
+      });
+      item.random.push(newItem);
     }
   }
 

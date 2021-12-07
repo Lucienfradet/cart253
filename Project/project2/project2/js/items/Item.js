@@ -2,21 +2,13 @@
 //These will be the items that the radar will spawm and that the MeatBall will have to avoid or catch.
 
 class Item {
-  constructor(x, y, z, id) {
-    this.position = createVector(x, y, z);
-    this.speed = createVector(0, 0, sliders[7].value); //Watch out!! this is just for testing
-    this.size = 30;
+  constructor() {
     this.offset = 0;
     this.pastAngle = 0;
     this.angle = 0;
-    this.id = id;
   }
 
   followTunnel() {
-    //follow the tunnel on the Z axis
-    this.position.add(this.speed);
-
-
     //calculate the angle difference from that last frame and this one
     this.offset =  wheel.compoundBody.angle;
     this.angle = this.offset - this.pastAngle;
@@ -31,7 +23,6 @@ class Item {
     //Update the position vector with the rotated 2D vector
     this.position.x = positionVector2D.x;
     this.position.y = positionVector2D.y;
-
   }
 
   display() {
@@ -52,6 +43,5 @@ class Item {
     let d = dist(this.position.x, this.position.y, this.position.z, meatBall.body.position.x, meatBall.body.position.y, 0);
     return (d + this.size/2 < meatBall.radius * 2);
   }
-
 
 }

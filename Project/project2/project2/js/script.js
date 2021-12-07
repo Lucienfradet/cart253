@@ -53,7 +53,9 @@ let meatBall;
 
 let radar = [];
 
-let item = [];
+let item = {
+  random: []
+};
 
 let spawner;
 
@@ -276,18 +278,19 @@ function draw() {
   rotator.update();
 
   //display and update Items
-  for (let i = 0; i < item.length; i++) {
+  for (let i = 0; i < item.random.length; i++) {
 
     // let pos = rotator.rotatorize(item[i].position);
     // item[i].position.x = pos.x;
     // item[i].position.y = pos.y;
-    if (spawner.state !== 'barrage') {
-      item[i].followTunnel();
-    }
-    item[i].display();
+    // if (spawner.state !== 'barrage') {
+    //   item.random[i].followTunnel();
+    // }
+    item.random[i].update();
+    item.random[i].display();
 
-    if (item[i].isOffScreen() || item[i].collision()) {
-      item.splice(i, 1);
+    if (item.random[i].isOffScreen() || item.random[i].collision()) {
+      item.random.splice(i, 1);
       i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
     }
   }
