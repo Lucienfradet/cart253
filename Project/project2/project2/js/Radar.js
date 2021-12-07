@@ -1,10 +1,18 @@
 class Radar {
-  constructor() {
-    this.position = createVector(tunnel[0].radius, tunnel[0].radius, 0);
+  constructor({
+    posX,
+    posY,
+    posZ,
+    amp
+  }) {
+    
+    this.position = createVector(posX, posY, posZ);
     this.centerPositionZ = 0; //Z position of the center point
     this.angle = 0.05;
-    this.amplitude = tunnel[0].radius;
+    this.amplitude = amp;
     this.rotationAxis = createVector(0, 0, 1);
+
+    this.position.setMag(this.amplitude);
   }
 
   rotate() {
@@ -39,7 +47,7 @@ class Radar {
   display() {
     //Displays the line
     this.centerPositionZ = tunnel[tunnel.length - 1].position.z; //Follow the tunnel expension
-    this.position.setMag(this.amplitude);
+    //this.position.setMag(this.amplitude);
 
     push();
 

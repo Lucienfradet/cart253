@@ -16,6 +16,7 @@ class Item {
     //follow the tunnel on the Z axis
     this.position.add(this.speed);
 
+
     //calculate the angle difference from that last frame and this one
     this.offset =  wheel.compoundBody.angle;
     this.angle = this.offset - this.pastAngle;
@@ -36,7 +37,7 @@ class Item {
   display() {
     push();
     noFill();
-    strokeWeight(3);
+    strokeWeight(2);
     stroke(255);
     translate(this.position.x, this.position.y, this.position.z);
     ellipse(0, 0, this.size);
@@ -49,7 +50,7 @@ class Item {
 
   collision() {
     let d = dist(this.position.x, this.position.y, this.position.z, meatBall.body.position.x, meatBall.body.position.y, 0);
-    return (d + this.size/2 < meatBall.radius + 50);
+    return (d + this.size/2 < meatBall.radius * 2);
   }
 
 

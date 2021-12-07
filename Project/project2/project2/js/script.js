@@ -51,11 +51,13 @@ let wheel;
 
 let meatBall;
 
-let radar;
+let radar = [];
 
 let item = [];
 
 let spawner;
+
+let rotator;
 
 //sliders for debugging
 let sliders = [];
@@ -95,8 +97,15 @@ function setup() {
   meatBall = new MeatBall(0, -10, 30);
 
   //Creates the Radar and the spawner
-  radar = new Radar();
+  radar[0] = new Radar({
+    posX: tunnel[0].radius,
+    posY: tunnel[0].radius,
+    posZ: 0,
+    amp: tunnel[0].radius
+  });
+
   spawner = new Spawner({state: ''});
+  rotator = new Rotator();
 
   //Creates sliders for debugging
   sliders[0] = new Slider({
@@ -250,28 +259,31 @@ function draw() {
 
   debuggingSlidersDisplay();
 
-  //Wheel Functions
-  wheel.display();
-  wheel.rotate();
-
   //MeatBall Functions
   meatBall.display();
 
-  //Tunnel and radar functions
-  if (time > 0) { //Displays the tunnel after a time
-    for (let i = 0; i < tunnel.length; i++) {
-      tunnel[i].deploy();
-      }
-      radar.display();
-      radar.rotate();
-  }
+  //Wheel Functions
+  wheel.display();
+  wheel.rotate();
+  wheel.storeCollisions();
+
+
+
 
   //Spawner Functions
   spawner.update();
+  //Keep track of the Wheel rotation to be used by other objects with the ROTATORIZE
+  rotator.update();
 
   //display and update Items
   for (let i = 0; i < item.length; i++) {
-    item[i].followTunnel();
+
+    // let pos = rotator.rotatorize(item[i].position);
+    // item[i].position.x = pos.x;
+    // item[i].position.y = pos.y;
+    if (spawner.state !== 'barrage') {
+      item[i].followTunnel();
+    }
     item[i].display();
 
     if (item[i].isOffScreen() || item[i].collision()) {
@@ -281,10 +293,28 @@ function draw() {
   }
 
   //Tunel Functions
-  for (let i = 0; i < tunnel.length; i++) {
-    tunnel[i].display();
+  //Tunnel and radar functions
+  if (time > 0) { //Displays the tunnel after a time
+    for (let i = 0; i < tunnel.length; i++) {
+      tunnel[i].deploy();
+      }
+    for (let i = 0; i < radar.length; i++) {
+      radar[i].display();
+      radar[i].rotate();
+    }
+
   }
 
+
+
+  for (let i = 0; i < tunnel.length; i++) {
+    //this interfere with the history thing and interestingly, alos with the wheel.compoundBody... so fuck the moment, fuck it.
+    // let pos = rotator.rotatorize(tunnel[i].position);
+    // tunnel[i].position.x = pos.x;
+    // tunnel[i].position.y = pos.y;
+    tunnel[i].display();
+  }
+  tunnel[0].update();
   tunnel[0].saveHistory();
 
   for (let i = tunnel[0].history.length - 1; i >= 1; i--) {

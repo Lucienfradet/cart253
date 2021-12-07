@@ -12,26 +12,22 @@ class Tunnel {
     this.noiseZoff = 0.3; //a number makes it look like the tunnel is moving toward the viewer (not really what's happening, more like an illusion)
     this.zoff = this.noiseZoff * this.layer; //third dimension of perlin noise
     this.noiseProgressionSpeed = 0.08;
-    this.rotation = 0; //actually the phase
+    this.phase = 0; //if this is incremented, you get a rotation effect (position doesn't change)
     this.wheelRotationSpeed = 0.05;
     this.rotationSpeed = 0.05;
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
 
+    //rotation variables:
+    this.angle = 0;
+    this.pastAngle = 0;
+    this.offset = 0;
+
     this.history = []; //Stores the tunnel[0] position history to input with a delay on the following tunnel rings
-  }
-
-  update() {
-
-    if (this.layer === 0) {
-      this.position = wheel.compoundBody.position;
-      this.history.push(this.position);
-    }
-    rotateZ(wheel.compoundBody.angle);
   }
 
   display() {
     push();
-    rotateZ(wheel.compoundBody.angle);
+    //rotateZ(wheel.compoundBody.angle);
     //Begin the tunnel with only one layer visible
     if (deployed) {
       stroke(255, 255 - this.colorOpacity); //Dilute the stroke as the cricles move back on the z axis
@@ -48,8 +44,8 @@ class Tunnel {
 
     beginShape();
       for (let i = 0; i < TWO_PI; i += (PI/50)) {
-        let xoff = map(sin(i + this.rotation), -1, 1, 0, this.noiseMax); //Map the sin function to the desired noiseRange
-        let yoff = map(cos(i + this.rotation), -1, 1, 0, this.noiseMax); //Map the cos function to the desired noiseRange
+        let xoff = map(sin(i + this.phase), -1, 1, 0, this.noiseMax); //Map the sin function to the desired noiseRange
+        let yoff = map(cos(i + this.phase), -1, 1, 0, this.noiseMax); //Map the cos function to the desired noiseRange
         let r = map(noise(xoff, yoff, this.zoff), 0, 1, this.radius, this.radius + this.radiusOffset); //Map the noise to the radius and desired radius radiusOffset
         let x = r * sin(i);
         let y = r * cos(i);
@@ -64,13 +60,20 @@ class Tunnel {
     //this.noiseMax *= 1.1;
   }
 
+  update() {
+    if (this.layer === 0) {
+      this.position = wheel.compoundBody.position;
+    }
+    //rotateZ(wheel.compoundBody.angle);
+  }
+
   rotate() { //Function using the offset which doen't work really. *Should delete*
     // if (keyIsDown(65)) { //A key
-    //   this.rotation += this.rotationSpeed;
+    //   this.phase += this.rotationSpeed;
     // }
     //
     // if (keyIsDown(68)) { //D key
-    //   this.rotation -= this.rotationSpeed;
+    //   this.phase -= this.rotationSpeed;
     // }
   }
 
@@ -82,16 +85,12 @@ class Tunnel {
     }
   }
 
-  saveHistory() { //pushes the tunnel history into the array
+  saveHistory() { //pushes the tunnel[0] history into the array
     if (this.history.length > NUM_RING - 2) {
       this.history.splice(0, 1);
     }
 
-    let pos = wheel.compoundBody.position;
-    this.position.x = pos.x;
-    this.position.y = pos.y;
-
-    let vPos = createVector(pos.x, pos.y);
+    let vPos = createVector(this.position.x, this.position.y);
 
     this.history.push(vPos);
   }
