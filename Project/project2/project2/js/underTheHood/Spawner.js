@@ -82,8 +82,6 @@ class Spawner {
     else {
       this.resetPosition = 'left';
     }
-
-    this.angle = constrain(this.angle, 0, 0.01)
   }
 
   random() {
@@ -95,7 +93,7 @@ class Spawner {
         x: radar[0].position.x,
         y: radar[0].position.y,
         z: radar[0].centerPositionZ,
-        speed: 25,
+        speed: 25 * state.randomSpeed, //changes the speed of items depending on where in the playLoop
         size: 30,
         strokeWeight: 3,
         id: 'random',
@@ -107,25 +105,25 @@ class Spawner {
 
   hole() {
     for (let i = 0; i < radar.length; i++) {
-      radar[i].angle = 0.1;
+      radar[i].angle = 0.09;
     }
 
-    if (atan2(radar[0].position.x, radar[0].position.y) > -PI + PI/4 || this.delay < 5) {
+    if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
       for (let i = 0; i < item.hole.length; i++) {
         if (item.hole[i].id === 'hole' + this.counter) {
           item.hole[i].speed.z = 0;
         }
       }
       if (this.delay > 1) {
-        for (let i = 0; i < radar.length; i++) {
-          if (frameCount % 2 < 1) {
+        if (frameCount % 30 < 15/2) {
+          for (let i = 0; i < radar.length; i++) {
             let newItem = new Hole({
               x: radar[i].position.x,
               y: radar[i].position.y,
               z: radar[i].centerPositionZ,
               speed: 0,
               size: 30,
-              strokeWeight: 3,
+              strokeWeight: 2,
               id: 'hole' + this.counter,
               color: 255
             });
@@ -139,9 +137,11 @@ class Spawner {
       for (let i = 0; i < radar.length; i++) {
         radar[i].angle = 0;
       }
+      let speed = random(15, 25);
       for (let i = 0; i < item.hole.length; i++) {
         if (item.hole[i].id === 'hole' + this.counter) {
-          item.hole[i].speed.z = 20;
+          item.hole[i].speed.z = speed + random();
+          item.hole[i].go = true;
         }
       }
     }
@@ -149,9 +149,9 @@ class Spawner {
   }
 
   barrage() {
-    for (let i = 0; i < radar.length; i++) {
-      radar[i].angle = 0.1;
-    }
+      for (let i = 0; i < radar.length; i++) {
+        radar[i].angle = 0.1;
+      }
 
     if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
       for (let i = 0; i < item.barrage.length; i++) {
@@ -176,9 +176,11 @@ class Spawner {
     }
     else {
       radar[0].angle = 0;
+      let speed = random(15, 25);
       for (let i = 0; i < item.barrage.length; i++) {
         if (item.barrage[i].id === 'barrage' + this.counter) {
-          item.barrage[i].speed.z = 20;
+          item.barrage[i].speed.z = speed;
+          item.barrage[i].go = true;
         }
       }
     }
@@ -187,7 +189,7 @@ class Spawner {
 
   beam() {
     for (let i = 0; i < radar.length; i++) {
-      radar[i].angle = 0.02;
+      radar[i].angle = 0.022;
     }
 
     if (this.delay > 1) {
@@ -210,7 +212,7 @@ class Spawner {
   }
 
   wheelOfDoom() {
-    radar[0].angle = -0.03;
+    radar[0].angle = -0.029;
 
     if (this.delay > 1) {
       for (let i = 0; i < radar.length; i++) {
@@ -223,7 +225,7 @@ class Spawner {
           strokeWeight: 3,
           id: 'wheelOfDoom',
           color: 255,
-          rotationSpeed: 0.5
+          rotationSpeed: 0.1
         });
         item.wheelOfDoom.push(newItem);
       }
@@ -282,6 +284,8 @@ class Spawner {
 
     if (keyCode === 101) { //NUM_KEY 5
       wipeRadar();
+      radar.angle = 0;
+      this.reseted = false;
       this.delay = 0;
       this.counter++;
 

@@ -49,6 +49,8 @@ let img = {
 //fonts
 let yoster;
 
+let state;
+
 let time;
 
 let world;
@@ -93,6 +95,8 @@ Description of setup
 function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
   background(0);
+
+  state = new Game();
 
   //Creates the Physics engine and activates it
   world = new Physics();
@@ -269,69 +273,17 @@ function setup() {
 Description of draw()
 */
 function draw() {
-  background(0);
-  time = frameCount/60;
-
-  debuggingSlidersDisplay();
-
-  //MeatBall Functions
-  meatBall.display();
-
-  //Wheel Functions
-  //wheel.display();
-  wheel.rotate();
-  wheel.storeCollisions();
-
-
-
-
-  //Spawner Functions
-  spawner.update();
-  //Keep track of the Wheel rotation to be used by other objects with the ROTATORIZE
-  rotator.update();
-
-  //display and update Items
-  items();
-
-  //Tunel Functions
-  //Tunnel and radar functions
-  if (time > 0) { //Displays the tunnel after a time
-    for (let i = 0; i < tunnel.length; i++) {
-      tunnel[i].deploy();
-      }
-    for (let i = 0; i < radar.length; i++) {
-      radar[i].display();
-      radar[i].rotate();
-    }
-
-  }
-
-
-
-  for (let i = 0; i < tunnel.length; i++) {
-    //this interfere with the history thing and interestingly, alos with the wheel.compoundBody... so fuck the moment, fuck it.
-    // let pos = rotator.rotatorize(tunnel[i].position);
-    // tunnel[i].position.x = pos.x;
-    // tunnel[i].position.y = pos.y;
-    tunnel[i].display();
-    tunnel[i].rotate();
-  }
-  tunnel[0].update();
-  tunnel[0].saveHistory();
-
-  for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
-    tunnel[i].applyHistory(tunnel[0].history.length - i);
-  }
-
-  // imageMode(CENTER);
-  // image(img.backgroundTest, 0, 0);
+  state.update();
 }
 
 function items() {
   for (let i = 0; i < item.random.length; i++) {
     item.random[i].update();
     item.random[i].display();
-    if (item.random[i].isOffScreen() || item.random[i].collision()) {
+    if (item.random[i].collision()) {
+      state.fatalCollision = true;
+    }
+    else if (item.random[i].isOffScreen() || item.random[i].collision()) {
       item.random.splice(i, 1);
       i--; //the splice function removes and jacks everything back so I need to move back with the array before checking the IsOfScreen function again
     }
@@ -341,7 +293,10 @@ function items() {
   for (let i = 0; i < item.barrage.length; i++) {
     item.barrage[i].update();
     item.barrage[i].display();
-    if (item.barrage[i].isOffScreen() || item.barrage[i].collision()) {
+    if (item.barrage[i].collision()) {
+      state.fatalCollision = true;
+    }
+    else if (item.barrage[i].isOffScreen() || item.barrage[i].collision()) {
       item.barrage.splice(i, 1);
       i--;
     }
@@ -350,7 +305,10 @@ function items() {
   for (let i = 0; i < item.beam.length; i++) {
     item.beam[i].update();
     item.beam[i].display();
-    if (item.beam[i].isOffScreen() || item.beam[i].collision()) {
+    if (item.beam[i].collision()) {
+      state.fatalCollision = true;
+    }
+    else if (item.beam[i].isOffScreen() || item.beam[i].collision()) {
       item.beam.splice(i, 1);
       i--;
     }
@@ -359,7 +317,10 @@ function items() {
   for (let i = 0; i < item.wheelOfDoom.length; i++) {
     item.wheelOfDoom[i].update();
     item.wheelOfDoom[i].display();
-    if (item.wheelOfDoom[i].isOffScreen() || item.wheelOfDoom[i].collision()) {
+    if (item.wheelOfDoom[i].collision()) {
+      state.fatalCollision = true;
+    }
+    else if (item.wheelOfDoom[i].isOffScreen() || item.wheelOfDoom[i].collision()) {
       item.wheelOfDoom.splice(i, 1);
       i--;
     }
@@ -368,11 +329,15 @@ function items() {
   for (let i = 0; i < item.hole.length; i++) {
     item.hole[i].update();
     item.hole[i].display();
-    if (item.hole[i].isOffScreen() || item.hole[i].collision()) {
+    if (item.hole[i].collision()) {
+      state.fatalCollision = true;
+    }
+    else if (item.hole[i].isOffScreen() || item.hole[i].collision()) {
       item.hole.splice(i, 1);
       i--;
     }
   }
+
 }
 
 function debuggingSlidersDisplay() {
@@ -389,6 +354,5 @@ function wipeRadar() {
 }
 
 function keyPressed() {
-  wheel.keyPressed();
-  spawner.keyPressed();
+  state.keyPressed();
 }

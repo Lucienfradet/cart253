@@ -5,6 +5,7 @@ class Tunnel {
     this.layer = layer;
     this.zPositionOffset = 0;
     this.profondeur = 50;
+    this.deploymentSpeed = 0.8;
     this.colorOpacity = 5 * layer;
     this.position = createVector(0, 0, 0);
     this.radius = 150; //radius of the tunnel entrance
@@ -80,7 +81,7 @@ class Tunnel {
   deploy() { //deploys the tunnel to the set profondeur parameter
     deployed = true;
     if (this.zPositionOffset < this.profondeur) {
-      this.zPositionOffset += 1;
+      this.zPositionOffset += this.deploymentSpeed;
       this.position.z = -this.zPositionOffset * this.layer;
     }
   }
