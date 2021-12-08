@@ -1,3 +1,5 @@
+//3D vector that acts like an item spawner at the back of the tunnel
+
 class Radar {
   constructor({
     posX,
@@ -5,12 +7,12 @@ class Radar {
     posZ,
     amp
   }) {
-    
+
     this.position = createVector(posX, posY, posZ);
     this.centerPositionZ = 0; //Z position of the center point
-    this.angle = 0.05;
-    this.amplitude = amp;
-    this.rotationAxis = createVector(0, 0, 1);
+    this.angle = 0.05; //rotation speed
+    this.amplitude = amp; //length of the radar
+    this.rotationAxis = createVector(0, 0, 1); //Normal vector to be used by the rotate function
 
     this.position.setMag(this.amplitude);
   }
@@ -42,25 +44,23 @@ class Radar {
         )
       )
     );
+
+    //was fun to do but, as you can see in the rest of the code, I found a much simpler way resorting to 2D vectors.
+    //This formula would be usefull for more complex systems of 3D vectors :)
   }
 
+  //Displays the radar line
   display() {
-    //Displays the line
     this.centerPositionZ = tunnel[tunnel.length - 1].position.z; //Follow the tunnel expension
-    //this.position.setMag(this.amplitude);
 
     push();
-
-    rotateZ(wheel.compoundBody.angle);
+    rotateZ(wheel.compoundBody.angle); //follows the wheel rotation (for the radar rotating the matrix is good enough)
 
     noFill();
     stroke(255);
     strokeWeight(20);
     line(0 , 0, this.centerPositionZ, this.position.x, this.position.y, this.centerPositionZ);
     pop();
-
-    //console.log(`x: ${this.position.x}`);
-    //console.log(`y: ${this.position.y}`);
 
     //Displays the Point in the middle of the radar
     push();

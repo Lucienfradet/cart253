@@ -1,8 +1,10 @@
+//Deals with the perlin noise tunnel of doom!
+
 let deployed = false;
 
 class Tunnel {
   constructor(layer) {
-    this.layer = layer;
+    this.layer = layer; //layer number in the tunnel array
     this.zPositionOffset = 0;
     this.profondeur = 50;
     this.deploymentSpeed = 0.8;
@@ -12,26 +14,20 @@ class Tunnel {
     this.radiusOffset = 25; //amount of space that the perlin noise will have to affect the radius
     this.noiseZoff = 0.3; //a number makes it look like the tunnel is moving toward the viewer (not really what's happening, more like an illusion)
     this.zoff = this.noiseZoff * this.layer; //third dimension of perlin noise
-    this.noiseProgressionSpeed = 0.08;
+    this.noiseProgressionSpeed = 0.08; //Speed with which the tunnel seems to be moving towards or away from the screen
     this.phase = 0; //if this is incremented, you get a rotation effect (position doesn't change)
-    this.wheelRotationSpeed = 0.05;
-    this.rotationSpeed = 0.02;
+    this.rotationSpeed = 0.02; //speed of the "rotation" incremented on the phase
     this.noiseMax = 5; //this value affects the amount and strenght of the noise peaks
-
-    //rotation variables:
-    this.angle = 0;
-    this.pastAngle = 0;
-    this.offset = 0;
 
     this.history = []; //Stores the tunnel[0] position history to input with a delay on the following tunnel rings
   }
 
+  //displays the tunnel
   display() {
     push();
-    //rotateZ(wheel.compoundBody.angle);
     //Begin the tunnel with only one layer visible
     if (deployed) {
-      stroke(255, 255 - this.colorOpacity); //Dilute the stroke as the cricles move back on the z axis
+      stroke(255 - this.colorOpacity); //Dilute the stroke as the cricles move back on the z axis
     }
     else if (this.layer === 0) {
       stroke(255);
@@ -43,6 +39,7 @@ class Tunnel {
     noFill();
     strokeWeight(1.5);
 
+    //Draws the tunnel layers as shapes affected by 3D perlin noise
     beginShape();
       for (let i = 0; i < TWO_PI; i += (PI/50)) {
         let xoff = map(sin(i + this.phase), -1, 1, 0, this.noiseMax); //Map the sin function to the desired noiseRange
@@ -55,20 +52,19 @@ class Tunnel {
     endShape(CLOSE);
     pop();
 
+    //increments the noise on the z axis
     this.zoff += this.noiseProgressionSpeed;
-    //this.phase += 0.01; //Allows to "rotate" the whole tunnel. It actually affects the xoff and yoff values.
-    //this.position.z += 0.01;
-    //this.noiseMax *= 1.1;
   }
 
+  //updates the first layer of the tunnel according to the wheel.position
   update() {
     if (this.layer === 0) {
       this.position = wheel.compoundBody.position;
     }
-    //rotateZ(wheel.compoundBody.angle);
   }
 
-  rotate() { //Function using the offset which doen't work really. *Should delete*
+  //seamingly rotates the tunnels to fit the rotating visuals
+  rotate() {
     if (keyIsDown(65)) { //A key
       this.phase -= this.rotationSpeed;
     }
@@ -78,7 +74,8 @@ class Tunnel {
     }
   }
 
-  deploy() { //deploys the tunnel to the set profondeur parameter
+  //deploys the tunnel to the set profondeur parameter
+  deploy() {
     deployed = true;
     if (this.zPositionOffset < this.profondeur) {
       this.zPositionOffset += this.deploymentSpeed;
@@ -86,7 +83,8 @@ class Tunnel {
     }
   }
 
-  saveHistory() { //pushes the tunnel[0] history into the array
+  //pushes the tunnel[0].position history into an array
+  saveHistory() {
     if (this.history.length > NUM_RING - 2) {
       this.history.splice(0, 1);
     }
@@ -96,6 +94,7 @@ class Tunnel {
     this.history.push(vPos);
   }
 
+  //gives a wavy visual effect to the whole tunnel when the first layer moves
   applyHistory(i) {
     this.position.x = tunnel[0].history[i].x;
     this.position.y = tunnel[0].history[i].y;

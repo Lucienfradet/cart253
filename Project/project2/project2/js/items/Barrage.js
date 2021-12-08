@@ -1,3 +1,5 @@
+//Items to be used in a BARRAGE formation
+
 class Barrage extends Item {
   constructor({
     x,
@@ -17,7 +19,7 @@ class Barrage extends Item {
     this.strokeWeight = strokeWeight;
     this.id = id;
     this.color = color;
-    this.go = false;
+    this.go = false; //is true if the current barrage layer has been sent out
   }
 
   update() {
@@ -28,11 +30,12 @@ class Barrage extends Item {
     //Checks if the items are moving and start the spawner again
     for (let i = 0; i < item.barrage.length; i++) {
       if (item.barrage[i].go && item.barrage[i].id === 'barrage' + spawner .counter) {
-        this.activate();
+        state.barrage();
         item.barrage[i + 1].go = false;
       }
     }
 
+    //makes sure the last barrage start moving if the state changes
     if (spawner.state !== 'barrage') {
       for (let i = 0; i < item.barrage.length; i++) {
         item.barrage[i].speed.z = 20;
@@ -49,13 +52,5 @@ class Barrage extends Item {
     translate(this.position.x, this.position.y, this.position.z);
     ellipse(0, 0, this.size);
     pop();
-  }
-
-  activate() {
-    radar[0].angle = 0;
-    spawner.reseted = false;
-    spawner.delay = 0;
-    spawner.counter++;
-    spawner.state = 'barrage';
   }
 }

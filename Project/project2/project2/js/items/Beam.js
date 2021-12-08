@@ -1,3 +1,5 @@
+//Items to be used in a BEAM formation
+
 class Beam extends Item {
   constructor({
     x,

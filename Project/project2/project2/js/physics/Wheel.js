@@ -1,24 +1,25 @@
+//matter.js body that holds the meatBall
+
 class Wheel {
   constructor() {
-    //Parameters to create the Wheel obect
+    //Parameters to create the Wheel object
     this.NUM_PARTS = 30;
-    this.parts = [];
-    this.compoundBody;
-    this.composite;
-    this.startingFriction;
-    this.h = 40;
-    this.radius = tunnel[0].radius + this.h;
-    this.w = TWO_PI * this.radius / this.NUM_PARTS;
-    this.wheelRotationSpeed = 0.02;
-    this.jumpForce = 1.5;
+    this.parts = []; //rectangle body parts
+    this.compoundBody; //Body composed of all the parts
+    this.composite; //a ensemble of bodies and constraints
+    this.h = 40; //height of the rectangle parts
+    this.radius = tunnel[0].radius + this.h; //Radius of the wheel based on the tunnel radius
+    this.w = TWO_PI * this.radius / this.NUM_PARTS; //width of the rectangle parts
+    this.wheelRotationSpeed = 0.02; //Amount of rotation that the player can give the wheel with 'A'/'D' keys
+    this.jumpForce = 1.5; //Force applied to the wheel when the player hits SpaceBar
 
     //Creates a rectangle body for every part of the wheel
     for(let i = 0; i < this.NUM_PARTS; i++) {
         let angle = i / this.NUM_PARTS * TWO_PI;
         let x = cos(angle);
-        let y = sin(angle);
+        let y = sin(angle); //cos/sin functions so the bodies are created following a circle
         let cx = x * this.radius;
-        let cy = y * this.radius;
+        let cy = y * this.radius; //Adapt the circle to the desired radius
         let config = {
           x: cx,
           y: cy,
@@ -27,57 +28,47 @@ class Wheel {
           options: {
              angle: angle,
              isStatic: false,
-             inertia: Infinity //Prevents the parts from rotating on their axies! Merci jésus marie joseph bonne enfant.
+             inertia: Infinity //Prevents the parts from rotating on their axies! 7 hours later. Merci jésus marie joseph bonne enfant.
             }
         };
         //Function that creates the bodies
         let square = this.addRect(config);
-        this.parts.push(square);
+        this.parts.push(square); //adds the parts to the parts array
       }
 
     //Create the compoundBody with the different parts
     this.createBody(this.parts);
 
-    //Parameters fot the center joint constraint
+    //Parameters for the center joint constraint
     this.constraint;
     this.constraintOptions = {
       pointA: { x: 0, y: 0 },
       bodyB: this.compoundBody,
       pointB: { x: 0, y: 0 },
-      stiffness: 0.01,
+      stiffness: 0.01, //acts more or less like a rubberBand
       length: 0
     }
 
-    //stores a vector with the last collision point between the wheel and meatBall
-    this.collision;
-
-    //Create a Constraint
+    //Create the Constraint
     this.constraint = Constraint.create(this.constraintOptions);
-    //World.add(world.world, this.constraint);
 
     this.composite = Composite.create();
-    this.composite = Composite.add(world.world, [this.compoundBody, this.constraint]);
+    this.composite = Composite.add(world.world, [this.compoundBody, this.constraint]); //Add the final compoundBody and constraint as a Composite in the world! Fiouuu!
 
   }
 
+  //Creates rectangular matter.js bodies
   addRect({ x, y, w, h, options = {} }) {
 	let body = Bodies.rectangle(x, y, w, h, options);
-	//this.addBody(body);
 	return body;
   }
 
-  addBody(body) {
-    World.add(world.world, body);
-  }
-
+  //Create the compoundBody with the different parts
   createBody(parts) {
     this.compoundBody = Body.create({ parts: parts });
-    //Body.setParts(this.compoundBody, parts);
-    //this.addBody(this.body);
-
-    console.log(this.compoundBody);
   }
 
+  //Displays the wheel (mainly for testing and visualisation, not in the final version)
   display() {
     for (let i = 1; i <= this.NUM_PARTS; i++) { //Starting at 1 because the createBody function pushes the whole array and inserts a "self reference to the current body instance" in the [0] spot
       let pos = this.parts[i].position;
@@ -85,7 +76,9 @@ class Wheel {
 
       push();
       translate(pos.x, pos.y);
-      rotate(angle + this.compoundBody.angle); //add or remove compoundBody.angle (acts as an offset to display the parts still or rotating on their own axes (NOTE: matter.js doesn't see them as rotating)
+
+      //add or remove compoundBody.angle (acts as an offset to display the parts still or rotating on their own axes (NOTE: matter.js doesn't actually think of them as rotating!)
+      rotate(angle + this.compoundBody.angle);
       rectMode(CENTER);
       noFill();
       strokeWeight(1);
@@ -101,6 +94,7 @@ class Wheel {
     pop();
   }
 
+  //Allows the player to rotate the wheel with 'A' and 'D' keys
   rotate() {
     if (keyIsDown(65)) { //A key
       Body.setAngularVelocity(this.compoundBody, -this.wheelRotationSpeed);
@@ -111,6 +105,7 @@ class Wheel {
     }
   }
 
+  //saves the latest point of contact between the wheel and meatBall to allow for a force perpendicular to the meatBall to be applied on the wheel
   storeCollisions() {
     //check if the arrays are empty or not
     let col = world.engine.pairs.collisionActive.length;
@@ -131,6 +126,7 @@ class Wheel {
     }
   }
 
+  //Allows for the wheel to jump and the meatBall to be pushed around a lil' bit
   keyPressed() {
     if (keyCode === 32) { //SpaceBar
 
@@ -143,6 +139,7 @@ class Wheel {
       }
     }
 
+    //Small force on the meatBall, allows for momentum to build up faster, controlling the ball in mid air and pushing forward while the wheel is spinning
     if (keyCode === 65) { //A key
       Body.applyForce( meatBall.body, {x: meatBall.body.position.x, y: meatBall.body.position.y - meatBall.radius}, {x: -this.wheelRotationSpeed, y: 0} );
     }

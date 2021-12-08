@@ -1,3 +1,5 @@
+//Items to be used by the... snake of doom? I myself, don't see the "wheel"
+
 class WheelOfDoom extends Item {
   constructor({
     x,
@@ -18,17 +20,22 @@ class WheelOfDoom extends Item {
     this.strokeWeight = strokeWeight;
     this.id = id;
     this.color = color;
-    this.rotationSpeed = rotationSpeed;
+    this.rotationSpeed = rotationSpeed; //To be used in addition of all the other rotations and give this item a different feel
   }
 
   update() {
+    //Creates a 2D vector, rotates it with the p5.js function and slam it back in the this.position 3Dvector
+    //Maybe I should email p5 about adding that damn 3D rotation function lol
     let rotVector = createVector(this.position.x, this.position.y);
     rotVector.rotate(this.rotationSpeed);
     this.position.x = rotVector.x;
     this.position.y = rotVector.y;
+
     //follow the tunnel on the Z axis
     this.position.add(this.speed);
     super.followTunnel();
+
+    //Removing radars here too? can't be too sure I guess
     if (spawner.state !== 'wheelOfDoom') {
       for (let i = 1; i < radar.length; i++) {
         radar.splice(i, 1);

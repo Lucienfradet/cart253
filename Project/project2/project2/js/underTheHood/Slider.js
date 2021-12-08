@@ -1,3 +1,5 @@
+//Creates Sliders for debugging perpouses! perpussez?
+
 class Slider {
   constructor({
     value,
@@ -25,9 +27,11 @@ class Slider {
     this.text1 = createP(this.name);
     this.text1.position(140, -15 + this.id * 30);
 
+    //Updates the sliders when they are moved
     this.slider.elt.addEventListener('change', this.callback);
   }
 
+  //updates the visuals and info on the canvas
   update(i) {
     this.value = this.slider.value();
 

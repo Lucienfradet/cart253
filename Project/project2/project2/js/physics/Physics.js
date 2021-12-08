@@ -12,11 +12,12 @@ let Engine = Matter.Engine,
 
 class Physics {
   constructor() {
-    this.engine = Engine.create({ gravity: {y: 1} });
-    this.world = this.engine.world;
-    this.runner = Runner.create();
+    this.engine = Engine.create({ gravity: {y: 1} }); //creates a world with default settings
+    this.world = this.engine.world; //world in the engine for further use
+    this.runner = Runner.create(); //not in use
   }
 
+  //Run that damn physics engine baby!
   runWorld() {
     Runner.run(this.engine);
   }

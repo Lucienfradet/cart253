@@ -42,6 +42,7 @@ let canvasHeight = 550;
 // let canvasWidth = 1160;
 // let canvasHeight = 893;
 
+//Images
 let img = {
   backgroundTest: undefined
 }
@@ -49,20 +50,22 @@ let img = {
 //fonts
 let yoster;
 
+//State of the simulation
 let state;
 
-let time;
-
+/* The following should be in the Game.js but I lack time :( */
+//matter.js objects
 let world;
+let wheel;
+let meatBall;
 
+//Perlin noise Tunnel
 const NUM_RING = 50;
 let tunnel = [];
 
-let wheel;
-
-let meatBall;
-
+//radar and item spawner
 let radar = [];
+let spawner;
 
 let item = {
   random: [],
@@ -72,8 +75,7 @@ let item = {
   hole: []
 };
 
-let spawner;
-
+//useless crap lol
 let rotator;
 
 //sliders for debugging
@@ -90,7 +92,7 @@ function preload() {
 
 
 /**
-Description of setup
+Creates the canvas and game assets in advance. (possibly also the debugging sliders)
 */
 function setup() {
   createCanvas(canvasWidth, canvasHeight, WEBGL);
@@ -112,7 +114,7 @@ function setup() {
   //Create the matter.js Wheel
   wheel = new Wheel();
 
-  //Create the main playable body, behold the MEATBALL
+  //Create the main playable body, behold "La Sacrament de MEATBALL"
   meatBall = new MeatBall(0, -10, 30);
 
   //Creates the Radar and the spawner
@@ -122,9 +124,9 @@ function setup() {
     posZ: 0,
     amp: tunnel[0].radius
   });
-
   spawner = new Spawner({state: ''});
-  rotator = new Rotator();
+
+  rotator = new Rotator(); //Why is this still here!?
 
   //Creates sliders for debugging
   sliders[0] = new Slider({
@@ -255,27 +257,43 @@ function setup() {
   sliders[10] = new Slider({
     value: undefined,
     min: 0,
+    max: 1000,
+    defaut: 25,
+    step: 1,
+    name: 'TunnelnoiseMax',
+    id: 10,
+    callback: function (event) {
+      for (let i = 0; i < tunnel.length; i++) {
+        tunnel[i].noiseMax = sliders[10].update(10);
+      }
+    }
+  });
+  sliders[11] = new Slider({
+    value: undefined,
+    min: 0,
     max: 1,
     defaut: 0.1,
     step: 0.01,
     name: 'noiseProgressionSpeed',
-    id: 10,
+    id: 11,
     callback: function (event) {
       for (let i = 0; i < tunnel.length; i++) {
-        tunnel[i].noiseProgressionSpeed = sliders[10].update(10);
+        tunnel[i].noiseProgressionSpeed = sliders[11].update(11);
       }
     }
   });
+  //Add some of your own! they're so much fun! lol
 }
 
 
 /**
-Description of draw()
+Updates the state
 */
 function draw() {
   state.update();
 }
 
+//Sad copy and past of the item's update, display and removal functions
 function items() {
   for (let i = 0; i < item.random.length; i++) {
     item.random[i].update();
@@ -346,6 +364,7 @@ function debuggingSlidersDisplay() {
   }
 }
 
+//removes all radar except the infamous radar[0]! (My man! the OG! I love him sooo much!)
 function wipeRadar() {
   for (let i = 1; i < radar.length; i++) {
     radar.splice(i, 1);

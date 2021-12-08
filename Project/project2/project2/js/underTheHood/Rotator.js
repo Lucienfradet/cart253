@@ -1,3 +1,5 @@
+//Wanted to add this to a separete function and use it on EVERYTHING. Ended up not using it at all. lol
+
 class Rotator {
   constructor() {
     this.angle = 0;

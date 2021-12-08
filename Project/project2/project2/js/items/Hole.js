@@ -1,3 +1,5 @@
+//Items to be used in a weird whirlwind formation
+
 class Hole extends Item {
   constructor({
     x,
@@ -30,12 +32,12 @@ class Hole extends Item {
     //Checks if the items are moving and start the spawner again
     for (let i = 0; i < item.hole.length; i++) {
       if (item.hole[i].go && item.hole[i].id === 'hole' + spawner .counter) {
-        this.activate();
-
-        item.hole[i + 1].go = false;
+        state.hole();
+        item.hole[i + 1].go = false; //Makes sure it doesn't happen again in the same forLoop
       }
     }
 
+    //Moves last items and wipes radars if the state changes
     if (spawner.state !== 'hole') {
       wipeRadar();
       for (let i = 0; i < item.hole.length; i++) {
@@ -52,22 +54,5 @@ class Hole extends Item {
     translate(this.position.x, this.position.y, this.position.z);
     ellipse(0, 0, this.size);
     pop();
-  }
-
-  activate() {
-    wipeRadar();
-    spawner.delay = 0;
-    spawner.counter++;
-
-    for (let i = 1; i < 4; i++) {
-      let newRadar = new Radar({
-        posX: radar[0].position.x,
-        posY: radar[0].position.y,
-        posZ: 0,
-        amp: tunnel[0].radius - i * 40
-      });
-      radar.push(newRadar)
-    }
-    spawner.state = 'hole';
   }
 }

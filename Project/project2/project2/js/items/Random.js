@@ -1,3 +1,5 @@
+//Items to be used by the random spawn function
+
 class Random extends Item {
   constructor({
     x,
@@ -34,5 +36,11 @@ class Random extends Item {
     translate(this.position.x, this.position.y, this.position.z);
     ellipse(0, 0, this.size);
     pop();
+  }
+
+  activate() {
+    spawner.delay = 0;
+    spawner.reseted = false;
+    spawner.state = 'random';
   }
 }

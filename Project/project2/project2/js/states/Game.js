@@ -1,3 +1,5 @@
+//Handles the Game, GameLoop and GameOver
+
 class Game extends State {
   constructor() {
     super();
@@ -25,26 +27,27 @@ class Game extends State {
     background(0);
     this.time = frameCount/60 - this.startTime; //increments the time
 
-    //displays information about sliders on the gameScreen for realTime update
-    //debuggingSlidersDisplay();
+    //debuggingSlidersDisplay(); //displays information about sliders on the gameScreen for realTime update
 
     //MeatBall Functions
-    meatBall.display();
+    meatBall.display(); //Updates and displays meatBall
 
     //Wheel Functions
-    //wheel.display();
+    //wheel.display(); //INACTIVE for final version
     wheel.rotate();
     wheel.storeCollisions();
 
     //Spawner Functions
     spawner.update();
-    rotator.update(); //Keep track of the Wheel rotation to be used by other objects with the ROTATORIZE
+
+    //THIS SHOULD GO STRAIGHT TO THE DUMPSTER
+    //rotator.update(); //Keep track of the Wheel rotation to be used by other objects with the ROTATORIZE
 
     //display and update Items
     items();
 
-    //Tunel Functions
-    if (this.time > 3) { //Displays the tunnel after a time
+    //Radar and Tunnel deployment
+    if (this.time > 3) { //Displays the whole tunnel and radar after a time
       for (let i = 0; i < tunnel.length; i++) {
         tunnel[i].deploy();
         }
@@ -54,6 +57,7 @@ class Game extends State {
       }
     }
 
+    //The following if statements control the chronological order of the playLoop
     if (this.time > 5 && this.phase1) {
       this.phase1 = false;
       this.random();
@@ -61,14 +65,14 @@ class Game extends State {
 
     if (this.time > 20 && this.phase2) {
       this.phase2 = false;
-      shuffle(this.choiceStates, true);
+      shuffle(this.choiceStates, true); //Randomize the functions being used by the playLoop
       this.currentState = this.choiceStates[0];
       this.stateSelect();
     }
 
     if (this.time > 28 && this.phase3) {
       this.phase3 = false;
-      this.randomSpeed += 0.1;
+      this.randomSpeed += 0.1; //Accelerate the speed of the random spawn
       this.random();
     }
 
@@ -111,13 +115,14 @@ class Game extends State {
       this.random();
     }
 
-    if (this.time > 65) {
+    if (this.time > 65) { //Final BOSS all hell breaks loose
       this.randomize();
       this.stateSelect();
     }
 
     this.gameOver();
 
+    //Tunnel functions
     for (let i = 0; i < tunnel.length; i++) {
       tunnel[i].display();
       tunnel[i].rotate();
@@ -134,17 +139,18 @@ class Game extends State {
     // image(img.backgroundTest, 0, 0);
   }
 
+  //randomize allStates
   randomize() {
     let changeChance = random();
     if (changeChance < 0.05) {
       this.index = int(random(0, 5));
-      console.log(this.index);
     }
 
     this.currentState = this.allStates[this.index];
-    this.index = undefined; //prevents the functionSelect from running more than once.
+    this.index = undefined; //prevents the stateSelect from running again until the index changes again
   }
 
+  //Deals with GameOver events
   gameOver() {
     if (this.fatalCollision) {
       background(255, 0, 0);
@@ -152,6 +158,7 @@ class Game extends State {
     }
   }
 
+  //Executes functions
   stateSelect() {
     if (this.currentState === 'random') {
       this.random();
@@ -174,21 +181,7 @@ class Game extends State {
     }
   }
 
-  firstBarrage() {
-    do {
-      radar.angle = 0;
-      spawner.reseted = false;
-      spawner.delay = 0;
-      spawner.counter++;
-      spawner.state = 'barrage';
-
-      if (item.barrage[0].id === 'barrage' + spawner.counter && item.barrage[0].speed.z === 20) {
-        this.phase2++;
-      }
-    }
-    while (this.phase2 < 5)
-  }
-
+  //Starting parameters for the Item Spawner depending on the function
   random() {
     spawner.delay = 0;
     spawner.reseted = false;
@@ -196,7 +189,7 @@ class Game extends State {
   }
 
   barrage() {
-    radar.angle = 0;
+    radar[0].angle = 0;
     spawner.reseted = false;
     spawner.delay = 0;
     spawner.counter++;
@@ -215,7 +208,6 @@ class Game extends State {
       });
       radar.push(newRadar)
     }
-
     spawner.state = 'beam';
   }
 
@@ -239,12 +231,12 @@ class Game extends State {
       });
       radar.push(newRadar)
     }
-
     spawner.state = 'hole';
   }
 
+  //handles the keyPresses
   keyPressed() {
     wheel.keyPressed();
-    spawner.keyPressed();
+    spawner.keyPressed(); //For debugging purposes
   }
 }

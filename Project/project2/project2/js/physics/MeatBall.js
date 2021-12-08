@@ -2,14 +2,13 @@ class MeatBall {
   constructor(x, y, radius) {
     this.radius = radius;
     this.friction; //from 0 to 1 -- default 0.1
-    this.detail = 7;
+    this.detail = 7; //looks of the sphere.
     this.body = Bodies.circle(x, y, this.radius, {friction: this.friction});
-    Composite.add(world.world, this.body);
-
-
+    Composite.add(world.world, this.body); //adds the body to matter.js world
   }
 
   display() {
+    //Properties of the matter.js body
     let pos = this.body.position;
     let angle = this.body.angle;
 
@@ -23,13 +22,14 @@ class MeatBall {
     ellipseMode(CENTER);
     ellipse(0, 0, this.radius * 2, this.radius * 2, this.detail);
 
+    //Drawing a line to visualise the rotation and for testing
     stroke(255, 0, 0);
     strokeWeight(1);
     //line(0, 0, 0 + this.radius, 0);
     pop();
-    //console.log(this.body.position.y);
   }
 
+  //NOT USED vizualises when the ball was anchored to the wheel
   displayAnchored() {
     let pos = this.body.position;
     let angle = this.body.angle;
@@ -45,5 +45,4 @@ class MeatBall {
     ellipse(0, 0, this.radius, this.radius, this.detail);
     pop();
   }
-
 }

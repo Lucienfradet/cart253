@@ -1,17 +1,20 @@
+//Object that deals with spawning items in different formations!
+
 class Spawner {
   constructor({
     state
   }) {
 
     this.state = state;
-    this.resetPosition = '';
-    this.reseted = true;
-    this.resetingSpeed = 0.01;
-    this.delay = 0;
-    this.counter = 0;
+    this.resetPosition = ''; //either LEFT or RIGHT depending on the position of the radar
+    this.reseted = true; //flase if the radar needs resetting
+    this.resetingSpeed = 0.01; //increment on the radar.angle when resetting
+    this.delay = 0; //delays certain functions
+    this.counter = 0; //Allows for items in the same Class to be handled separatly by adding this.counter to their id
 
   }
 
+  //Checks the states of the spawner. This is being changed by the playLoop in the Game Class
   update() {
     switch(this.state) {
       case 'random':
@@ -56,6 +59,7 @@ class Spawner {
     }
   }
 
+  //Resets the radar (or tries to lol) to the angle = 0 position
   resetRadar() {
     switch(this.resetPosition) {
       case 'right':
@@ -63,7 +67,7 @@ class Spawner {
           radar[0].angle -= this.resetingSpeed;
         }
         if (radar[0].position.x < 0) {
-          this.reseted = true;
+          this.reseted = true; //reset should be done, the spawner can continue
         }
         break;
       case 'left':
@@ -71,11 +75,12 @@ class Spawner {
           radar[0].angle += this.resetingSpeed;
         }
         if (radar[0].position.x > 0) {
-          this.reseted = true;
+          this.reseted = true; //reset should be done, the spawner can continue
         }
         break;
     }
 
+    //Checks if the radar.angle is in the PI or -PI cadran
     if (radar[0].position.x > 0) {
       this.resetPosition = 'right';
     }
@@ -84,6 +89,7 @@ class Spawner {
     }
   }
 
+  //Spawns items randomly
   random() {
     radar[0].angle = 0.3;
 
@@ -103,19 +109,22 @@ class Spawner {
     }
   }
 
+  //Spawns items in a whirlwind formation
   hole() {
-    for (let i = 0; i < radar.length; i++) {
+    for (let i = 0; i < radar.length; i++) { //also move the new radar that the calling function created in state.hole()
       radar[i].angle = 0.09;
     }
 
+    //Spawning Phase
+    //Checks the real angle of the radar and stop the spawning phase when the radars of completed a trip around the world
     if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
       for (let i = 0; i < item.hole.length; i++) {
         if (item.hole[i].id === 'hole' + this.counter) {
           item.hole[i].speed.z = 0;
         }
       }
-      if (this.delay > 1) {
-        if (frameCount % 30 < 15/2) {
+      if (this.delay > 1) { //Prevents item spawning before the newly created radars are in position in the back of the tunnel
+        if (frameCount % 30 < 15/2) { //allows for gaps to be created in the disc shape spawn formation (items spawns in a blinking fation)
           for (let i = 0; i < radar.length; i++) {
             let newItem = new Hole({
               x: radar[i].position.x,
@@ -133,6 +142,8 @@ class Spawner {
       }
 
     }
+
+    //Moving Phase
     else {
       for (let i = 0; i < radar.length; i++) {
         radar[i].angle = 0;
@@ -141,17 +152,18 @@ class Spawner {
       for (let i = 0; i < item.hole.length; i++) {
         if (item.hole[i].id === 'hole' + this.counter) {
           item.hole[i].speed.z = speed + random();
-          item.hole[i].go = true;
+          item.hole[i].go = true; //Tells the hole Class that the last bunch of items are moving
         }
       }
     }
     this.delay++;
   }
 
+  //Spawns rings of items that the player will have to jump over
+  //Same as the Hole() function above
   barrage() {
-      for (let i = 0; i < radar.length; i++) {
-        radar[i].angle = 0.1;
-      }
+    radar[0].angle = 0.1;
+
 
     if (atan2(radar[0].position.x, radar[0].position.y) > -PI + 0.1 || this.delay < 5) {
       for (let i = 0; i < item.barrage.length; i++) {
@@ -160,7 +172,7 @@ class Spawner {
         }
       }
 
-      if (frameCount % 2 < 1) {
+      if (frameCount % 2 < 1) { //this part is different, spawns the items faster, creating a complete ring
         let newItem = new Barrage({
           x: radar[0].position.x,
           y: radar[0].position.y,
@@ -174,6 +186,8 @@ class Spawner {
         item.barrage.push(newItem);
       }
     }
+
+    //moving phase
     else {
       radar[0].angle = 0;
       let speed = random(15, 25);
@@ -187,6 +201,7 @@ class Spawner {
     this.delay++;
   }
 
+  //Spawns a Beam of items the player has no choice but to run away and wait for it to stop
   beam() {
     for (let i = 0; i < radar.length; i++) {
       radar[i].angle = 0.022;
@@ -211,8 +226,9 @@ class Spawner {
     this.delay++;
   }
 
+  //Spawns a single beam, because every item of this function also rotate, this formation is harder to predict but ca be jumped over
   wheelOfDoom() {
-    radar[0].angle = -0.029;
+    radar[0].angle = -0.032;
 
     if (this.delay > 1) {
       for (let i = 0; i < radar.length; i++) {
@@ -220,7 +236,7 @@ class Spawner {
           x: radar[i].position.x,
           y: radar[i].position.y,
           z: radar[i].centerPositionZ,
-          speed: 25,
+          speed: random(24.5, 25.5),
           size: 30,
           strokeWeight: 3,
           id: 'wheelOfDoom',
@@ -233,79 +249,26 @@ class Spawner {
     this.delay++;
   }
 
-  wipeOut() {
-    for (let i = 0; i < item.length; i++) {
-      item.splice(i, 1);
-      i--;
-    }
-    for (let i = 1; i < radar.length; i++) {
-      radar.splice(i, 1);
-      i--;
-    }
-  }
-
+  //KeyPressed for testing and debigging
   keyPressed() {
-    if (keyCode === 97) { //NUM_KEY 1
-      this.delay = 0;
-      this.reseted = false;
-      this.state = 'random';
-    }
-
-    if (keyCode === 98) { //NUM_KEY 2
-      radar.angle = 0;
-      this.reseted = false;
-      this.delay = 0;
-      this.counter++;
-      this.state = 'barrage';
-    }
-
-    if (keyCode === 99) { //NUM_KEY 3
-      //this.reseted = false;
-      this.delay = 0;
-
-      for (let i = 1; i < 4; i++) {
-        let newRadar = new Radar({
-          posX: radar[0].position.x,
-          posY: radar[0].position.y,
-          posZ: 0,
-          amp: tunnel[0].radius - i * 40
-        });
-        radar.push(newRadar)
+      if (keyCode === 97) { //NUM_KEY 1
+        state.random();
       }
 
-      this.state = 'beam';
-    }
-
-    if (keyCode === 100) { //NUM_KEY 4
-      this.delay = 0;
-      this.reseted = false;
-      this.state = 'wheelOfDoom';
-    }
-
-    if (keyCode === 101) { //NUM_KEY 5
-      wipeRadar();
-      radar.angle = 0;
-      this.reseted = false;
-      this.delay = 0;
-      this.counter++;
-
-      for (let i = 1; i < 4; i++) {
-        let newRadar = new Radar({
-          posX: radar[0].position.x,
-          posY: radar[0].position.y,
-          posZ: 0,
-          amp: tunnel[0].radius - i * 40
-        });
-        radar.push(newRadar)
+      if (keyCode === 98) { //NUM_KEY 2
+        state.barrage();
       }
 
-      this.state = 'hole';
-    }
+      if (keyCode === 99) { //NUM_KEY 3
+        state.beam();
+      }
 
-    if (keyCode === 105) { //NUM_KEY 9
-      this.reseted = false;
-      this.state = '';
-      this.wipeOut();
-    }
+      if (keyCode === 100) { //NUM_KEY 4
+        state.wheelOfDoom();
+      }
+
+      if (keyCode === 101) { //NUM_KEY 5
+        state.hole();
+      }
   }
 }

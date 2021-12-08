@@ -1,3 +1,5 @@
+//Super class for States
+
 class State {
   constructor() {
 
