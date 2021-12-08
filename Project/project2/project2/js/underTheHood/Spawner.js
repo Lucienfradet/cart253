@@ -45,7 +45,7 @@ class Spawner {
         break;
 
       case 'wheelOfDoom':
-        this.wheelOfDoom();
+        this.wheelOfDoom(0.1); //rotationSpeed as an argument
         break;
 
       case 'hole':
@@ -227,7 +227,7 @@ class Spawner {
   }
 
   //Spawns a single beam, because every item of this function also rotate, this formation is harder to predict but ca be jumped over
-  wheelOfDoom() {
+  wheelOfDoom(rotationSpeed) {
     radar[0].angle = -0.032;
 
     if (this.delay > 1) {
@@ -241,7 +241,7 @@ class Spawner {
           strokeWeight: 3,
           id: 'wheelOfDoom',
           color: 255,
-          rotationSpeed: 0.1
+          rotationSpeed: rotationSpeed
         });
         item.wheelOfDoom.push(newItem);
       }
