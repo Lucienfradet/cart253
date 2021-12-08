@@ -6,6 +6,10 @@ class Title extends State {
   }
 
   update() {
+    background(0);
+  }
 
+  keyPressed() {
+    state = new Intro();
   }
 }

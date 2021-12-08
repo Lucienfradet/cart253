@@ -3,6 +3,10 @@
 class Game extends State {
   constructor() {
     super();
+
+    //Create the main playable body, behold "La Sacrament de MEATBALL"
+    meatBall = new MeatBall(0, 0, 30);
+
     this.startTime = frameCount/60;
     this.time = 0; //gameLoop time progression
     this.fatalCollision = false; //triggers the failure of the player (collision with an item)
@@ -134,9 +138,6 @@ class Game extends State {
     for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
       tunnel[i].applyHistory(tunnel[0].history.length - i);
     }
-
-    // imageMode(CENTER);
-    // image(img.backgroundTest, 0, 0);
   }
 
   //randomize allStates

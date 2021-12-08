@@ -1,5 +1,5 @@
 /**
-Project 2 prototype
+Project 2
 Lucien Cusson-Fradet
 
 I ran out of time doing the prototype. Parts of it ended up being more complicated than anticipated.
@@ -36,11 +36,18 @@ OK fix the tunnel jump delay...
 
 "use strict";
 // 1160 893
-let canvasWidth = 700;
-let canvasHeight = 550;
+// let canvasWidth = 700;
+// let canvasHeight = 550;
 
-// let canvasWidth = 1160;
-// let canvasHeight = 893;
+let canvasWidth = 1160;
+let canvasHeight = 893;
+let canvas;
+
+//tunnel offSet for intro scene
+let offSet = {
+  x: 65,
+  y: 10
+}
 
 //Images
 let img = {
@@ -49,6 +56,7 @@ let img = {
 
 //fonts
 let yoster;
+let playerName = [];
 
 //State of the simulation
 let state;
@@ -95,10 +103,12 @@ function preload() {
 Creates the canvas and game assets in advance. (possibly also the debugging sliders)
 */
 function setup() {
-  createCanvas(canvasWidth, canvasHeight, WEBGL);
+  canvas = createCanvas(canvasWidth, canvasHeight, WEBGL);
   background(0);
+  textFont(yoster); //getting an error if this ain't here lol
 
-  state = new Game();
+  //state = new Game();
+  state = new Intro();
 
   //Creates the Physics engine and activates it
   world = new Physics();
@@ -113,9 +123,6 @@ function setup() {
 
   //Create the matter.js Wheel
   wheel = new Wheel();
-
-  //Create the main playable body, behold "La Sacrament de MEATBALL"
-  meatBall = new MeatBall(0, -10, 30);
 
   //Creates the Radar and the spawner
   radar[0] = new Radar({
@@ -374,4 +381,11 @@ function wipeRadar() {
 
 function keyPressed() {
   state.keyPressed();
+}
+
+function keyTyped() {
+  if (keyCode !== ENTER) {
+    let touche = key;
+    state.keyTyped(touche)
+  }
 }

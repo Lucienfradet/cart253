@@ -9,7 +9,7 @@ class Tunnel {
     this.profondeur = 50;
     this.deploymentSpeed = 0.8;
     this.colorOpacity = 5 * layer;
-    this.position = createVector(0, 0, 0);
+    this.position = createVector(0 , 0 , 0);
     this.radius = 150; //radius of the tunnel entrance
     this.radiusOffset = 25; //amount of space that the perlin noise will have to affect the radius
     this.noiseZoff = 0.3; //a number makes it look like the tunnel is moving toward the viewer (not really what's happening, more like an illusion)
@@ -47,7 +47,7 @@ class Tunnel {
         let r = map(noise(xoff, yoff, this.zoff), 0, 1, this.radius, this.radius + this.radiusOffset); //Map the noise to the radius and desired radius radiusOffset
         let x = r * sin(i);
         let y = r * cos(i);
-        vertex(x + this.position.x, y + this.position.y, this.position.z); //draws every vertex of the circle
+        vertex(x + this.position.x - offSet.x, y + this.position.y - offSet.y, this.position.z); //draws every vertex of the circle
       }
     endShape(CLOSE);
     pop();

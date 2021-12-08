@@ -12,4 +12,8 @@ class State {
   keyPressed() {
 
   }
+
+  keyTyped() {
+    
+  }
 }
