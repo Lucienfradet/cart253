@@ -297,7 +297,9 @@ function setup() {
 Updates the state
 */
 function draw() {
-  state.update();
+  if (state.currentState !== 'gameOver') {
+    state.update();
+  }
 }
 
 //Sad copy and past of the item's update, display and removal functions
@@ -362,7 +364,33 @@ function items() {
       i--;
     }
   }
+}
 
+function itemWipeOut() {
+  for (let i = 0; i < item.random.length; i++) {
+    item.random.splice(i, 1);
+    i--;
+  }
+
+  for (let i = 0; i < item.barrage.length; i++) {
+    item.barrage.splice(i, 1);
+    i--;
+  }
+
+  for (let i = 0; i < item.beam.length; i++) {
+    item.beam.splice(i, 1);
+    i--;
+  }
+
+  for (let i = 0; i < item.wheelOfDoom.length; i++) {
+    item.wheelOfDoom.splice(i, 1);
+    i--;
+  }
+
+  for (let i = 0; i < item.hole.length; i++) {
+    item.hole.splice(i, 1);
+    i--;
+  }
 }
 
 function debuggingSlidersDisplay() {

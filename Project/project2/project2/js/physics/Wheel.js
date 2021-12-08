@@ -102,7 +102,7 @@ class Wheel {
 
     if (keyIsDown(68)) { //D key
       Body.setAngularVelocity(this.compoundBody, this.wheelRotationSpeed);
-    }
+    }  
   }
 
   //saves the latest point of contact between the wheel and meatBall to allow for a force perpendicular to the meatBall to be applied on the wheel

@@ -25,6 +25,9 @@ class Game extends State {
     this.phase6 = true;
     this.phase7 = true;
     this.phase8 = true;
+
+    this.gameOverPhase = true;
+    this.firstTry = true;
   }
 
   update() {
@@ -51,10 +54,16 @@ class Game extends State {
     items();
 
     //Radar and Tunnel deployment
-    if (this.time > 3) { //Displays the whole tunnel and radar after a time
+    if (this.time > 3 && this.firstTry) { //Displays the whole tunnel and radar after a time
       for (let i = 0; i < tunnel.length; i++) {
         tunnel[i].deploy();
         }
+      for (let i = 0; i < radar.length; i++) {
+        radar[i].display();
+        radar[i].rotate();
+      }
+    }
+    else if (this.firstTry === false){
       for (let i = 0; i < radar.length; i++) {
         radar[i].display();
         radar[i].rotate();
@@ -155,8 +164,39 @@ class Game extends State {
   gameOver() {
     if (this.fatalCollision) {
       background(255, 0, 0);
-      noLoop();
+      this.firstTry = false;
+      this.currentState = 'gameOver';
     }
+  }
+
+  //Resets all Game parameters for the next try
+  restart() {
+    this.startTime = frameCount/60 - 5; //start at phase1
+    this.time = 0;
+    spawner.state = '';
+    itemWipeOut();
+
+    for (let i = 0; i < radar.length; i++) {
+      radar.splice(i, 1);
+      i--;
+    }
+    radar[0] = new Radar({
+      posX: tunnel[0].radius,
+      posY: tunnel[0].radius,
+      posZ: 0,
+      amp: tunnel[0].radius
+    });
+
+    this.fatalCollision = false;
+    this.phase1 = true;
+    this.phase2 = true;
+    this.phase3 = true;
+    this.phase4 = true;
+    this.phase5 = true;
+    this.phase6 = true;
+    this.phase7 = true;
+    this.phase8 = true;
+    this.currentState = undefined;
   }
 
   //Executes functions
@@ -237,7 +277,14 @@ class Game extends State {
 
   //handles the keyPresses
   keyPressed() {
+    if (this.currentState === 'gameOver') {
+      this.restart();
+    }
     wheel.keyPressed();
     spawner.keyPressed(); //For debugging purposes
+
+    if (keyCode === 38) {
+      state = new Ending();
+    }
   }
 }
