@@ -15,6 +15,7 @@ class Game extends State {
     this.currentState = undefined;
     this.index = 0; //controls the allStates index selection
     this.randomSpeed = 1; //Increments as the game loop progresses
+    this.delay = 0;
 
     //Triggers gameEvents once and turn off.
     this.phase1 = true;
@@ -55,6 +56,11 @@ class Game extends State {
 
     //Radar and Tunnel deployment
     if (this.time > 3 && this.firstTry) { //Displays the whole tunnel and radar after a time
+      if (deployed === false) {
+        snd.halfBouce.loop();
+        snd.halfBouceDead.setVolume(0);
+        snd.halfBouceDead.loop();
+      }
       for (let i = 0; i < tunnel.length; i++) {
         tunnel[i].deploy();
         }
@@ -133,6 +139,14 @@ class Game extends State {
       this.stateSelect();
     }
 
+    if (this.time > 80) {
+      snd.halfBouce.stop();
+      snd.halfBouceDead.stop();
+      snd.soup.setVolume(0);
+      snd.soup.play()
+      state = new Ending();
+    }
+
     this.gameOver();
 
     //Tunnel functions
@@ -163,9 +177,15 @@ class Game extends State {
   //Deals with GameOver events
   gameOver() {
     if (this.fatalCollision) {
+      if (this.currentState !== 'gameOver') {
+        snd.hit.play();
+      }
+      snd.halfBouce.setVolume(0);
+      snd.halfBouceDead.setVolume(1);
       background(255, 0, 0);
       this.firstTry = false;
       this.currentState = 'gameOver';
+      this.delay = 0;
     }
   }
 
@@ -277,13 +297,19 @@ class Game extends State {
 
   //handles the keyPresses
   keyPressed() {
-    if (this.currentState === 'gameOver') {
+    if (this.currentState === 'gameOver' && this.delay > 10) {
       this.restart();
+      snd.halfBouce.setVolume(1);
+      snd.halfBouceDead.setVolume(0);
     }
     wheel.keyPressed();
     spawner.keyPressed(); //For debugging purposes
 
     if (keyCode === 38) {
+      snd.halfBouce.stop();
+      snd.halfBouceDead.stop();
+      snd.soup.setVolume(0);
+      snd.soup.play()
       state = new Ending();
     }
   }

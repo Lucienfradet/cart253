@@ -1,4 +1,5 @@
 //Deals with the intro before the game starts Screen
+//Code mainly from Pippin Barr's exemple https://editor.p5js.org/pippinbarr/sketches/ssgYeBo8R
 
 class PressAnyKey extends State {
   constructor() {
@@ -31,6 +32,7 @@ class PressAnyKey extends State {
     pop();
   }
 
+  //Stores the player's name for use in the Outro Sequence
   keyTyped(touche) {
       playerName += touche;
   }

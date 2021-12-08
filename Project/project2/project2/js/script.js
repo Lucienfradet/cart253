@@ -54,6 +54,14 @@ let img = {
   backgroundTest: undefined
 }
 
+//Sounds
+let snd = {
+  halfBouce: undefined,
+  halfBouceDead: undefined,
+  hit: undefined,
+  soup: undefined
+}
+
 //fonts
 let yoster;
 let playerName = [];
@@ -96,7 +104,13 @@ let sliders = [];
 */
 function preload() {
   yoster = loadFont('assets/fonts/yoster.ttf');
+
   img.backgroundTest = loadImage('assets/images/backgroundTest.png');
+
+  snd.halfBouce = loadSound('assets/sounds/halfBounce.wav');
+  snd.halfBouceDead = loadSound('assets/sounds/halfBounceDead.wav');
+  snd.hit = loadSound('assets/sounds/hit.wav');
+  snd.soup = loadSound('assets/sounds/soup.wav');
 }
 
 
@@ -302,6 +316,7 @@ function draw() {
   if (state.currentState !== 'gameOver') {
     state.update();
   }
+  state.delay++;
 }
 
 //Sad copy and past of the item's update, display and removal functions

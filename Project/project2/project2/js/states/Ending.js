@@ -5,8 +5,8 @@ class Ending extends State {
     super();
     this.startTime = frameCount/60;
     this.time = 0; //gameLoop time progression
-    this.timeSwitch1 = 5;
-    this.timeSwitch2 = 15;
+    this.timeSwitch1 = 18;
+    this.timeSwitch2 = 20;
 
     this.increments = {
       radiusOffset: 0.9,
@@ -15,13 +15,21 @@ class Ending extends State {
       itemSpeed: 0.01,
       radarSpeed: 0.01,
       itemRotation: 0.1,
-      tunnelRadius: 1
+      tunnelRadius: 1,
+      soundVolume: 0.001
     }
+
+    this.soundVolume = 0;
   }
 
   update() {
     background(0);
     this.time = frameCount/60 - this.startTime; //increments the time
+
+    if (this.soundVolume < 1) {
+      this.soundVolume += this.increments.soundVolume;
+    }
+    snd.soup.setVolume(this.soundVolume)
 
     //Wheel Functions
     wheel.storeCollisions();
