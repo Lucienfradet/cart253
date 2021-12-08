@@ -57,6 +57,7 @@ class Game extends State {
     //Radar and Tunnel deployment
     if (this.time > 3 && this.firstTry) { //Displays the whole tunnel and radar after a time
       if (deployed === false) {
+        snd.noise.stop();
         snd.halfBouce.loop();
         snd.halfBouceDead.setVolume(0);
         snd.halfBouceDead.loop();
@@ -139,7 +140,7 @@ class Game extends State {
       this.stateSelect();
     }
 
-    if (this.time > 80) {
+    if (this.time > 75) {
       snd.halfBouce.stop();
       snd.halfBouceDead.stop();
       snd.soup.setVolume(0);

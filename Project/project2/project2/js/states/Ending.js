@@ -64,6 +64,7 @@ class Ending extends State {
     this.shitGoesWild();
   }
 
+  //Increments a bunch of values to create a crazy effect
   shitGoesWild() {
     if (this.time < this.timeSwitch1) {
       for (let i = 0; i < radar.length; i++) {
@@ -90,6 +91,7 @@ class Ending extends State {
 
   }
 
+  //camls shit down.
   shitCalmsDown() {
     for (let i = 0; i < tunnel.length; i++) {
       let tun = tunnel[i];
