@@ -57,6 +57,7 @@ let img = {
 //fonts
 let yoster;
 let playerName = [];
+let speech;
 
 //State of the simulation
 let state;
@@ -106,9 +107,10 @@ function setup() {
   canvas = createCanvas(canvasWidth, canvasHeight, WEBGL);
   background(0);
   textFont(yoster); //getting an error if this ain't here lol
+  speech = new p5.Speech();
 
   //state = new Game();
-  state = new Intro();
+  state = new PressAnyKey();
 
   //Creates the Physics engine and activates it
   world = new Physics();

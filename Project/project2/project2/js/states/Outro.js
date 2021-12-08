@@ -5,6 +5,7 @@ class Outro extends State {
     super();
     this.startTime = frameCount/60;
     this.time = 0; //gameLoop time progression
+    this.endMsg = 'Welcome Home,' + ' ' + playerName + ',';
   }
 
   update() {
@@ -21,6 +22,12 @@ class Outro extends State {
 
     for (let i = tunnel[0].history.length - 1; i >= 1; i--) {
       tunnel[i].applyHistory(tunnel[0].history.length - i);
+    }
+
+    if (this.time > 2) {
+      speech.setRate(0.3)
+      speech.setPitch(0.01);
+      speech.speak(this.endMsg);
     }
   }
 }
