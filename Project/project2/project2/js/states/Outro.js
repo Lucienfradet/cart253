@@ -24,7 +24,7 @@ class Outro extends State {
       tunnel[i].applyHistory(tunnel[0].history.length - i);
     }
 
-    //Plays an audio with the player's name
+    //This recites the endMsg plus the entered playerName
     if (this.time > 2) {
       speech.setRate(0.3)
       speech.setPitch(0.01);
