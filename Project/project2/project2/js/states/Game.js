@@ -195,6 +195,7 @@ class Game extends State {
     this.startTime = frameCount/60 - 5; //start at phase1
     this.time = 0;
     spawner.state = '';
+    this.randomSpeed = 1;
     itemWipeOut();
 
     for (let i = 0; i < radar.length; i++) {
