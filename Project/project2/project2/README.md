@@ -40,5 +40,3 @@ Song Credits:
 
   Merci,
   Lucien
-
-  Traduit avec www.DeepL.com/Translator (version gratuite)
